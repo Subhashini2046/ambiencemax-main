@@ -1,0 +1,266 @@
+<div
+  *ngIf="
+    this.UsrDataService.userId === undefined ||
+    this.UsrDataService.userRole === null
+  "
+>
+  <div class="alert alert-danger text-center mx-4 my-4">
+    <h3>
+      Invalid username or password , please try again !
+    </h3>
+    <hr />
+    <button class="btn btn-danger" routerLink="/">
+      Go Back!
+    </button>
+  </div>
+</div>
+<div
+  class="example-container"
+  [class.example-is-mobile]="mobileQuery.matches"
+  *ngIf="this.UsrDataService.userId !== undefined"
+>
+  <mat-toolbar color="primary" class="example-toolbar">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <a routerLink="/dashboard" class="navbar-brand" (click)="main = ''">
+      <img
+        class="text-center"
+        src="../assets/Logo.svg"
+        width="100"
+        height="30"
+        alt=""
+        class="d-align-block"
+      />
+      <h4 class="navbar-text" style="margin-left: 16px; color: white;">
+        AmbienceMax
+      </h4>
+    </a>
+    <span class="example-spacer"></span>
+    <div class="form-inline" *ngIf="this.UsrDataService.userId !== null">
+      <button
+        class="btn btn-lg btn-danger"
+        mat-button
+        [matMenuTriggerFor]="beforeMenu"
+      >
+        <mat-icon
+          class="example-icon"
+          aria-hidden="false"
+          aria-label="Example settings icon"
+          >settings</mat-icon
+        >
+      </button>
+      <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item>View Profile</button>
+        <button mat-menu-item>All Settings</button>
+        <button mat-menu-item routerLink="" (click)="logout()">
+          Logout
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+  <mat-sidenav-container
+    class="example-sidenav-container"
+    [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
+  >
+    <mat-sidenav
+      #snav
+      [mode]="'over'"
+      [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56"
+      class="sidenav"
+    >
+      <mat-nav-list>
+        <a
+          class="btn"
+          (click)="main = ''; snav.toggle();"
+          mat-list-item
+        >
+          Dashboard
+        </a>
+        <a
+          class="btn"
+          *ngIf="this.UsrDataService.userRole === 1"
+          (click)="main = 'form'; snav.toggle()"
+          mat-list-item
+        >
+          New Request
+        </a>
+        <!-- <a
+        class="btn"
+        *ngIf="this.UsrDataService.userRole !== 1"
+        
+        mat-list-item
+      >
+        Open Request
+      </a> -->
+        <!-- <a class="btn" *ngIf= 'this.UsrDataService.userRole === 1'
+        (click) = "Request('UnderNeg'); snav.toggle();" mat-list-item>
+          Under Negotiation
+        </a> -->
+<!--         
+        <a
+        class="btn"
+        *ngFor="let chip of Buttons1"
+        (click)="Request(chip.func); snav.toggle(); main = chip.func;
+        this.UsrDataService.main = chip.func;"
+        mat-list-item
+      >
+        {{ chip.name }}</a
+      > -->
+        <a
+          class="btn"
+          *ngFor="let chip of Buttons"
+          (click)="Request(chip.func); snav.toggle(); main = chip.func;
+          this.UsrDataService.main = chip.func;"
+          mat-list-item
+        >
+          {{ chip.name }}</a
+        >
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+      <!-- <div *ngIf = 'this.UsrDataService.currUser !== undefined ' class = "maindiv"> -->
+      <div *ngIf="this.UsrDataService.userId !== undefined" class="maindiv">
+        <app-request-form *ngIf="main === 'form'"></app-request-form>
+        <app-pending *ngIf="main === 'Pending'"></app-pending>
+        <app-all-request *ngIf="main === 'all'"></app-all-request>
+        <app-open *ngIf="main === 'open' && this.UsrDataService.userId !== 1"></app-open>
+        <app-close *ngIf="main === 'closed'"></app-close>
+
+        <!-- <div *ngIf="main === 'form'">
+          <app-request-form></app-request-form>
+        </div>
+        <div *ngIf="main === 'Pending'">
+          <app-request-table></app-request-table>
+        </div>
+        <div *ngIf="main === 'all'">
+          <app-request-table></app-request-table>
+        </div>
+        <div *ngIf="main === 'open'">
+          <app-request-table></app-request-table>
+        </div>
+        <div *ngIf="main === 'closed'">
+          <app-request-table></app-request-table>
+        </div> -->
+
+        <!-- <div *ngIf = "main === 'cancelled' ">
+          <app-request-table ></app-request-table>
+        </div> -->
+        <div *ngIf="main === ''" class="row graph">
+          <div class="col-lg-8">
+            <mat-card *ngIf="ChartType === 'doughnut'">
+              <mat-card-title class="title">
+                Total No Of Requests : {{ All }}
+              </mat-card-title>
+              <hr />
+              <mat-card-content>
+                <app-doughnut-chart class="graph"></app-doughnut-chart>
+              </mat-card-content>
+              <mat-card-actions class="text-center">
+                <button
+                  mat-button
+                  class="btn btn-lg btn-warning"
+                  (click)="ChartType = 'bar'"
+                >
+                  Change Chart Type
+                </button>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="ChartType === 'horizontalBar'">
+              <mat-card-title class="title"
+                >Total No Of Requests : {{ All }}
+              </mat-card-title>
+              <hr />
+              <mat-card-content>
+                <app-chart-represent></app-chart-represent>
+              </mat-card-content>
+              <mat-card-actions class="text-center">
+                <button
+                  mat-button
+                  class="btn btn-lg btn-warning"
+                  (click)="ChartType = 'doughnut'"
+                >
+                  Change Chart Type
+                </button>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="ChartType === 'bar'">
+              <mat-card-title class="title"
+                >Total No Of Requests : {{ All }}
+              </mat-card-title>
+              <hr />
+              <mat-card-content>
+                <app-bar-chart-component></app-bar-chart-component>
+              </mat-card-content>
+              <mat-card-actions class="text-center">
+                <button
+                  mat-button
+                  class="btn btn-lg btn-warning"
+                  (click)="ChartType = 'horizontalBar'"
+                >
+                  Change Chart Type
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+          <div class="col-lg-4">
+            <div class="col">
+              <mat-card class="example-card text-center">
+                <button
+                  class="btn btn-lg btn-outline-primary"
+                  (click)="reqRefetch()"
+                >
+                 Fetch Latest Requets!
+                </button>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card class="example-card">
+                <mat-card-title>Pending Requests</mat-card-title>
+                <mat-card-content>
+                  <h2>
+                    {{ Pending }}
+                  </h2>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="Request('Pending')" routerLink="pending">
+                    View All
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card class="example-card">
+                <mat-card-title>Open Requests</mat-card-title>
+                <mat-card-content>
+                  <h2>
+                    {{ Open }}
+                  </h2>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="Request('open')" routerLink="open">View All</button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card class="example-card">
+                <mat-card-title>Closed Requests</mat-card-title>
+                <mat-card-content>
+                  <h2>
+                    {{ Closed }}
+                  </h2>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-button (click)="Request('closed')" routerLink="close">
+                    View All
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

@@ -1,0 +1,52 @@
+<div class="text-center container" style="background-color: white; margin-top: 10px;">
+  <hr>
+  <div class="alert alert-info">
+    <h3>Approval Status</h3>
+  </div>
+  <hr>
+  <table class="table">
+    <thead class="thead-light">
+        <tr>
+          <th scope="col">
+            Role Id
+          </th>
+          <th scope="col">
+            Designation
+          </th>
+          <th scope="col">
+            Status
+          </th >
+        </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor = "let role of this.UsrDataService.RoleMap; index as i" >
+        <td *ngIf = "i > 0">
+          {{i+1}}
+        </td>
+        <td *ngIf = "i > 0">
+        {{role}}
+        </td>
+        <td *ngIf = "i > 0 && i+1 > this.UsrDataService.viewReq.req_level"
+         >
+          <span  style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
+            {{UsrDataService.viewReq.req_status}}
+          </span>
+        <td *ngIf = "i > 0 && i+1 <= this.UsrDataService.viewReq.req_level">
+          <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
+            Approved
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="col" >
+    <button
+      mat-raised-button
+      color = "accent"
+      (click) = "backClicked()"
+      >
+      Go Back
+      </button>
+      </div>
+</div>
+
