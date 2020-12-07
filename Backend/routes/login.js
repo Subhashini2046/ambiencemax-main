@@ -21,7 +21,7 @@ router.post("/login", (req, res) => {
           if (err) {
             console.log(err);
           } else {
-            role_id = result[0].role_id;
+            role_id = result[0].role_id
             console.log(result);
             // if (role_id === 1 ) {
             //   var sql1 = `select * from requests where req_initiator_id = '${user_id}' order by req_id desc limit 100 ; select count(*) as "all" from requests where req_initiator_id = '${user_id}'; select count(*) as "pending" from requests where req_status = 'Pending' and req_initiator_id = '${user_id}'; select count(*) as "closed" from requests where req_status = 'Closed' and req_initiator_id = '${user_id}'`;
@@ -113,14 +113,12 @@ router.post("/login", (req, res) => {
 
                       })
                       loop.then(()=>{
-                        // console.log(reqData);
                         res.send(
                           JSON.stringify({
                             result: "passed",
                             user_id: user_id,
-                            req_data: reqData.slice(0,10),
                             role_id : role_id,
-                            req_stats: req_stats,
+                           // req_stats: req_stats,
                             h_id: h_id
                           })
                         );

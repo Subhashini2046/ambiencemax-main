@@ -7,12 +7,15 @@ import { UserDataService } from './Services/UserDataService';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  
   constructor(public UsrDataService: UserDataService) {
-    if (this.UsrDataService.userId === null || this.UsrDataService.userId === undefined){
-      if(JSON.parse(localStorage.getItem('userData'))) {
-        this.UsrDataService.userId = JSON.parse(localStorage.getItem('userData')).userId;
-      }
-    }
+  //   if (this.UsrDataService.userId === null || this.UsrDataService.userId === undefined){
+  //     console.log("asdfghj");
+  //     console.log(this.UsrDataService.userId);
+  //     if(JSON.parse(localStorage.getItem('userData'))) {
+  //       this.UsrDataService.userId = JSON.parse(localStorage.getItem('userData')).userId;
+  //     }
+  //   }
   }
   title = 'AmbienceMax';
   logout() {

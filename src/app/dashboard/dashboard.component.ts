@@ -1,8 +1,11 @@
   import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
   import { UserDataService } from '../Services/UserDataService';
+  import { RequestService,ReqStats } from'../Services/RequestService';
   import { MediaMatcher } from '@angular/cdk/layout';
   import { Subscription } from 'rxjs';
   import { Router } from '@angular/router';
+  import { MatTableDataSource, MatPaginator } from '@angular/material'; 
+  import { HttpClient } from '@angular/common/http';
   export interface Options {
     name: string;
     func: string;
@@ -11,6 +14,7 @@
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
+    providers:[RequestService]
   })
   export class DashboardComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList;
@@ -22,6 +26,9 @@
     public All;
     public Pending;
     public Closed;
+    public userId;
+    public userRole;
+
     //public OpenReq;
     ChartType = 'bar';
     // Buttons:Options=[{ name: 'Open Requests', func: 'open' }];
@@ -41,7 +48,9 @@
     private _mobileQueryListener: () => void;
     constructor(
       public UsrDataService: UserDataService,
+      public requestService: RequestService,
       changeDetectorRef: ChangeDetectorRef,
+      private http: HttpClient,
       media: MediaMatcher,
       private router: Router
     ) {
@@ -50,11 +59,19 @@
       // tslint:disable-next-line: deprecation
       this.mobileQuery.addListener(this._mobileQueryListener);
     }
+    public dataSource = new MatTableDataSource(this.UsrDataService.desiredRequests);
     Request(type: string) {
       // const all = this.UsrDataService.fetchObservable();
       this.main = type;
       if (type === 'Pending') {
-        this.UsrDataService.desiredRequests = this.UsrDataService.pendingRequests;
+       // this.requestService.getPendingRequest(this.userId);
+       // this.UsrDataService.desiredRequests = this.UsrDataService.pendingRequests;
+        //this.requestService.getRequest(this.userId);
+        // this.UsrDataService.fetchPendingRequest();
+        // this.UsrDataService.fetchDesiredObservable().subscribe((e)=>{
+        //   this.dataSource.data = e;
+        // });
+       // this.router.navigateByUrl('/dashboard/pending');
         this.router.navigate(['/dashboard/pending']);
         console.log('Pending Called');
         
@@ -67,12 +84,12 @@
         
       } else if (type === 'closed') {
       // this.UsrDataService.isPending = false;
-        this.UsrDataService.desiredRequests = this.UsrDataService.closedRequests;
+        //this.UsrDataService.desiredRequests = this.UsrDataService.closedRequests;
         this.router.navigate(['/dashboard/close']);
         console.log('Closed Called');
       } else if (type === 'open') {
         // this.UsrDataService.isPending = false;
-        this.UsrDataService.desiredRequests = this.UsrDataService.openRequests;
+       // this.UsrDataService.desiredRequests = this.UsrDataService.openRequests;
         this.router.navigate(['/dashboard/open']);
         console.log('Open Called');
         
@@ -81,50 +98,66 @@
       // console.log(this.UsrDataService.isPending);
     }
     ngOnInit() {
+      
       this.main='';
       console.log('ngOnint Dashboard!');
       this.UsrDataService.mainObservable().subscribe( e => {
         this.main = e;
       });
-      // if(this.UsrDataService.userId==1){
-        
+      this.userId = JSON.parse(localStorage.getItem('userId'));
+      console.log(this.userId);
+      this.userRole= JSON.parse(localStorage.getItem('userRole'));
+      console.log(this.userRole);
+    // let response:any=  this.requestService.getRequest(this.userId).subscribe((response:any)=>{
+    //   this.Pending=response.req_stats.Pending,
+    // this.All = response.req_stats.All;
+    //   this.Open = response.req_stats.Open;
+    //   this.Closed = response.req_stats.Closed;
+     
+    // });
+      //    if (this.UsrDataService.userRole == null) {
+      //   this.UsrDataService.reqStats = JSON.parse(localStorage.getItem('RqeuestState'));
+      //   if (this.UsrDataService.reqStats !== null) {
+      //     console.log('User Data Fetched from Local storage!');
+      //     //this.UsrDataService.reqStats = this.UsrDataService.reqStats;
+      //     // this.All = this.UsrDataService.reqStats.All;
+      //     // this.Pending = this.UsrDataService.reqStats.Pending;
+      //     // this.Closed = this.UsrDataService.reqStats.Closed;
+      //     // this.Open = this.UsrDataService.reqStats.Open;
+      //     //this.UsrDataService.hId = this.UsrDataService.Data.hId;
+      //     let response:any=  this.requestService.getRequest(this.userId).subscribe((response:any)=>{
+      //       this.Pending=response.req_stats.Pending,
+      //     this.All = response.req_stats.All;
+      //       this.Open = response.req_stats.Open;
+      //       this.Closed = response.req_stats.Closed;
+           
+      //     });
+      //   } else {
+      //     console.log('No User in session!');
+      //     this.router.navigateByUrl('/');
+      //   }
       // }
-      if (this.UsrDataService.userRole == null || this.UsrDataService.allRequests.length === 0) {
-        this.UsrDataService.Data = JSON.parse(localStorage.getItem('userData'));
-        if (this.UsrDataService.Data !== null) {
-          console.log('User Data Fetched from Local storage!');
-          this.UsrDataService.pendingRequests = this.UsrDataService.Data.pendingReq;
-          this.UsrDataService.closedRequests = this.UsrDataService.Data.closedReq;
-          this.UsrDataService.openRequests = this.UsrDataService.Data.openReq;
-          this.UsrDataService.email = this.UsrDataService.Data.email;
-          this.UsrDataService.password = this.UsrDataService.Data.password;
-          this.UsrDataService.allRequests = this.UsrDataService.Data.Requests;
-          this.UsrDataService.userRole = this.UsrDataService.Data.userRole;
-          this.UsrDataService.userId = this.UsrDataService.Data.userId;
-          this.UsrDataService.reqStats = this.UsrDataService.Data.reqStats;
-          this.All = this.UsrDataService.reqStats.All;
-          this.Pending = this.UsrDataService.reqStats.Pending;
-          this.Closed = this.UsrDataService.reqStats.Closed;
-          this.Open = this.UsrDataService.reqStats.Open;
-          this.UsrDataService.reqOffset = this.UsrDataService.Data.reqOffset;
-          this.UsrDataService.hId = this.UsrDataService.Data.hId;
-        } else {
-          console.log('No User in session!');
-          this.router.navigateByUrl('/');
-        }
-      }
-      this.Pending = this.UsrDataService.reqStats.Pending;
-      this.All = this.UsrDataService.reqStats.All;
-      this.Open = this.UsrDataService.reqStats.Open;
-      this.Closed = this.UsrDataService.reqStats.Closed;
-      console.log('Sub called!');
-      this.UsrDataService.fetchReqStat().subscribe((e) => {
-        this.Pending = e.Pending;
-        this.All = e.All;
-        this.Open = e.Open;
-        this.Closed = e.Closed;
-        console.log('Sub called!');
-      });
+      if (this.userRole != null) {
+      let response:any=  this.requestService.getRequest(this.userId).subscribe((response:any)=>{
+      this.Pending=response.req_stats.Pending,
+    this.All = response.req_stats.All;
+      this.Open = response.req_stats.Open;
+      this.Closed = response.req_stats.Closed;
+     
+    });
+  }
+      // this.Pending = this.UsrDataService.reqStats.Pending;
+      // this.All = this.UsrDataService.reqStats.All;
+      // this.Open = this.UsrDataService.reqStats.Open;
+      // this.Closed = this.UsrDataService.reqStats.Closed;
+    // console.log('Sub called!');
+    //   this.UsrDataService.fetchReqStat().subscribe((e) => {
+    //     this.Pending = e.Pending;
+    //     this.All = e.All;
+    //     this.Open = e.Open;
+    //     this.Closed = e.Closed;
+    //     console.log('Sub called!!');
+    //   });
       // this.UsrDataService.NoOfReq('Pending');
       // this.Pending = this.UsrDataService.NoOfReq('Pending');
     }

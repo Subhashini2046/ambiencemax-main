@@ -4,6 +4,10 @@ const loginRoutes = require('./routes/login');
 const approveRoutes = require('./routes/approve');
 const addRequests = require('./routes/addRequests');
 const addWorkFlow = require('./routes/addWorkFlow');
+const pendingRoute=require('./routes/pending');
+const closedRoute=require('./routes/close');
+const openRoute=require('./routes/open');
+const dashboardRoute=require('./routes/dashboard');
 const app = express();
 
 app.use(bodyParser.json());
@@ -267,6 +271,10 @@ app.get("/" , (req,res,next)=>{
 // })
 
 app.use(loginRoutes);
+app.use(dashboardRoute);
+app.use(pendingRoute);
+app.use(closedRoute);
+app.use(openRoute);
 app.use(approveRoutes);
 app.use(addRequests);
 app.use(addWorkFlow);

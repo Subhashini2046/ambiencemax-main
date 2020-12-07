@@ -13,7 +13,7 @@ export class LoginFormComponent implements OnInit {
   constructor(private UserDataService: UserDataService) {}
   onLogin() {
     console.log(this.email);
-    this.UserDataService.authenticateUser(this.email, this.password);
+    this.UserDataService.authenticateUser1(this.email, this.password);
   }
   ngOnInit() {}
 
