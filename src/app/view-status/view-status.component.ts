@@ -21,6 +21,8 @@ export class ViewStatusComponent implements OnInit {
     
   }
   ngOnInit() {
+    
   }
+
 
 }

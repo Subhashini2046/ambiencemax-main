@@ -41,9 +41,11 @@ export class AddDialogComponent implements OnInit {
   
 }
 onChangeCountry($event) {
+  console.log("select user........");
   this.SelectedCountry = $event.target.options[$event.target.options.selectedIndex].text;
   console.log("Selected userrole",this.SelectedCountry);
   this.userDataService.resendTo=this.SelectedCountry;
+
 }  
 
 ngOnInit() {

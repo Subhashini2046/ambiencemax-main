@@ -7,6 +7,7 @@ const addWorkFlow = require('./routes/addWorkFlow');
 const pendingRoute=require('./routes/pending');
 const closedRoute=require('./routes/close');
 const openRoute=require('./routes/open');
+const allReqRoute=require('./routes/allRequest');
 const dashboardRoute=require('./routes/dashboard');
 const app = express();
 
@@ -275,6 +276,7 @@ app.use(dashboardRoute);
 app.use(pendingRoute);
 app.use(closedRoute);
 app.use(openRoute);
+app.use(allReqRoute);
 app.use(approveRoutes);
 app.use(addRequests);
 app.use(addWorkFlow);

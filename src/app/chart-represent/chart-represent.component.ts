@@ -48,18 +48,11 @@ export class ChartRepresentComponent implements OnInit {
 
     this.userId = JSON.parse(localStorage.getItem('userId'));
     console.log(this.userId);
-    let response:any=  this.requestService.getRequest(this.userId).subscribe((response:any)=>{
-     this.Pending=response.req_stats.Pending;
-      this.Open = response.req_stats.Open;
-      this.Closed = response.req_stats.Closed;
-      localStorage.setItem('pendingReq', JSON.stringify(this.Pending));
-      localStorage.setItem('OpenReq', JSON.stringify(this.Open));
-      localStorage.setItem('CloseReq', JSON.stringify(this.Closed));
-    });
-    this.Pending = JSON.parse(localStorage.getItem('pendingReq'));
-    this.Open = JSON.parse(localStorage.getItem('OpenReq'));
-    this.Closed = JSON.parse(localStorage.getItem('CloseReq'));
-    console.log(this.Pending);
+    this.requestService.getBar(this.userId)
+    .subscribe(res => {
+      let pending = res['req_stats'].Pending
+      let close = res['req_stats'].Closed
+      let open = res['req_stats'].Open
     console.log('Sub called!...');
     this.barChartData = [
       {
@@ -70,11 +63,12 @@ export class ChartRepresentComponent implements OnInit {
         barThickness: 70,
         maxBarThickness: 80,
         minBarLength: 5,
-        data: [this.Pending, this.Open, this.Closed],
+        data: [pending, open, close],
         label: 'No Of Requests'
       }
     ];
     console.log('horizontalBar Called!');
+  })
     }
   }
 

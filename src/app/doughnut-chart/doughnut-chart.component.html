@@ -1,5 +1,5 @@
 <div class="chartwrapper">
-  <div class="canvass">
+  <div class="canvass" *ngIf="doughnutChartData">
     <canvas baseChart
     [data]="doughnutChartData"
     [labels]="doughnutChartLabels"

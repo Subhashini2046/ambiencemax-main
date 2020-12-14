@@ -1,4 +1,4 @@
-<div class="col">
+<!-- <div class="col">
     <mat-card class="example-card text-center">
       <button
         class="btn btn-lg btn-outline-primary"
@@ -9,8 +9,10 @@
         Fetch More Requests!
       </button>
     </mat-card>
-  </div>
+  </div> -->
+
   <div class="mat-elevation-z8">
+    <br>
   <table class="table" mat-table [dataSource]="this.dataSource">
   
     <!--- Note that these columns can be defined in any order.
@@ -62,7 +64,7 @@
         <button mat-raised-button
         color = "warn"
         *ngIf = "UserDataService.userRole !== 8"
-        (click) = 'UserDataService.viewReq = element; UserDataService.getWorkFlow(element.req_id)'
+        (click) = 'UserDataService.viewReq = element;UserDataService.getWorkFlow(element.req_id)'
         routerLink="view">
           View
         </button>
@@ -82,7 +84,7 @@
         <button
         mat-raised-button
         color = "accent"
-        (click) = 'UserDataService.viewReq = element'
+        (click) = 'UserDataService.viewReq = element;UserDataService.getViewStatus(element.req_id)'
         routerLink="status">
         View Status
         </button>

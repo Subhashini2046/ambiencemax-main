@@ -3,7 +3,7 @@ let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
 
-  router.post("/closedReq",(req,res) =>{
+  router.post("/allReq",(req,res) =>{
     data = req.body;
     user_id = data.user_id;
     console.log(data);
@@ -36,14 +36,13 @@ let express = require("express"),
                           const loop = new Promise((resolve,reject) =>{  result.forEach((element,index) => {
                                 w_id = element.work_id;
                                 console.log(w_id);
-                                sql5 = `Select * from requests where req_status = 'closed' and w_id = '${w_id}' order by req_id desc;select count(*) as "closed" from requests where w_id = '${w_id}' and req_status = 'closed'`;
+                                sql5 = `Select * from requests where w_id = '${w_id}' order by req_id desc;select count(*) as "closed" from requests where w_id = '${w_id}' and req_status = 'closed'`;
                                 let fetch = new Promise((resolve,reject)=>{
                                 con.query(sql5,function(err,result){
                                   if(err){
                                     console.log(err);
                                   }else{
                                     reqData.push(...result[0]);
-
                                     resolve();
                                   }
   

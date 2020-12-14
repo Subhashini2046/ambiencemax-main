@@ -1,3 +1,4 @@
+var moment = require('moment');
 var mysql = require('mysql');
 var con = mysql.createConnection({
     host: "localhost",
@@ -9,7 +10,6 @@ var con = mysql.createConnection({
 });
 
 module.exports = con;
-
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -76,6 +76,7 @@ app.post("/resendReq",(req,res)=>{
   app.post("/addLogNewReq",(req,res)=>{
     role = req.body.userRole;
     reqId = req.body.req_id;
+    //aprocessingTime=moment(Date.now()).format('HH:mm:ss');;
     sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Request Initiate","Initiator","Request Initiated")`
     con.query(sql,function(err,result){
       if(err){
@@ -99,9 +100,13 @@ app.post("/resendReq",(req,res)=>{
   // })
 app.get('/api/users/:id', (req, res) => {
     let req_id = req.params.id;
+    console.log(req_id);
     mysqlConnection2.query(`select distinct aaction_taken_by from request_actionnnn where req_id=${req_id} ;`, (err, rows, fields) => {
         if (!err) {
+          console.log("..........//");
+            console.log(rows);
             res.send(rows);
+
         }
         else {
             console.log(err);

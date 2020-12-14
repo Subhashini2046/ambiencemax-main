@@ -19,7 +19,8 @@
         </tr>
     </thead>
     <tbody>
-      <tr *ngFor = "let role of this.UsrDataService.RoleMap; index as i" >
+
+      <!-- <tr *ngFor = "let role of this.UsrDataService.RoleMap; index as i" >
         <td *ngIf = "i > 0">
           {{i+1}}
         </td>
@@ -32,6 +33,26 @@
             {{UsrDataService.viewReq.req_status}}
           </span>
         <td *ngIf = "i > 0 && i+1 <= this.UsrDataService.viewReq.req_level">
+          <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
+            Approved
+          </span>
+        </td>
+      </tr> -->
+      <tr *ngFor = "let role of this.UsrDataService.role1; index as j" >
+        
+        <td *ngIf = "j>=0">                   
+          {{role.role_id}}
+        </td>
+        <td *ngIf = "j>=0">
+        {{role.role_name}}
+        </td>
+      
+        <td *ngIf = "role.role_id > this.UsrDataService.viewReq.req_level"
+         >
+          <span  style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
+            {{UsrDataService.viewReq.req_status}}
+          </span>
+        <td *ngIf = "role.role_id<= this.UsrDataService.viewReq.req_level">
           <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
             Approved
           </span>

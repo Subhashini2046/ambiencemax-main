@@ -31,10 +31,12 @@ import { OpenComponent } from './open/open.component';
 import { CloseComponent } from './close/close.component';
 import { PendingComponent } from './pending/pending.component';
 import { AllRequestComponent } from './all-request/all-request.component';
+
 const appRoutes = [
   {path: 'dashboard' , component: DashboardComponent},
   {path: 'submitted' , component: SubmittedComponent},
   {path: '' , component: HomeComponent},
+  {path: 'dashboard/request-form' , component: RequestFormComponent},
   {path: 'dashboard/view' , component: ViewReqComponent},
   {path: 'dashboard/status' , component: ViewStatusComponent},
   {path: 'admin' , component: AdminPanelComponent},

@@ -31,11 +31,15 @@ export class OpenComponent implements OnInit, OnDestroy {
       console.log(this.userId);
      // this.requestService.openRequests = JSON.parse(localStorage.getItem('openRequest'));
       //this.openRequests=this.requestService.getOpenRequest(this.userId);
-      this.requestService.getOpenRequest(this.userId);
-      this.openRequests=this.requestService.openRequests;
-      console.log(this.openRequests);
-       this.dataSource.data=this.openRequests;
-       console.log(this.dataSource.data);
+      return this.requestService.getOpenRequest(this.userId).subscribe((response:any)=>{
+
+        this.dataSource.data=response.reqData1 });
+      // this.requestService.getOpenRequest(this.userId);
+      // this.openRequests=this.requestService.openRequests;
+      // console.log(this.openRequests);
+      //  this.dataSource.data=this.openRequests;
+      //  console.log(this.dataSource.data);
+
        //this.dataSource.data;
       // this.dataSource.paginator = this.paginator;
       //console.log(this.dataSource);

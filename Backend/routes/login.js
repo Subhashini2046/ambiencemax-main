@@ -118,8 +118,9 @@ router.post("/login", (req, res) => {
                             result: "passed",
                             user_id: user_id,
                             role_id : role_id,
+                            w_id:w_id
                            // req_stats: req_stats,
-                            h_id: h_id
+                            //h_id: h_id
                           })
                         );
                       })

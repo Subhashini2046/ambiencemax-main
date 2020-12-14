@@ -82,6 +82,7 @@
           class="btn"
           *ngIf="this.UsrDataService.userRole === 1"
           (click)="main = 'form'; snav.toggle()"
+          routerLink="request-form"
           mat-list-item
         >
           New Request
@@ -205,7 +206,7 @@
             </mat-card>
           </div>
           <div class="col-lg-4">
-            <div class="col">
+            <!-- <div class="col">
               <mat-card class="example-card text-center">
                 <button
                   class="btn btn-lg btn-outline-primary"
@@ -214,7 +215,7 @@
                  Fetch Latest Requets!
                 </button>
               </mat-card>
-            </div>
+            </div> -->
             <div class="col">
               <mat-card class="example-card">
                 <mat-card-title>Pending Requests</mat-card-title>

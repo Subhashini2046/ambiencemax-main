@@ -25,6 +25,10 @@
     Closed: number;
     Open: number;
   }
+  export interface Role2{
+    role_id:number;
+    role:String;
+  }
   @Injectable()
   export class UserDataService {
     usersURL="http://localhost:5600/api/users";
@@ -41,8 +45,10 @@
     Data: UserData;
     userId = null;
     userRole = null;
+    w_id=null;
     resendTo=" ";
     resendid:number;
+    role_id:number;
     ApproveAction="Approved";
     isPending = false;
     public fetchedReqs: ReqSchema[];
@@ -67,6 +73,8 @@
     public underNegRequests: ReqSchema[] = [];
     public desiredRequests: ReqSchema[] = [];
     public Workflow = [];
+    public role1:Role2[] = [];
+    public role2:Role2[] = [];
     action_taken_by="";
     newReqId:number;
     public reqTypeData: {
@@ -103,6 +111,7 @@
         ('http://localhost:3000/login', { email, password })
         .subscribe((ResData) => {
           console.log(ResData);
+          
           this.userId = ResData.user_id;
           this.userRole = ResData.role_id;
           this.fetchedReqs = [...ResData.req_data];
@@ -150,83 +159,51 @@
     authenticateUser1(email: string, password: string) {
       this.email = email;
       this.password  = password;
-      this.http.post<{ result: string, user_id: string,role_id: number,h_id: number }>
+      this.http.post<{ result: string,w_id:number, user_id: string,role_id: number,h_id: number }>
         ('http://localhost:3000/login', { email, password })
         .subscribe((ResData) => {
           console.log(ResData);
           this.userId = ResData.user_id;
-          this.userRole=ResData.role_id
-          console.log(this.userId);
-         // this.userRole = ResData.role_id;
-        //  this.allRequests = this.fetchedReqs;
-         // this.reqStats = ResData.req_stats;
-         // console.log(this.hId);
-         // console.log(this.reqStats);
+          this.userRole=ResData.role_id;
+          this.w_id=ResData.w_id;
           console.log('================================================');
           console.log('Request Data Fetched On Auth !');
           console.log(this.userId);
+          console.log(this.w_id);
           console.log('================================================');
           this.router.navigateByUrl('/dashboard');
           if (this.userRole !== null) {
             console.log(this.userId);
             localStorage.setItem('userRole', JSON.stringify(this.userRole));
             localStorage.setItem('userId', JSON.stringify(this.userId));
-            //console.log(this.userId);
+            localStorage.setItem('w_id', JSON.stringify(this.userId));
           }
         });
     }
-    getPendingRequest(user_id:string){
-      this.http.post<{ result: string, user_id: string, req_data: ReqSchema[] , role_id: number , h_id: number}>
-        ('http://localhost:3000/pendingReq', { user_id})
-        .subscribe((ResData) => {
-          console.log(ResData);
-          this.userId = ResData.user_id;
-          this.userRole = ResData.role_id;
-          this.fetchedReqs = [...ResData.req_data];
-          this.fetchedReqsUpdated.next(this.fetchedReqs);
-          // this.reqStatsSubject.next(this.reqStats);
-          this.hId = ResData.h_id;
-          console.log(this.hId);
-          console.log(this.reqStats);
-          console.log('================================================');
-          console.log('Request Data Fetched On Auth !');
-          console.log(this.reqStats);
-          this.ReqClassification(this.fetchedReqs);
-          console.log('Pending Requests :');
-          console.log(this.pendingRequests);
-          console.log('================================================');
-          this.Data = {
-            userId: this.userId,
-            userRole: this.userRole,
-            email: this.email,
-            password: this.password,
-            Requests: this.allRequests,
-            reqStats: this.reqStats,
-            pendingReq: this.pendingRequests,
-            closedReq: this.closedRequests,
-            openReq: this.openRequests,
-            hId: this.hId,
-            reqOffset: this.reqOffset,
-            viewReq: this.viewReq
-          };
-          this.router.navigateByUrl('/dashboard');
-          if (this.userRole !== null) {
-            localStorage.setItem('userId', JSON.stringify(this.userId));
-            console.log(this.Data);
-          }
-        });
 
-    }
-    
-    getWorkFlow(reqId: number) {
+  getWorkFlow(reqId: number) {
       this.http.post('http://localhost:3000/workflow', {req_id: reqId})
       .subscribe((ResData) => {
         console.log(ResData);
         this.Workflow = ResData[0].w_flow.split(',');
         console.log("Workflow",this.Workflow);
-        this.decideApprove();
+       this.decideApprove();
         });
+      }
+
+    getViewStatus(reqId:number){
+      this.http.post<{ result: string,w_flow:[], role: Role2[]}>('http://localhost:3000/viewStatus', {req_id: reqId})
+      .subscribe((ResData) => {
+        console.log(ResData);
+        this.Workflow=ResData.w_flow;
+        this.role1=ResData.role;
+        this.role1.sort((a,b) => a.role_id-b.role_id);
+        console.log("Workflow",this.Workflow);
+        console.log("Role",this.role1);
+      });
     }
+
+
     getLastApprove(reqId:number)
     {
       this.RoleMap[this.viewReq.req_level-1];
@@ -478,49 +455,6 @@
         return -1;
       }
       return 0;
-    }
-    fetchPendingRequest(){
-      this.reqStart = this.allRequests[0].req_id;
-      console.log(this.Data);
-      // tslint:disable-next-line: max-line-length
-      this.http.post<{result: number; user_id: number, req_data: ReqSchema[], role_id: number}>('http://localhost:3000/pendingReq', {userRole: this.userRole , hId: this.hId , reqOffset: this.reqOffset , reqStart: this.reqStart , user_id: this.userId }).subscribe((response) => {
-        if (response.req_data.length > 0 ) {
-          console.log('New Requests Fetched!');
-          console.log('-----------------------------');
-          this.allRequests.push(...response.req_data);
-          this.allRequests.sort(this.compare);
-          this.ReqClassification(response.req_data);
-          this.reqOffset = this.allRequests[this.allRequests.length - 1].req_id;
-          console.log('User Data Service Main : ' + this.main);
-          if (this.main === 'Pending') {
-            this.desiredRequests = this.pendingRequests;
-            console.log('Pending Called');
-          // this.isPending = true;
-          }
-          this.desiredReqSub.next(this.desiredRequests);
-          console.log(this.desiredRequests);
-          this.Data = {
-            userId: this.userId,
-            userRole: this.userRole,
-            email: this.email,
-            password: this.password,
-            Requests: this.allRequests,
-            reqStats: this.reqStats,
-            pendingReq: this.pendingRequests,
-            closedReq: this.closedRequests,
-            openReq: this.openRequests,
-            hId: this.hId,
-            reqOffset: this.reqOffset,
-            viewReq: this.viewReq
-          };
-          if (this.userRole !== null) {
-            localStorage.setItem('userData', JSON.stringify(this.Data));
-            console.log(this.Data);
-          }
-        }
-        console.log('-----------------------------');
-        // console.log(this.Data);
-      });
     }
     fetchMoreRequests() {
       this.reqStart = this.allRequests[0].req_id;

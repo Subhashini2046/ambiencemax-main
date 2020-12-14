@@ -1,6 +1,7 @@
 import { Component, OnInit, SystemJsNgModuleLoader } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 import { format } from 'url';
 import { ReqSchema } from '../Services/ReqSchema';
 import {FormsModule} from "@angular/forms";
@@ -10,7 +11,7 @@ import {FormsModule} from "@angular/forms";
   styleUrls: ['./request-form.component.css']
 })
 export class RequestFormComponent implements OnInit {
-  constructor( public UserDataService: UserDataService , private _snackBar: MatSnackBar) {
+  constructor( public UserDataService: UserDataService , private _snackBar: MatSnackBar,private router: Router) {
 
 }
   Approvers = [];
@@ -34,6 +35,7 @@ export class RequestFormComponent implements OnInit {
     this.currReq.req_initiator_id = this.UserDataService.userId;
     this.UserDataService.main = '';
     this.UserDataService.mainSub.next(this.UserDataService.main);
+    this.router.navigateByUrl('/dashboard');
   }
   ngOnInit() {
   }

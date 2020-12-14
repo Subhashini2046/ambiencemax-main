@@ -33,12 +33,10 @@ let express = require("express"),
                         if(result.length > 0){
                           let w_id;
                           reqData = [];
-                          req_stats = {
-                            
-                            Pending: 0,
-                          }
+                          reqData1 = [];
                           const loop = new Promise((resolve,reject) =>{  result.forEach((element,index) => {
                                 w_id = element.work_id;
+                                console.log(".........")
                                 console.log(w_id);
                                 sql5 = `Select * from requests where req_status = 'Pending' and w_id = '${w_id}' order by req_id desc;select count(*) as "closed" from requests where w_id = '${w_id}' and req_status = 'closed'`;
                                 let fetch = new Promise((resolve,reject)=>{
@@ -46,8 +44,23 @@ let express = require("express"),
                                   if(err){
                                     console.log(err);
                                   }else{
+                                    reqId=result[0][0].req_id;
+                                    //console.log(reqId);
+                                    console.log("...............................//");
                                     reqData.push(...result[0]);
+                                    reqData.forEach(( element ) => {
+                                      if(element.req_level == role_id-1) {
+                                        reqData1.push(element);
+                                      }
+                                    })
+                                    
+                                    
+                                   
+                                    
+                                   //console.log(reqId);
+                                   
                                     resolve();
+
                                   }
   
                                 })
@@ -63,15 +76,13 @@ let express = require("express"),
   
                         })
                         loop.then(()=>{
-                          // console.log(reqData);
                           res.send(
                             JSON.stringify({
                               result: "passed",
-                             // user_id: user_id,
-                              //req_data: reqData.slice(0,10),
-                              req_data: reqData,
                               role_id : role_id,
-                              //req_stats: req_stats,
+                          
+                              reqData1:reqData1,
+
                               h_id: h_id
                             })
                           );
