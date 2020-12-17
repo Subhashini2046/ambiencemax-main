@@ -25,7 +25,7 @@ export class AllRequestComponent implements OnInit {
       console.log("AllRequest Component");
       this.userId = JSON.parse(localStorage.getItem('userId'));
       console.log(this.userId);
-      return this.requestService.getAllRequest(this.userId).subscribe((response:any)=>{
+      return this.UserDataService.getAllRequest(this.userId).subscribe((response:any)=>{
 
         this.dataSource.data=response.req_data;
       })
@@ -37,14 +37,7 @@ export class AllRequestComponent implements OnInit {
   }
   ngOnDestroy() {
   }
-  reRender() {
-    // this.dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
-    this.UserDataService.fetchMoreRequests();
-    this.UserDataService.fetchDesiredObservable().subscribe((e)=>{
-      this.dataSource.data = e;
-    });
-    // this.paginator._changePageSize(10);
-  }
+
   approve(no: number , id: string) {}
   findStatus(reqNo: number) {
     let status: string;

@@ -13,6 +13,15 @@ import {FormBuilder,FormGroup,FormControl,Validators} from '@angular/forms';
 })
 export class ViewReqComponent implements OnInit {
   view: ReqSchema;
+  public req_id;
+  public req_title;
+  public req_type;
+  public req_budget;
+  public req_date;
+  public req_description;
+  public req_initiator_id;
+  public req_status;
+  public role_name;
   workflow;
   comment = '';
   Approvers = [];
@@ -68,6 +77,18 @@ export class ViewReqComponent implements OnInit {
       this.userDataService.userRole = JSON.parse(localStorage.getItem('userData')).userRole;
       //console.log("Role",this.userDataService.RoleMap);
     }
+    this.userDataService.getViewRequestData(this.userDataService.ReqId).subscribe((response:any)=>{
+      this.req_id=response.req_data[0]['req_id'];
+      this.req_title=response.req_data[0]['req_title'];
+      this.req_type=response.req_data[0]['req_type'];
+      this.req_initiator_id=response.req_data[0]['req_initiator_id'];
+      this.req_date=response.req_data[0]['req_date'];
+      this.req_budget=response.req_data[0]['req_budget'];
+      this.req_description=response.req_data[0]['req_description'];
+      this.req_status=response.req_data[0]['req_status'];
+      this.role_name=response.role_name[0]['role_name'];
+      //console.log(this.role_name);
+    });
     console.log(localStorage);
   }
   openSnackBar(message: string) {

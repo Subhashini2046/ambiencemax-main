@@ -26,60 +26,49 @@
     <tr>
       <td>1.</td>
       <td>Request ID</td>
-      <td>{{ view.req_id }}</td>
+      <td>{{ req_id }}</td>
     </tr>
     <tr>
       <td>2.</td>
       <td>Request Title</td>
-      <td>{{ view.req_title }}</td>
+      <td>{{ req_title }}</td>
     </tr>
     <tr>
       <td>3.</td>
       <td>Request Type</td>
-      <td>{{ view.req_type }}</td>
+      <td>{{ req_type }}</td>
     </tr>
     <tr>
       <td>4.</td>
       <td>Request Initiator Id</td>
-      <td>{{ view.req_initiator_id }}</td>
+      <td>{{ req_initiator_id }}</td>
     </tr>
-    <!-- <tr>
-      <td>5.</td>
-      <td>Request Type</td>
-      <td>{{ view.req_type }}</td>
-    </tr> -->
     <tr>
       <td>5.</td>
       <td>Request sent on</td>
-      <td>{{ view.req_date }}</td>
+      <td>{{ req_date }}</td>
     </tr>
     <tr>
       <td>6.</td>
       <td>Request Budget</td>
-      <td>{{ view.req_budget }}</td>
+      <td>{{ req_budget }}</td>
     </tr>
     <tr>
       <td>7.</td>
       <td>Request Description</td>
-      <td>{{ view.req_description }}</td>
+      <td>{{ req_description }}</td>
     </tr>
     <tr>
       <td>8.</td>
       <td>Request Status</td>
-      <td>{{ view.req_status }}</td>
+      <td>{{ req_status }}</td>
     </tr>
     <tr>
       <td>9.</td>
       <td>Last Approved By</td>
-      <td>{{userDataService.getLastApprove(view.req_level)}}</td>
+      <td>{{role_name}}</td>
     </tr>
-    <!-- <tr>
-      <td>10.</td>
-      <td>Workflow</td>
-      <td>{{userDataService.getFlow(view.req_id)}}</td>
-    </tr> -->
-
-  </tbody>
+ </tbody>
 </table>
   <div
     class="row"
@@ -92,7 +81,7 @@
     <div class="text-center col-lg-3">
       <button
         class="btn btn-success btn-large"
-        (click)="userDataService.Approved(view.req_id);this.openSnackBar('Request Approved Successfully!');"
+        (click)="userDataService.Approved(req_id);this.openSnackBar('Request Approved Successfully!');"
         routerLink="/dashboard"
         *ngIf = "userDataService.toBeApproved"
       >

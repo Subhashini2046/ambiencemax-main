@@ -63,7 +63,7 @@
         <button mat-raised-button
         color = "warn"
         *ngIf = "UserDataService.userRole !== 8"
-        (click) = 'UserDataService.viewReq = element; UserDataService.getWorkFlow(element.req_id)'
+        (click) = 'UserDataService.viewReq = element; UserDataService.getWorkFlow(element.req_id);UserDataService.getRole()'
         routerLink="view">
           View
         </button>

@@ -8,6 +8,7 @@ const pendingRoute=require('./routes/pending');
 const closedRoute=require('./routes/close');
 const openRoute=require('./routes/open');
 const allReqRoute=require('./routes/allRequest');
+const viewRequest=require('./routes/viewRequest');
 const dashboardRoute=require('./routes/dashboard');
 const app = express();
 
@@ -279,5 +280,6 @@ app.use(openRoute);
 app.use(allReqRoute);
 app.use(approveRoutes);
 app.use(addRequests);
+app.use(viewRequest);
 app.use(addWorkFlow);
 module.exports = app;

@@ -29,6 +29,21 @@ let express = require("express"),
       }
     })
   })
+  router.get("/getRole",(req,res)=>{
+    reqId = req.body.req_id;
+    sql = `Select role_name from roles order by role_id;`
+    con.query(sql,function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        console.log(result);
+        res.send(JSON.stringify({
+          result:"passed",
+          role_name:result
+      }));
+      }
+    })
+  })
 
   router.post("/viewStatus",(req,res)=>{
     reqId = req.body.req_id;

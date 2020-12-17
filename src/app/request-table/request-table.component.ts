@@ -20,14 +20,7 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
   }
-  reRender() {
-    // this.dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
-    this.UserDataService.fetchMoreRequests();
-    this.UserDataService.fetchDesiredObservable().subscribe((e)=>{
-      this.dataSource.data = e;
-    });
-    // this.paginator._changePageSize(10);
-  }
+  
   approve(no: number , id: string) {}
   findStatus(reqNo: number) {
     let status: string;

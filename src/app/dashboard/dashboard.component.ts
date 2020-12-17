@@ -93,9 +93,6 @@
 
   }
     }
-    reqRefetch() {
-      this.UsrDataService.fetchLatestRequests();
-    }
     ngOnDestroy(): void {
       this.mobileQuery.removeListener(this._mobileQueryListener);
     }

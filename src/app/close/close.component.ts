@@ -25,7 +25,7 @@ export class CloseComponent implements OnInit,OnDestroy {
       console.log("Closed Component");
       this.userId = JSON.parse(localStorage.getItem('userId'));
       console.log(this.userId);
-      return this.requestService.getClosedRequest(this.userId).subscribe((response:any)=>{
+      return this.UserDataService.getClosedRequest(this.userId).subscribe((response:any)=>{
 
         this.dataSource.data=response.req_data;
       });
@@ -37,14 +37,6 @@ export class CloseComponent implements OnInit,OnDestroy {
     this.dataSource.sort = this.sort;
   }
   ngOnDestroy() {
-  }
-  reRender() {
-    // this.dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
-    this.UserDataService.fetchMoreRequests();
-    this.UserDataService.fetchDesiredObservable().subscribe((e)=>{
-      this.dataSource.data = e;
-    });
-    // this.paginator._changePageSize(10);
   }
   approve(no: number , id: string) {}
   findStatus(reqNo: number) {

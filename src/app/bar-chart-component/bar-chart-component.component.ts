@@ -39,7 +39,7 @@ export class BarChartComponentComponent implements OnInit {
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     console.log(this.userId);
-    this.requestService.getBar(this.userId)
+    this.userDataService.getBar(this.userId)
       .subscribe(res => {
         let pending = res['req_stats'].Pending
         let close = res['req_stats'].Closed

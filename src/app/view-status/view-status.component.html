@@ -47,12 +47,12 @@
         {{role.role_name}}
         </td>
       
-        <td *ngIf = "role.role_id > this.UsrDataService.viewReq.req_level"
+        <td *ngIf = "role.role_id >= this.UsrDataService.viewReq.req_level"
          >
           <span  style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
             {{UsrDataService.viewReq.req_status}}
           </span>
-        <td *ngIf = "role.role_id<= this.UsrDataService.viewReq.req_level">
+        <td *ngIf = "role.role_id<this.UsrDataService.viewReq.req_level">
           <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
             Approved
           </span>

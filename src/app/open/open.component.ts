@@ -29,20 +29,10 @@ export class OpenComponent implements OnInit, OnDestroy {
      console.log("Open Component");
      this.userId = JSON.parse(localStorage.getItem('userId'));
       console.log(this.userId);
-     // this.requestService.openRequests = JSON.parse(localStorage.getItem('openRequest'));
-      //this.openRequests=this.requestService.getOpenRequest(this.userId);
-      return this.requestService.getOpenRequest(this.userId).subscribe((response:any)=>{
+      return this.UserDataService.getOpenRequest(this.userId).subscribe((response:any)=>{
 
-        this.dataSource.data=response.reqData1 });
-      // this.requestService.getOpenRequest(this.userId);
-      // this.openRequests=this.requestService.openRequests;
-      // console.log(this.openRequests);
-      //  this.dataSource.data=this.openRequests;
-      //  console.log(this.dataSource.data);
-
-       //this.dataSource.data;
-      // this.dataSource.paginator = this.paginator;
-      //console.log(this.dataSource);
+        this.dataSource.data=response.req_data});
+     
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -50,14 +40,6 @@ export class OpenComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy() {
-  }
-  reRender() {
-    // this.dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
-    this.UserDataService.fetchMoreRequests();
-    this.UserDataService.fetchDesiredObservable().subscribe((e)=>{
-      this.dataSource.data = e;
-    });
-    // this.paginator._changePageSize(10);
   }
   approve(no: number , id: string) {}
   findStatus(reqNo: number) {
