@@ -65,6 +65,11 @@
     </tr>
     <tr>
       <td>9.</td>
+      <td>Request Action</td>
+      <td>{{ req_action }}</td>
+    </tr>
+    <tr>
+      <td>10.</td>
       <td>Last Approved By</td>
       <td>{{role_name}}</td>
     </tr>
@@ -73,17 +78,17 @@
   <div
     class="row"
     *ngIf="
-      this.userDataService.viewReq.req_status === 'Pending' &&
-      this.userDataService.userRole !== 1
+      this.userDataService.viewReq.req_status === 'Pending' 
     "
   >
     <div class="col-lg-3"></div>
     <div class="text-center col-lg-3">
       <button
         class="btn btn-success btn-large"
-        (click)="userDataService.Approved(req_id);this.openSnackBar('Request Approved Successfully!');"
+        (click)="userDataService.Approved(req_id);this.userDataService.userRole;this.openSnackBar('Request Approved Successfully!');"
         routerLink="/dashboard"
-        *ngIf = "userDataService.toBeApproved"
+        *ngIf = "userDataService.toBeApproved &&
+        this.userDataService.userRole !== 1"
       >
         Approve
       </button>

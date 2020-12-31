@@ -1,0 +1,59 @@
+@import "src/theme.scss";
+select{
+    border: 1px solid #dce0d4;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+    width: max-content;
+}
+label{
+    font-size: 16px;
+    color: black;
+    padding-left: 10px;
+ }
+ input[type='text']{
+     border: 1px solid #dce0d4;
+     border-radius: 5px;
+     padding: 5px;
+ }
+ input[type='number']{
+     border: 1px solid #dce0d4;
+     border-radius: 5px;
+     padding: 5px;
+ }
+ input[type='button']{
+     background-color: mat-color($reddish-app-accent);
+     color: white;
+     font-size: 16px; 
+     border: 0px solid #dce0d4;
+     border-radius: 5px;
+     margin: 5px;
+     padding: 5px;
+     padding-left: 15px;
+     padding-right: 15px;
+     cursor: pointer;
+     align-content: center;
+ }
+ input[type='button']:hover{
+     background-color: rgb(55, 102, 133);
+ }
+.stylepopupbuttonconfirm{
+    background-color: mat-color($reddish-app-primary);
+    color: white;
+    font-size: 16px; 
+}
+.stylepopupbuttoncancel{
+    margin-left: 10px;
+    background-color: rgb(179, 41, 37);
+    color: white;
+    font-size: 16px;
+}
+.logo{
+    color: #eaece6;
+    font-size: 22px;
+    margin-left: 15px;
+    padding-top: 10px;
+  }
+  .logo .apptype{
+      font-size: 18px;
+  }

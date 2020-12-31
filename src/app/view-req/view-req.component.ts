@@ -22,6 +22,7 @@ export class ViewReqComponent implements OnInit {
   public req_initiator_id;
   public req_status;
   public role_name;
+  public req_action;
   workflow;
   comment = '';
   Approvers = [];
@@ -65,19 +66,21 @@ export class ViewReqComponent implements OnInit {
     
   }
   ngOnInit() {
+    this.userDataService.toBeApproved=false;
     if ( this.userDataService.viewReq === null || this.userDataService.viewReq === undefined) {
       this.userDataService.viewReq = JSON.parse(localStorage.getItem('viewReq'));
       this.userDataService.toBeApproved = JSON.parse(localStorage.getItem('toBeApproved'));
+      this.userDataService.userRole=JSON.parse(localStorage.getItem('userRole'));
       // console.log(JSON.parse(localStorage.getItem('toBeApproved')));
       console.log(this.userDataService.viewReq);
       this.view = this.userDataService.viewReq;
       this.workflow=this.userDataService.RoleMap;
       console.log(this.view);
       this.userDataService.message = JSON.parse(localStorage.getItem('message'));
-      this.userDataService.userRole = JSON.parse(localStorage.getItem('userData')).userRole;
+      //this.userDataService.userRole = JSON.parse(localStorage.getItem('userData')).userRole;
       //console.log("Role",this.userDataService.RoleMap);
     }
-    this.userDataService.getViewRequestData(this.userDataService.ReqId).subscribe((response:any)=>{
+    this.userDataService.getViewRequestData(this.userDataService.viewReq.req_id).subscribe((response:any)=>{
       this.req_id=response.req_data[0]['req_id'];
       this.req_title=response.req_data[0]['req_title'];
       this.req_type=response.req_data[0]['req_type'];
@@ -86,7 +89,8 @@ export class ViewReqComponent implements OnInit {
       this.req_budget=response.req_data[0]['req_budget'];
       this.req_description=response.req_data[0]['req_description'];
       this.req_status=response.req_data[0]['req_status'];
-      this.role_name=response.role_name[0]['role_name'];
+      this.role_name=response.role_name;
+      this.req_action=response.req_action;
       //console.log(this.role_name);
     });
     console.log(localStorage);

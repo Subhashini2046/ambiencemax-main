@@ -46,10 +46,11 @@
 .content{
   width: 100%;
   height: 100%;
-  background-image: url("../../assets/bgimg.png");
+  /* background-image: url("../../assets/bgimg.png"); */
   background-repeat: repeat;
   background-size: 250px 100px;
-  background-color:  rgba(86, 123, 146, 0.445);
+  /* background-color:  rgba(86, 123, 146, 0.445); */
+  background-color: rgb(213, 227, 243);
   padding: 0px 0px 0px 0px;
   color: black;
   padding-left: 10px;

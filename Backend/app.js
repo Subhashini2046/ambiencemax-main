@@ -10,18 +10,19 @@ const openRoute=require('./routes/open');
 const allReqRoute=require('./routes/allRequest');
 const viewRequest=require('./routes/viewRequest');
 const dashboardRoute=require('./routes/dashboard');
+const updateRquestRoute=require('./routes/updateRequest');
+var cors = require('cors')
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
+app.use(cors());
 app.use((req,res,next)=>{
   console.log('First Middleware');
   next();
 });
-
 app.use((req,res,next)=>{
-  res.setHeader('Access-Control-Allow-Origin','*')
+ res.setHeader('Access-Control-Allow-Origin','*');
+ res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader(
   'Access-Control-Allow-Headers',
   'Origin,X-Request-With,Content-Type,Accept'
@@ -271,7 +272,7 @@ app.get("/" , (req,res,next)=>{
 //   res.send('Hello from express!')
 //   next();
 // })
-
+//app.use('/file',addRequests);
 app.use(loginRoutes);
 app.use(dashboardRoute);
 app.use(pendingRoute);
@@ -281,5 +282,6 @@ app.use(allReqRoute);
 app.use(approveRoutes);
 app.use(addRequests);
 app.use(viewRequest);
+app.use(updateRquestRoute);
 app.use(addWorkFlow);
 module.exports = app;

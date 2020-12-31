@@ -19,22 +19,22 @@
   [class.example-is-mobile]="mobileQuery.matches"
   *ngIf="this.UsrDataService.userId !== undefined"
 >
-  <mat-toolbar color="primary" class="example-toolbar">
+  <mat-toolbar  class="col-bg-header">
     <button mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
     <a routerLink="/dashboard" class="navbar-brand" (click)="main = ''">
-      <img
-        class="text-center"
-        src="../assets/Logo.svg"
-        width="100"
-        height="30"
-        alt=""
-        class="d-align-block"
-      />
-      <h4 class="navbar-text" style="margin-left: 16px; color: white;">
-        AmbienceMax
-      </h4>
+      <div class="logo">
+        <img
+          class="text-center"
+          src="../assets/Logo.svg"
+          width="100"
+          height="30"
+          alt=""
+          class="d-align-block"
+        />
+          <span class="apptype" style="margin-left: 16px; color: rgb(10, 10, 10);">AmbienceMax</span>
+        </div>
     </a>
     <span class="example-spacer"></span>
     <div class="form-inline" *ngIf="this.UsrDataService.userId !== null">
@@ -68,7 +68,7 @@
       [mode]="'over'"
       [fixedInViewport]="mobileQuery.matches"
       fixedTopGap="56"
-      class="sidenav"
+      class="col-bg-header"
     >
       <mat-nav-list>
         <a
@@ -87,28 +87,7 @@
         >
           New Request
         </a>
-        <!-- <a
-        class="btn"
-        *ngIf="this.UsrDataService.userRole !== 1"
-        
-        mat-list-item
-      >
-        Open Request
-      </a> -->
-        <!-- <a class="btn" *ngIf= 'this.UsrDataService.userRole === 1'
-        (click) = "Request('UnderNeg'); snav.toggle();" mat-list-item>
-          Under Negotiation
-        </a> -->
-<!--         
-        <a
-        class="btn"
-        *ngFor="let chip of Buttons1"
-        (click)="Request(chip.func); snav.toggle(); main = chip.func;
-        this.UsrDataService.main = chip.func;"
-        mat-list-item
-      >
-        {{ chip.name }}</a
-      > -->
+      
         <a
           class="btn"
           *ngFor="let chip of Buttons"
@@ -148,8 +127,16 @@
         <!-- <div *ngIf = "main === 'cancelled' ">
           <app-request-table ></app-request-table>
         </div> -->
-        <div *ngIf="main === ''" class="row graph">
+        
+        <!-- <div *ngIf="main === ''" class="row graph">
           <div class="col-lg-8">
+            <select id="inputdes" class="form-control">
+              <option selected>Choose...</option>
+              <option>Request for new assets</option>
+              <option>Request for Repair </option>
+              <option>Request for Maintainance </option>
+              <option>Other </option>
+            </select>
             <mat-card *ngIf="ChartType === 'doughnut'">
               <mat-card-title class="title">
                 Total No Of Requests : {{ All }}
@@ -205,17 +192,8 @@
               </mat-card-actions>
             </mat-card>
           </div>
+          
           <div class="col-lg-4">
-            <!-- <div class="col">
-              <mat-card class="example-card text-center">
-                <button
-                  class="btn btn-lg btn-outline-primary"
-                  (click)="reqRefetch()"
-                >
-                 Fetch Latest Requets!
-                </button>
-              </mat-card>
-            </div> -->
             <div class="col">
               <mat-card class="example-card">
                 <mat-card-title>Pending Requests</mat-card-title>
@@ -260,8 +238,70 @@
               </mat-card>
             </div>
           </div>
-        </div>
+        </div> -->
+
+        <div *ngIf="main === ''" class="row graph">
+          <div style="margin-left: 2.5em" class="col-lg-5">
+            <div class="col">
+              <mat-card  class="example-card" *ngIf="ChartType === 'bar'">
+
+                <mat-card-content  class="example-card">
+                  <app-bar-chart-component></app-bar-chart-component>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card  class="example-card" *ngIf="ChartType === 'bar'">
+
+                <mat-card-content class="example-card">
+                  <app-doughnut-chart></app-doughnut-chart>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+          </div>
+
+          <div class="col-lg-5">
+            <div class="col">
+              <mat-card style="width: 120%"class="example-card">
+                <mat-card-title>Pending Requests: {{ Pending }}
+                  <button mat-button class="stylepopupbuttonconfirm" mat-button (click)="Request('Pending')"
+                    routerLink="pending">
+                    View All
+                  </button>
+                </mat-card-title>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card style="width: 120%" class="example-card">
+                <mat-card-title>Open Requests: {{ Open }}
+                  <button mat-button class="stylepopupbuttonconfirm" (click)="Request('open')" routerLink="open">
+                    View All
+                  </button>
+                </mat-card-title>
+              </mat-card>
+            </div>
+            <div class="col">
+              <mat-card style="width: 120%" class="example-card">
+                <mat-card-title>Closed Requests:{{ Closed }}
+                  <button mat-button class="stylepopupbuttonconfirm" (click)="Request('closed')" routerLink="close">
+                    View All
+                  </button>
+                </mat-card-title>
+              </mat-card>
+            </div>
+            
+            <div class="col">
+              <mat-card style="width: 120%" class="example-card" *ngIf="ChartType === 'bar'">
+
+                <mat-card-content class="example-card">
+                  <app-chart-represent></app-chart-represent>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
       </div>
+    </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

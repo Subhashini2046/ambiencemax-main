@@ -31,7 +31,9 @@ import { OpenComponent } from './open/open.component';
 import { CloseComponent } from './close/close.component';
 import { PendingComponent } from './pending/pending.component';
 import { AllRequestComponent } from './all-request/all-request.component';
-
+import {FileUploadModule} from 'ng2-file-upload';
+import { UpdateRequestFormComponent } from './update-request-form/update-request-form.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
 const appRoutes = [
   {path: 'dashboard' , component: DashboardComponent},
   {path: 'submitted' , component: SubmittedComponent},
@@ -55,7 +57,9 @@ const appRoutes = [
 
   {path: 'dashboard/all' , component: AllRequestComponent},
   {path: 'dashboard/all/status' , component:  AllRequestComponent},
-  {path: 'dashboard/all/view' , component:  AllRequestComponent}
+  {path: 'dashboard/all/view' , component:  AllRequestComponent},
+
+  {path: 'dashboard/open/update' , component:  UpdateRequestFormComponent}
 ];
 @NgModule({
   declarations: [
@@ -79,6 +83,7 @@ const appRoutes = [
     CloseComponent,
     PendingComponent,
     AllRequestComponent,
+    UpdateRequestFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,7 +107,9 @@ const appRoutes = [
     MatPaginatorModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    FileUploadModule,
+    FlexLayoutModule
   ],
   providers: [ UserDataService],
   bootstrap: [AppComponent]

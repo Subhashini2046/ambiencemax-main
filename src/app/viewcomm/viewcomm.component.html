@@ -91,8 +91,7 @@
   <div
     class="row"
     *ngIf="
-      this.userDataService.viewReq.req_status === 'Pending' &&
-      this.userDataService.userRole !== 1
+      this.userDataService.viewReq.req_status === 'Pending'
     "
   >
     <div class="col-lg-3"></div>
@@ -138,7 +137,8 @@
         class="btn btn-danger btn-large"
         style="width: 60%;"
         (click)="userDataService.ResendUpdate(view.req_id);this.openSnackBar('Request Resend Successfully!');"
-      >
+        > 
+      
         Resend For Change
       </button>
     </div>

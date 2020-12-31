@@ -1,4 +1,5 @@
 var moment = require('moment');
+var multer=require('multer');
 var mysql = require('mysql');
 var con = mysql.createConnection({
     host: "localhost",
@@ -8,7 +9,6 @@ var con = mysql.createConnection({
     insecureAuth : true,
     multipleStatements: true
 });
-
 module.exports = con;
 
 const express = require('express');
@@ -27,6 +27,47 @@ let mysqlConnection2 = mysql.createConnection({
     multipleStatements: true
 })
 
+var DIR = './uploads/';
+//var upload = multer({dest: DIR});
+// app.use(multer({
+//   dest: DIR,
+//   rename: function (fieldname, filename) {
+//     return filename + Date.now();
+//   },
+//   onFileUploadStart: function (file) {
+//     console.log(file.originalname + ' is starting ...');
+//   },
+//   onFileUploadComplete: function (file) {
+//     console.log(file.fieldname + ' uploaded to  ' + file.path);
+//   }
+// }));
+
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+      callBack(null, 'uploads')
+  },
+  filename: (req, file, callBack) => {
+      callBack(null, `FunOfHeuristic_${file.originalname}`)
+  }
+})
+
+const upload = multer({ storage: storage })
+app.post('/multipleFiles', upload.array('files'), (req, res, next) => {
+  const files = req.files;
+  console.log(files);
+  if (!files) {
+    const error = new Error('No File')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send({sttus:  'ok',
+    files:files
+  });
+})
+
+//app.use(cors({credentials: true, origin: 'http://localhost:5600/api'}));
 mysqlConnection2.connect((err) => {
     if (!err) {
         console.log('DB connection successful!');
@@ -35,6 +76,31 @@ mysqlConnection2.connect((err) => {
         console.log('Db Connection Failed : ' + JSON.stringify(err, undefined, 2));
     }
 })
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, callBack) => {
+//       callBack(null, 'uploads')
+//   },
+//   filename: (req, file, callBack) => {
+//       callBack(null, `FunOfHeuristic_${file.originalname}`)
+//   }
+// })
+
+// const upload = multer({ storage: storage })
+app.get('/api', function (req, res) {
+  res.end('file catcher example');
+});
+ 
+app.post('/api', function (req, res) {
+  upload(req, res, function (err) {
+    if (err) {
+      return res.end(err.toString());
+    }
+ 
+    res.end('File is uploaded');
+  });
+});
+ 
 app.post("/resendReq",(req,res)=>{
     role = req.body.userRole;
     reqId = req.body.req_id;
@@ -44,6 +110,9 @@ app.post("/resendReq",(req,res)=>{
         console.log(err);
       }else{
         console.log(result);
+        res.send(JSON.stringify({
+          result:"passed"
+        }));
       }
     })
   })
@@ -51,12 +120,17 @@ app.post("/resendReq",(req,res)=>{
     role = req.body.userRole;
     reqId = req.body.req_id;
     action_by=req.body.action_taken_by;
+    console.log("........role",role,reqId,action_by);
     sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Approved",'${action_by}',"Approved")`
     con.query(sql,function(err,result){
       if(err){
         console.log(err);
       }else{
         console.log(result);
+        res.send(JSON.stringify({
+          result:"passed",
+          id:res.insertId
+        }));
       }
     })
   })
@@ -70,6 +144,10 @@ app.post("/resendReq",(req,res)=>{
         console.log(err);
       }else{
         console.log(result);
+        res.send(JSON.stringify({
+          result:"passed",
+          id:res.insertId
+        }));
       }
     })
   })
@@ -84,6 +162,10 @@ app.post("/resendReq",(req,res)=>{
       }else{
           
         console.log(result);
+        res.send(JSON.stringify({
+          result:"passed",
+          id:res.insertId
+        }));
       }
     })
   })

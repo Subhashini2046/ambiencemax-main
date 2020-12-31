@@ -1,73 +1,172 @@
-<div class="text-center container" style="background-color: white; margin-top: 10px;">
-  <hr>
-  <div class="alert alert-info">
+<!-- <div class="text-center container" style="background-color: white; margin-top: 10px;">
+  <hr> -->
+<!-- <div class="alert alert-info">
+    <h3>Request Log</h3>
+  </div>
+  <div class="mat-elevation-z8">
+    <br>
+    <table class="table" mat-table [dataSource]="this.dataSource">
+
+      <ng-container matColumnDef="aaction_taken_by">
+        <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
+        <td mat-cell *matCellDef="let element"> {{element.aaction_taken_by}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="req_action">
+        <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Action </th>
+        <td mat-cell *matCellDef="let element"> {{element.req_action}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="req_date">
+        <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.req_date | date: 'yyyy-MM-dd'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="req_time">
+        <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.req_time}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div> -->
+<!-- <div class="alert alert-info">
     <h3>Approval Status</h3>
   </div>
   <hr>
   <table class="table">
     <thead class="thead-light">
-        <tr>
-          <th scope="col">
-            Role Id
-          </th>
-          <th scope="col">
-            Designation
-          </th>
-          <th scope="col">
-            Status
-          </th >
-        </tr>
+      <tr>
+        <th scope="col">
+          Role Id
+        </th>
+        <th scope="col">
+          Designation
+        </th>
+        <th scope="col">
+          Status
+        </th>
+      </tr>
     </thead>
     <tbody>
+      <tr *ngFor="let role of this.UsrDataService.role1; index as j">
 
-      <!-- <tr *ngFor = "let role of this.UsrDataService.RoleMap; index as i" >
-        <td *ngIf = "i > 0">
-          {{i+1}}
-        </td>
-        <td *ngIf = "i > 0">
-        {{role}}
-        </td>
-        <td *ngIf = "i > 0 && i+1 > this.UsrDataService.viewReq.req_level"
-         >
-          <span  style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
-            {{UsrDataService.viewReq.req_status}}
-          </span>
-        <td *ngIf = "i > 0 && i+1 <= this.UsrDataService.viewReq.req_level">
-          <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
-            Approved
-          </span>
-        </td>
-      </tr> -->
-      <tr *ngFor = "let role of this.UsrDataService.role1; index as j" >
-        
-        <td *ngIf = "j>=0">                   
+        <td *ngIf="j>=0">
           {{role.role_id}}
         </td>
-        <td *ngIf = "j>=0">
-        {{role.role_name}}
+        <td *ngIf="j>=0">
+          {{role.role_name}}
         </td>
-      
-        <td *ngIf = "role.role_id >= this.UsrDataService.viewReq.req_level"
-         >
-          <span  style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
+
+        <td *ngIf="role.role_id >= this.UsrDataService.viewReq.req_level">
+          <span style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
             {{UsrDataService.viewReq.req_status}}
           </span>
-        <td *ngIf = "role.role_id<this.UsrDataService.viewReq.req_level">
-          <span  style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
+        <td *ngIf="role.role_id<this.UsrDataService.viewReq.req_level">
+          <span style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
             Approved
           </span>
         </td>
       </tr>
     </tbody>
   </table>
-  <div class="col" >
-    <button
-      mat-raised-button
-      color = "accent"
-      (click) = "backClicked()"
-      >
+  <div class="col">
+    <button mat-raised-button color="accent" (click)="backClicked()">
       Go Back
-      </button>
-      </div>
-</div>
+    </button>
+  </div> -->
+<!-- </div> -->
 
+<div class="text-center container" style=" margin-top: 10px;">
+  <div class="row">
+    <div class="column_left">
+      <div class="text-center container" style="background-color: white;">
+        <hr>
+        <div class="alert alert-info">
+          <h3>Request Log</h3>
+        </div>
+        <div class="text-center container">
+          <br>
+          <table class="table" mat-table [dataSource]="this.dataSource">
+
+            <ng-container matColumnDef="aaction_taken_by">
+              <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
+              <td mat-cell *matCellDef="let element"> {{element.aaction_taken_by}} </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="req_action">
+              <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Action </th>
+              <td mat-cell *matCellDef="let element"> {{element.req_action}} </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="req_date">
+              <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Date </th>
+              <td mat-cell *matCellDef="let element"> {{element.req_date | date: 'yyyy-MM-dd'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="req_time">
+              <th class="thead-light" mat-header-cell *matHeaderCellDef> Request Time </th>
+              <td mat-cell *matCellDef="let element"> {{element.req_time}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="text-center container" style="background-color: white;">
+        <hr>
+        <div class="alert alert-info">
+          <h3>Approval Status</h3>
+        </div>
+        <hr>
+        <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">
+                Role Id
+              </th>
+              <th scope="col">
+                Designation
+              </th>
+              <th scope="col">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let role of this.UsrDataService.role1; index as j">
+
+              <td *ngIf="j>=0">
+                {{role.role_id}}
+              </td>
+              <td *ngIf="j>=0">
+                {{role.role_name}}
+              </td>
+
+              <td *ngIf="role.role_id >= this.UsrDataService.viewReq.req_level">
+                <span style="background-color: brown; border-radius:10px; color:white" class="px-4 py-1">
+                  {{UsrDataService.viewReq.req_status}}
+                </span>
+              <td *ngIf="role.role_id<this.UsrDataService.viewReq.req_level">
+                <span style="background-color: green; border-radius:10px; color:white" class="px-4 py-1">
+                  Approved
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="col">
+          <button mat-raised-button color="accent" (click)="backClicked()">
+            Go Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

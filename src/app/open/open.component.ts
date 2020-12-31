@@ -12,7 +12,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class OpenComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['req_id', 'Requesttitle', 'Request Type', 'Requester Id' ,
-  'Request City', 'requestinitdate'  , 'status',  'view' , 'Approve'];
+  'Request City', 'requestinitdate'  , 'status',  'view' , 'Approve','Update'];
  // public dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
  dataSource = new MatTableDataSource();
  members;
@@ -27,7 +27,9 @@ export class OpenComponent implements OnInit, OnDestroy {
   constructor( private http: HttpClient,public UserDataService: UserDataService,public requestService: RequestService, private changeDetectorRefs: ChangeDetectorRef) {}
   ngOnInit() {
      console.log("Open Component");
+     console.log("permission",this.UserDataService.user_Permission)
      this.userId = JSON.parse(localStorage.getItem('userId'));
+     this.UserDataService.userRole=JSON.parse(localStorage.getItem('userRole'));
       console.log(this.userId);
       return this.UserDataService.getOpenRequest(this.userId).subscribe((response:any)=>{
 

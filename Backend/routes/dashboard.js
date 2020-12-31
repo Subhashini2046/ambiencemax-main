@@ -42,7 +42,7 @@ let express = require("express"),
                           const loop = new Promise((resolve,reject) =>{  result.forEach((element,index) => {
                                 w_id = element.work_id;
                                 console.log(w_id);
-                                sql5 = `select count(*) as "all" from requests inner join workflow on(workflow.w_id=requests.w_id);select count(*) as "pending" from requests inner join workflow on(workflow.w_id=requests.w_id) where req_status='Pending' and (w_flow like '%${user_id},%' or req_initiator_id='${user_id}') and '${user_id}'<>req_level;select count(*) as "closed" from requests where w_id = '${w_id}' and req_status = 'Closed';select count(*) as "open" from requests inner join workflow on(workflow.w_id=requests.w_id) where req_status='Pending' and '${user_id}'=req_level;`;
+                                sql5 = `select count(*) as "all" from requests inner join workflow on(workflow.w_id=requests.w_id);select count(*) as "pending" from requests inner join workflow on(workflow.w_id=requests.w_id) where req_status='Pending' and (w_flow like '%${user_id},%' or req_initiator_id='${user_id}') and '${user_id}'<>req_level;select count(*) as "closed" from requests inner join workflow on(workflow.w_id=requests.w_id) where req_status='closed' and (w_flow like '%${user_id}%' or req_initiator_id='${user_id}') order by req_id desc;select count(*) as "open" from requests inner join workflow on(workflow.w_id=requests.w_id) where req_status='Pending' and '${user_id}'=req_level;`;
                                 let fetch = new Promise((resolve,reject)=>{
                                 con.query(sql5,function(err,result){
                                   if(err){
@@ -72,7 +72,8 @@ let express = require("express"),
                           res.send(
                             JSON.stringify({
                               result: "passed",
-                              req_stats: req_stats
+                              req_stats: req_stats,
+                              role_id:role_id
                             })
                           );
                         })

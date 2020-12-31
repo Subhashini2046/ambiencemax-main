@@ -7,7 +7,7 @@ router.post("/login", (req, res) => {
   console.log("Login Route");
   data = req.body;
   console.log(data);
-  var sql = `select user_id from users where user_name = '${data.email}' and user_pass = '${data.password}';`;
+  var sql = `select user_id,user_permission from users where user_name = '${data.email}' and user_pass = '${data.password}';`;
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
@@ -16,6 +16,7 @@ router.post("/login", (req, res) => {
       if (result.length == 1) {
         console.log(result);
         user_id = result[0].user_id;
+        user_permission=result[0].user_permission;
         var sql2 = `select role_id from access where user_id = '${user_id}';`
         con.query(sql2, function (err, result) {
           if (err) {
@@ -117,6 +118,7 @@ router.post("/login", (req, res) => {
                           JSON.stringify({
                             result: "passed",
                             user_id: user_id,
+                            user_permission:user_permission,
                             role_id : role_id,
                             w_id:w_id
                            // req_stats: req_stats,

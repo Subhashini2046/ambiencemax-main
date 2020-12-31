@@ -11,7 +11,7 @@
     </mat-card>
   </div> -->
 
-  <div class="mat-elevation-z8">
+  <div class="text-center container" style="background-color: white; margin-top: 20px;">
     <br>
   <table class="table" mat-table [dataSource]="this.dataSource">
   
@@ -62,9 +62,9 @@
       <th class="thead-light" mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <button mat-raised-button
-        color = "warn"
+        class="col-bg-button"
         *ngIf = "UserDataService.userRole !== 8"
-        (click) = 'UserDataService.viewReq = element;UserDataService.ReqId=element.req_id;UserDataService.getWorkFlow(element.req_id)'
+        (click) = 'UserDataService.viewReq = element;UserDataService.ReqId=element.req_id'
         routerLink="view">
           View
         </button>
@@ -83,7 +83,7 @@
       <td mat-cell *matCellDef="let element">
         <button
         mat-raised-button
-        color = "accent"
+        class="col-bg-accent"
         (click) = 'UserDataService.viewReq = element;UserDataService.getViewStatus(element.req_id)'
         routerLink="status">
         View Status

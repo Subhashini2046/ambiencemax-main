@@ -1,5 +1,6 @@
-<mat-toolbar color ="primary" class="example-toolbar">
+<mat-toolbar class="col-bg-header">
   <a routerLink="/dashboard" class="navbar-brand">
+    <div class="logo">
     <img
       class="text-center"
       src="../assets/Logo.svg"
@@ -8,9 +9,9 @@
       alt=""
       class="d-align-block"
     />
-    <h4 class="navbar-text" style="margin-left:16px; color: white;">
-      AmbienceMax
-    </h4>
+      <span class="apptype" style="margin-left: 16px; color: rgb(10, 10, 10);">AmbienceMax</span>
+    </div>
+
   </a>
   <span class="example-spacer"></span>
     <div class="form-inline" *ngIf="this.UsrDataService.userId !== null">

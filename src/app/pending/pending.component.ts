@@ -1,7 +1,7 @@
 import { Label } from 'ng2-charts';
 import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MatTableDataSource, MatPaginator, MatSort, throwMatDialogContentAlreadyAttachedError } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { RequestService } from '../Services/RequestService';
 import { ReqSchema } from '../Services/ReqSchema';
 @Component({

@@ -10,7 +10,7 @@
       </button>
     </mat-card>
   </div> -->
-  <div class="mat-elevation-z8">
+  <div class="text-center container" style="background-color: white; margin-top: 20px;">
     <br>
   <table class="table" mat-table [dataSource]="this.dataSource">
   
@@ -63,17 +63,11 @@
         <button mat-raised-button
         color = "warn"
         *ngIf = "UserDataService.userRole !== 8"
-        (click) = 'UserDataService.viewReq = element; UserDataService.getWorkFlow(element.req_id);UserDataService.getRole()'
+        (click) = 'UserDataService.viewReq = element;this.UserDataService.userRole;UserDataService.ReqId=element.req_id;UserDataService.getWorkFlow(element.req_id);'
         routerLink="view">
           View
         </button>
-        <!-- <button mat-raised-button
-        color = "primary"
-         matTooltip="Info about the action"
-         *ngIf = "UserDataService.userRole === 8 "
-         (click) = 'UserDataService.viewReq = element' routerLink="view">
-          View & Add Approvers
-        </button> -->
+        
       </td>
     </ng-container>
    
@@ -87,28 +81,21 @@
         routerLink="status">
         View Status
         </button>
-        <!-- <button
-        mat-raised-button
-        color = "primary"
-        *ngIf = 'this.UserDataService.isPending && (this.UserDataService.userRole!== 1)
-        && (this.UserDataService.userRole !== 8)'
-        (click) = 'approve(element.RequestNo , element.RequesterId)'
-        style="margin-left: 10px;"
-        >
-        Approve
-        </button> -->
-        <!-- <button
-        mat-raised-button
-        color = "warn"
-        *ngIf = ' this.UserDataService.userRole === 1 && element.req_status === "UnderNeg"'
-        style="margin-left: 10px;"
-        routerLink = "view"
-        >
-        Edit & View Feedback
-        </button> -->
       </td>
     </ng-container>
-  
+    <ng-container matColumnDef="Update">
+      <th class="thead-light" mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-raised-button
+        color = "warn"
+        *ngIf = "UserDataService.user_Permission==1"
+        (click)="UserDataService.ReqId=element.req_id;UserDataService.viewReq = element"
+        routerLink="update">
+          Update
+        </button>
+        
+      </td>
+    </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

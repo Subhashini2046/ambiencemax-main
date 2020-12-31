@@ -1,6 +1,51 @@
+var multer=require('multer');
 let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
+
+// var store = multer.diskStorage({
+//     destination:function(req,file,cb){
+//         cb(null, './uploads');
+//     },
+//     filename:function(req,file,cb){
+//         cb(null, Date.now()+'.'+file.originalname);
+//     }
+// });
+
+
+// var upload = multer({storage:store}).single('file');
+
+// router.post('/upload', function(req,res,next){
+//     upload(req,res,function(err){
+//         if(err){
+//             return res.status(501).json({error:err});
+//         }
+//         //do all database record saving activity
+//         return res.json({originalname:req.file.originalname, uploadname:req.file.filename});
+//     });
+// });
+
+
+router.post("/fileUpload",(req,res) =>{
+  reqId = req.body.req_id;
+  filepath=req.body.filepath;
+  console.log("\\\\\\\\\\/////",reqId,filepath);
+  sql1 = `insert into uploadfile (files,req_id) values ('${filepath}','${reqId}')`
+    con.query(sql1, (err, result) => {
+  if (err) {
+    console.log(err);
+  }
+  else {
+    console.log(result);
+    res.send(
+      JSON.stringify({
+        result: "passed",
+        id:res.insertId
+      })
+    );
+  }
+})
+})
 
   router.post("/newReq" , (req,response) =>{
     request = req.body.request;

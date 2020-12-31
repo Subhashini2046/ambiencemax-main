@@ -83,7 +83,9 @@ goToRequestAction(req_id) {
     this.snackBar.open(message, '', {
       duration: 3500,
       panelClass: ['simple-snack-bar']
+
     });
+    this.router.navigateByUrl('dashboard/open');
   }
 }
 

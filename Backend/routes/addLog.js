@@ -2,19 +2,22 @@ let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
 
-  // router.post("/addLog",(req,res)=>{
-  //   role = req.body.userRole;
-  //   reqId = req.body.req_id;
-  //   action_by=req.body.action_taken_by;
-  //   sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Approved",'${action_by}',"Approved")`
-  //   con.query(sql,function(err,result){
-  //     if(err){
-  //       console.log(err);
-  //     }else{
-  //       console.log(result);
-  //     }
-  //   })
-  // })
+
+  router.post("/addLog",(req,res)=>{
+    role = req.body.userRole;
+    reqId = req.body.req_id;
+    action_by=req.body.action_taken_by;
+    console.log("........role",role,reqId,action_by);
+    sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Approved",'${action_by}',"Approved")`
+    con.query(sql,function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        console.log(result);
+        res.send(JSON.stringify({id:res.insertId}));
+      }
+    })
+  })
 
   router.post("/newLog" , (req,res) =>{
     request = req.body.request;
