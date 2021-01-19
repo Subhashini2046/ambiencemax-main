@@ -11,6 +11,7 @@ import {Location} from '@angular/common';
 })
 export class UpdateRequestFormComponent implements OnInit {
   checkoutForm;
+  public userId;
   public req_id;
   public req_title;
   public req_type;
@@ -31,7 +32,8 @@ export class UpdateRequestFormComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.userDataService.getviewUpdateRequest(this.userDataService.viewReq.req_id).subscribe((response:any)=>{
+    this.userId = JSON.parse(localStorage.getItem('userId'));
+    this.userDataService.getviewUpdateRequest(this.UserDataService.viewReq.req_id).subscribe((response:any)=>{
       this.req_id=response.req_data[0]['req_id'];
       this.req_title=response.req_data[0]['req_title'];
       this.req_type=response.req_data[0]['req_type'];
@@ -47,9 +49,6 @@ export class UpdateRequestFormComponent implements OnInit {
     this.openSnackBar('Request Updated Successfully !');
   
     this.UserDataService.addUpdateRequest(RequestData,this.UserDataService.viewReq.req_id);
-    // this.currReq.req_initiator_id = this.UserDataService.userId;
-    // this.UserDataService.main = '';
-    // this.UserDataService.mainSub.next(this.UserDataService.main);
     console.log("checkoutForm",RequestData);
     this.checkoutForm.reset();
     this.router.navigateByUrl('dashboard/open');
@@ -63,7 +62,8 @@ export class UpdateRequestFormComponent implements OnInit {
   }
   
   backClicked() {
-    this._location.back();
+    this.router.navigateByUrl('dashboard/open');
+    // this._location.back();
     console.log( 'goBack()...' );
   
   }

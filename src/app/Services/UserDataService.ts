@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
   }
   export interface Role{
     role_id:number;
-    role:String;
+    role_name:String;
   }
   export interface RoleMap1{
     role:String;
@@ -32,6 +32,7 @@ import { map } from 'rxjs/operators';
 
     }
     constructor( private http: HttpClient, private router: Router) {}
+    index:number;
     userId = null;
     user_Permission=null;
     userRole = null;
@@ -44,9 +45,6 @@ import { map } from 'rxjs/operators';
     ApproveAction="Approved";
     isPending = false;
     public filepath=[];
-    public fetchedReqs: ReqSchema[];
-    public fetchedReqsUpdated = new Subject<ReqSchema[]>();
-    public reqStatsSubject = new Subject<ReqStats>();
     public desiredReqSub = new Subject<ReqSchema[]>();
     public mainSub = new Subject<string>();
     public toBeApproved = false;
@@ -108,6 +106,7 @@ import { map } from 'rxjs/operators';
             localStorage.setItem('userRole', JSON.stringify(this.userRole));
             localStorage.setItem('userId', JSON.stringify(this.userId));
             localStorage.setItem('w_id', JSON.stringify(this.userId));
+            localStorage.setItem('user_Permission', JSON.stringify(this.user_Permission));
           }
         });
     }
@@ -138,7 +137,10 @@ import { map } from 'rxjs/operators';
         this.Workflow=ResData.w_flow;
         this.role1=ResData.role;
         this.role1.sort((a,b) => a.role_id-b.role_id);
-      });
+ });
+    }
+    getData(){
+      
     }
     getViewRequestLog(reqId:number){
       return this.http.post('http://localhost:3000/viewRequestLog', { reqId });
@@ -188,14 +190,17 @@ import { map } from 'rxjs/operators';
       .subscribe((ResData) => {
         console.log("In Approved Method",ResData);
       });
-      if(this.resendTo=="Initiator"){this.userRole=1;}
+      console.log("this.viewReq.req_initiator_id",this.viewReq.req_initiator_id)
+      if(this.resendTo=="Initiator" && this.viewReq.req_initiator_id==1){this.userRole=1;}
+      if(this.resendTo=="Initiator" && this.viewReq.req_initiator_id==8){
+        this.userRole=this.viewReq.req_initiator_id ;}
       if(this.resendTo=="Location Head"){this.userRole=2;}
       if(this.resendTo=="Cluster Head"){this.userRole=3;}
       if(this.resendTo=="City Head"){this.userRole=4;}
       if(this.resendTo=="State Head"){this.userRole=5;}
       if(this.resendTo=="Country Head"){this.userRole=6;}
       if(this.resendTo=="Geography Head"){this.userRole=7;}
-      console.log("in resendUpdate",this.resendTo,"",this.userRole);
+      console.log("in resendUpdate",this.resendTo,"",this.userRole); 
       this.http.post('http://localhost:5600/resendReq', {req_id: reqId , userRole: this.userRole})
       .subscribe((ResData) => {
         console.log("In Resend Method",ResData);

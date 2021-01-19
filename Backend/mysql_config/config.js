@@ -28,21 +28,6 @@ let mysqlConnection2 = mysql.createConnection({
 })
 
 var DIR = './uploads/';
-//var upload = multer({dest: DIR});
-// app.use(multer({
-//   dest: DIR,
-//   rename: function (fieldname, filename) {
-//     return filename + Date.now();
-//   },
-//   onFileUploadStart: function (file) {
-//     console.log(file.originalname + ' is starting ...');
-//   },
-//   onFileUploadComplete: function (file) {
-//     console.log(file.fieldname + ' uploaded to  ' + file.path);
-//   }
-// }));
-
-
 
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {

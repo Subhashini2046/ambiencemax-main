@@ -1,4 +1,4 @@
-import { Component, OnInit, SystemJsNgModuleLoader } from '@angular/core';
+import { Component, ViewChild,OnInit, SystemJsNgModuleLoader } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
@@ -17,13 +17,16 @@ const URL = 'http://localhost:5600/api';
   styleUrls: ['./request-form.component.css']
 })
 export class RequestFormComponent implements OnInit {
-// 
+  public userId;
+  AllFileName:any[]=[];
+areCredentialsInvalid = false;
 public filepath=[];
+public fieldValue= [];
 uploader:FileUploader;
   hasBaseDropZoneOver:boolean;
   hasAnotherDropZoneOver:boolean;
   response:string;
-// 
+
 
   title = 'fileUpload';
   images;
@@ -73,7 +76,11 @@ uploader:FileUploader;
     w_id: 0,
     req_budget: 0
   };
-
+ ngOnInit() {
+    this.userId = JSON.parse(localStorage.getItem('userId'));
+    console.log('user_id',this.userId);
+    this.currReq.req_initiator_id=this.userId;
+  }
   public fileOverBase(e:any):void {
     this.hasBaseDropZoneOver = e;
   }
@@ -96,28 +103,85 @@ uploader:FileUploader;
 
 
   onMultipleSubmit(){
+  
+    var filesize=0;
     const formData = new FormData();
+    console.log("nnnnn",this.multipleImages)
     for(let img of this.multipleImages){
       formData.append('files', img);
+     filesize+=img['size'];
+     console.log("/////",img)
+     console.log("///",formData)
     }
+    var fileInMB=10485760;
+    if(filesize>fileInMB){
+      console.log("lll",filesize>fileInMB);
+      this.areCredentialsInvalid = true;
+      return;
+    }
+    console.log("lll");
+  //   this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
+  //     for (let i = 0; i < res.files.length; i++) { 
+  //       this.filepath[i]=res.files[i]['path'];
+  //       this.fieldValue[i]=res.files[i]['originalname'];
+  //  // console.log(this.filepath);
+  //     }
+  //     console.log("nnnnnhh",this.fieldValue);
+  // });
+  }
+  @ViewChild('attachments',{static: false}) attachment: any;
 
+  fileList: File[] = [];
+  listOfFiles: any[] = [];
+  
+  onFileChanged(event: any) {
+    var filesize=0;
+      for (var i = 0; i <= event.target.files.length - 1; i++) {
+        var selectedFile = event.target.files[i];
+        this.fileList.push(selectedFile);
+        filesize+=this.fileList[i]['size'];
+        this.listOfFiles.push(selectedFile.name);
+    }
+    var fileInMB=10485760;
+    if(filesize>fileInMB){
+      console.log("lll",filesize>fileInMB);
+      this.areCredentialsInvalid = true;
+      return;
+    }
+    console.log("mmmm",this.fileList);
+    this.attachment.nativeElement.value = '';
+  }
+  
+  
+  
+  removeSelectedFile(index) {
+   // Delete the item from fileNames list
+   this.listOfFiles.splice(index, 1);
+   // delete file from FileList
+   this.fileList.splice(index, 1);
+  }
+  onSubmit() {
+    const formData = new FormData();
+    for (let img of this.fileList) {
+      console.log("gggg",img);
+      formData.append('files', img);
+      console.log("///",formData)
+  }
     this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
       for (let i = 0; i < res.files.length; i++) { 
         this.filepath[i]=res.files[i]['path'];
-    console.log(this.filepath);
+        console.log("nnnnnhh",this.filepath[i]);
       }
   });
-  }
-  onSubmit() {
     this.openSnackBar('Request Submitted Successfully !');
+
     this.UserDataService.addRequest(this.currReq,this.filepath);
     this.currReq.req_initiator_id = this.UserDataService.userId;
     this.UserDataService.main = '';
     this.UserDataService.mainSub.next(this.UserDataService.main);
     this.router.navigateByUrl('/dashboard');
   }
-  ngOnInit() {
-  }
+
   openSnackBar(message: string) {
     this._snackBar.open(message, '', {
       duration: 3500,

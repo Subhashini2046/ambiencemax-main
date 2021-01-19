@@ -34,7 +34,14 @@ import { AllRequestComponent } from './all-request/all-request.component';
 import {FileUploadModule} from 'ng2-file-upload';
 import { UpdateRequestFormComponent } from './update-request-form/update-request-form.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { MainNavComponent } from './main-nav/main-nav.component';
+import { LayoutModule } from '@angular/cdk/layout';
 const appRoutes = [
+  {path: 'dashboard' , component: DashboardComponent,},
+
+{path: 'pending' , component: PendingComponent,},
+  {path: 'dashboard/view' , component: ViewReqComponent},
+  {path: 'status' , component: ViewStatusComponent},
   {path: 'dashboard' , component: DashboardComponent},
   {path: 'submitted' , component: SubmittedComponent},
   {path: '' , component: HomeComponent},
@@ -43,7 +50,7 @@ const appRoutes = [
   {path: 'dashboard/status' , component: ViewStatusComponent},
   {path: 'admin' , component: AdminPanelComponent},
 
-  {path: 'dashboard/pending' , component: PendingComponent},
+ {path: 'dashboard/pending' , component: PendingComponent},
   {path: 'dashboard/pending/status' , component: ViewStatusComponent},
   {path: 'dashboard/pending/view' , component: ViewReqComponent},
 
@@ -51,7 +58,7 @@ const appRoutes = [
   {path: 'dashboard/open/status' , component: ViewStatusComponent},
   {path: 'dashboard/open/view' , component: ViewReqComponent},
 
-  {path: 'dashboard/close' , component: CloseComponent},
+ {path: 'dashboard/close' , component: CloseComponent},
   {path: 'dashboard/close/status' , component: ViewStatusComponent},
   {path: 'dashboard/close/view' , component: ViewReqComponent},
 
@@ -84,6 +91,7 @@ const appRoutes = [
     PendingComponent,
     AllRequestComponent,
     UpdateRequestFormComponent,
+    MainNavComponent,
   ],
   imports: [
     BrowserModule,
@@ -109,7 +117,8 @@ const appRoutes = [
     ReactiveFormsModule,
     MatDialogModule,
     FileUploadModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    LayoutModule
   ],
   providers: [ UserDataService],
   bootstrap: [AppComponent]

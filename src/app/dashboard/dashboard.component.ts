@@ -67,6 +67,11 @@
         console.log('Open Called');
         
       }
+      else if (type === 'viewStatus') {
+        this.router.navigate(['/dashboard/status']);
+        console.log('Open Called');
+        
+      }
       this.UsrDataService.desiredReqSub.next(this.UsrDataService.desiredRequests);
     }
     ngOnInit() {
@@ -99,7 +104,7 @@
     logout() {
       localStorage.clear();
       this.UsrDataService.userId = null;
-      this.UsrDataService.fetchedReqs = [];
+      // this.UsrDataService.fetchedReqs = [];
       this.UsrDataService.desiredRequests = [];
       this.UsrDataService.allRequests = [];
       this.UsrDataService.pendingRequests = [];
@@ -112,7 +117,7 @@
         Closed: 0,
         Open: 0
       };
-      this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
+      // this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
       this.UsrDataService.main = '';
       console.log(this.UsrDataService.pendingRequests);
     }

@@ -21,7 +21,7 @@
 >
   <mat-toolbar  class="col-bg-header">
     <button mat-icon-button (click)="snav.toggle()">
-      <mat-icon>menu</mat-icon>
+      <mat-icon style="color: rgb(245, 236, 236);">menu</mat-icon>
     </button>
     <a routerLink="/dashboard" class="navbar-brand" (click)="main = ''">
       <div class="logo">
@@ -33,7 +33,7 @@
           alt=""
           class="d-align-block"
         />
-          <span class="apptype" style="margin-left: 16px; color: rgb(10, 10, 10);">AmbienceMax</span>
+          <span class="apptype" style="margin-left: 16px; color: rgb(245, 236, 236);">AmbienceMax</span>
         </div>
     </a>
     <span class="example-spacer"></span>
@@ -47,6 +47,7 @@
           class="example-icon"
           aria-hidden="false"
           aria-label="Example settings icon"
+          style="color: rgb(245, 236, 236);"
           >settings</mat-icon
         >
       </button>
@@ -59,7 +60,7 @@
       </mat-menu>
     </div>
   </mat-toolbar>
-  <mat-sidenav-container
+  <mat-sidenav-container style="color: rgb(245, 236, 236);"
     class="example-sidenav-container"
     [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
   >
@@ -70,7 +71,8 @@
       fixedTopGap="56"
       class="col-bg-header"
     >
-      <mat-nav-list>
+  
+      <mat-nav-list style="color: rgb(245, 236, 236);">
         <a
           class="btn"
           (click)="main = ''; snav.toggle();"
@@ -80,14 +82,14 @@
         </a>
         <a
           class="btn"
-          *ngIf="this.UsrDataService.userRole === 1"
+          *ngIf="this.userId === 1"
           (click)="main = 'form'; snav.toggle()"
           routerLink="request-form"
           mat-list-item
         >
           New Request
         </a>
-      
+
         <a
           class="btn"
           *ngFor="let chip of Buttons"
@@ -99,146 +101,15 @@
         >
       </mat-nav-list>
     </mat-sidenav>
+    
     <mat-sidenav-content class="content">
       <!-- <div *ngIf = 'this.UsrDataService.currUser !== undefined ' class = "maindiv"> -->
       <div *ngIf="this.UsrDataService.userId !== undefined" class="maindiv">
-        <app-request-form *ngIf="main === 'form'"></app-request-form>
-        <app-pending *ngIf="main === 'Pending'"></app-pending>
-        <app-all-request *ngIf="main === 'all'"></app-all-request>
-        <app-open *ngIf="main === 'open' && this.UsrDataService.userId !== 1"></app-open>
-        <app-close *ngIf="main === 'closed'"></app-close>
-
-        <!-- <div *ngIf="main === 'form'">
-          <app-request-form></app-request-form>
-        </div>
-        <div *ngIf="main === 'Pending'">
-          <app-request-table></app-request-table>
-        </div>
-        <div *ngIf="main === 'all'">
-          <app-request-table></app-request-table>
-        </div>
-        <div *ngIf="main === 'open'">
-          <app-request-table></app-request-table>
-        </div>
-        <div *ngIf="main === 'closed'">
-          <app-request-table></app-request-table>
-        </div> -->
-
-        <!-- <div *ngIf = "main === 'cancelled' ">
-          <app-request-table ></app-request-table>
-        </div> -->
-        
-        <!-- <div *ngIf="main === ''" class="row graph">
-          <div class="col-lg-8">
-            <select id="inputdes" class="form-control">
-              <option selected>Choose...</option>
-              <option>Request for new assets</option>
-              <option>Request for Repair </option>
-              <option>Request for Maintainance </option>
-              <option>Other </option>
-            </select>
-            <mat-card *ngIf="ChartType === 'doughnut'">
-              <mat-card-title class="title">
-                Total No Of Requests : {{ All }}
-              </mat-card-title>
-              <hr />
-              <mat-card-content>
-                <app-doughnut-chart class="graph"></app-doughnut-chart>
-              </mat-card-content>
-              <mat-card-actions class="text-center">
-                <button
-                  mat-button
-                  class="btn btn-lg btn-warning"
-                  (click)="ChartType = 'bar'"
-                >
-                  Change Chart Type
-                </button>
-              </mat-card-actions>
-            </mat-card>
-            <mat-card *ngIf="ChartType === 'horizontalBar'">
-              <mat-card-title class="title"
-                >Total No Of Requests : {{ All }}
-              </mat-card-title>
-              <hr />
-              <mat-card-content>
-                <app-chart-represent></app-chart-represent>
-              </mat-card-content>
-              <mat-card-actions class="text-center">
-                <button
-                  mat-button
-                  class="btn btn-lg btn-warning"
-                  (click)="ChartType = 'doughnut'"
-                >
-                  Change Chart Type
-                </button>
-              </mat-card-actions>
-            </mat-card>
-            <mat-card *ngIf="ChartType === 'bar'">
-              <mat-card-title class="title"
-                >Total No Of Requests : {{ All }}
-              </mat-card-title>
-              <hr />
-              <mat-card-content>
-                <app-bar-chart-component></app-bar-chart-component>
-              </mat-card-content>
-              <mat-card-actions class="text-center">
-                <button
-                  mat-button
-                  class="btn btn-lg btn-warning"
-                  (click)="ChartType = 'horizontalBar'"
-                >
-                  Change Chart Type
-                </button>
-              </mat-card-actions>
-            </mat-card>
-          </div>
-          
-          <div class="col-lg-4">
-            <div class="col">
-              <mat-card class="example-card">
-                <mat-card-title>Pending Requests</mat-card-title>
-                <mat-card-content>
-                  <h2>
-                    {{ Pending }}
-                  </h2>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button (click)="Request('Pending')" routerLink="pending">
-                    View All
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-            <div class="col">
-              <mat-card class="example-card">
-                <mat-card-title>Open Requests</mat-card-title>
-                <mat-card-content>
-                  <h2>
-                    {{ Open }}
-                  </h2>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button (click)="Request('open')" routerLink="open">View All</button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-            <div class="col">
-              <mat-card class="example-card">
-                <mat-card-title>Closed Requests</mat-card-title>
-                <mat-card-content>
-                  <h2>
-                    {{ Closed }}
-                  </h2>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button (click)="Request('closed')" routerLink="close">
-                    View All
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </div>
-        </div> -->
+        <app-request-form routerLinkActive="active" *ngIf="main === 'form'"></app-request-form>
+        <app-pending routerLinkActive="active" *ngIf="main === 'Pending'"></app-pending>
+        <app-all-request routerLinkActive="active" *ngIf="main === 'all'"></app-all-request>
+        <app-open routerLinkActive="active" *ngIf="main === 'open' && this.UsrDataService.userId !== 1"></app-open>
+        <app-close routerLinkActive="active" *ngIf="main === 'closed'"></app-close>
 
         <div *ngIf="main === ''" class="row graph">
           <div style="margin-left: 2.5em" class="col-lg-5">

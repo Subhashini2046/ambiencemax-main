@@ -50,7 +50,8 @@
   background-repeat: repeat;
   background-size: 250px 100px;
   /* background-color:  rgba(86, 123, 146, 0.445); */
-  background-color: rgb(213, 227, 243);
+  /* background-color: rgb(54, 92, 134); */
+  background-color: rgba(239, 244, 250, 0.404);
   padding: 0px 0px 0px 0px;
   color: black;
   padding-left: 10px;
@@ -87,6 +88,9 @@ mat-card{
 }
 .sidenav .btn{
   color: white;
+}
+.btn{
+  color: rgb(245, 237, 237);
 }
 .graph{
   height: 50%;

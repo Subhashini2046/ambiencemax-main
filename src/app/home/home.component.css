@@ -3,9 +3,10 @@
     margin-top: 30px;
     width: 90%;
     height: 95%;
-    box-shadow: 0px 4px 15px 1px gray;
+    /* box-shadow: 0px 4px 15px 1px gray; */
     padding: 15px 15px;
-    background: linear-gradient(to bottom, #000046, #1cb5e0);
+    /* background: linear-gradient(to bottom, #000046, #1cb5e0); */
+    background: white;
     border-radius: 5px;
     color: white;
     opacity: 1;
@@ -25,9 +26,10 @@
     margin-top: 30px;
     width: 37%;
     height: 95%;
-    box-shadow: 0px 4px 15px 1px gray;
+    /* box-shadow: 0px 4px 15px 1px gray; */
     padding: 15px 15px;
-    background: linear-gradient(to bottom, #000046, #1cb5e0);
+    /* background: linear-gradient(to bottom, #000046, #1cb5e0); */
+    background:white;
     border-radius: 5px;
     opacity: 1;
   }
