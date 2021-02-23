@@ -1,51 +1,33 @@
-<mat-dialog-content>
-    <mat-card>
-
-
-    <mat-card-header>
-
-
-        <mat-card-title>
-
-
-            <h2>Request Action Form </h2>
-
-
-        </mat-card-title>
-
-
-    </mat-card-header>
-
-
-    <mat-card-content>
-        <form [formGroup]="allocateForm" >
-
-        <div class="panel-body">
-           
-                <div class="col-md-12 col-sm-12">
-                    <div class="form-group col-md-3 col-sm-6">
-                      <label>Select User</label>
-                      <select formControlName="request_actionnnn" class="select" name="request_actionnnn" (change)="onChangeCountry($event)">
-                        <option value="" selected data-default>Select User</option>
-                        <option *ngFor="let type of users" [value]="type.a_id" >{{type.aaction_taken_by}}</option>
-                      </select>
-                      <p class="error" *ngIf="allocateForm.get('request_actionnnn').invalid && allocateForm.get('request_actionnnn').touched">* User is Required</p>
-                    </div>
-                </div>
-          
-        </div>
-      </form>
-      
-    </mat-card-content>
-
-    <mat-dialog-actions>
-
-
-        <button mat-button mat-dialog-close> Cancel</button>
-        <button mat-button (click)="navigateTo()"> Select </button>
-     
-
-
-    </mat-dialog-actions>
-
-</mat-card> </mat-dialog-content>
+<div class="row my-3">
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;">
+    <div class="alert alert-info my-1">
+      <h5 class="text-center">
+        Request Action Form
+      </h5>
+    </div>
+    <form class="px-3 py-3 my-4" [formGroup]="allocateForm" (submit)="form.reset()">
+      <br>
+      <div class="text-center">
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Select User</mat-label>
+          <mat-select formControlName="request_actionnnn" [(ngModel)]="accessId" name="food">
+            <mat-option *ngFor="let type of users" [value]="type.accessId">
+              {{type.role}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <p class="error"
+          *ngIf="allocateForm.get('request_actionnnn').invalid && allocateForm.get('request_actionnnn').touched">*
+          User is Required</p>
+      </div>
+      <div class="text-center">
+        <mat-dialog-actions>
+          <button mat-button (click)="onCancel()"> Cancel</button>
+          <button mat-button (click)="navigateTo()"> Select </button>
+        </mat-dialog-actions>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-3"></div>
+</div>

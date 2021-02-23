@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import {Location} from '@angular/common';
 @Component({
@@ -10,6 +10,7 @@ import {Location} from '@angular/common';
   styleUrls: ['./update-request-form.component.css']
 })
 export class UpdateRequestFormComponent implements OnInit {
+  req_id1: any;
   checkoutForm;
   public userId;
   public req_id;
@@ -22,7 +23,7 @@ export class UpdateRequestFormComponent implements OnInit {
   public req_status;
   public role_name;
   public req_action;
-  constructor(private _location: Location,public UserDataService: UserDataService,private formBuilder: FormBuilder,private router: Router,public userDataService: UserDataService,private _snackBar: MatSnackBar) {
+  constructor(private actrouter: ActivatedRoute,private _location: Location,public UserDataService: UserDataService,private formBuilder: FormBuilder,private router: Router,public userDataService: UserDataService,private _snackBar: MatSnackBar) {
     this.checkoutForm = this.formBuilder.group({
       RequestBudget: 0,
       RequesterId: 0,
@@ -32,8 +33,10 @@ export class UpdateRequestFormComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.userId = JSON.parse(localStorage.getItem('userId'));
-    this.userDataService.getviewUpdateRequest(this.UserDataService.viewReq.req_id).subscribe((response:any)=>{
+    this.actrouter.params.subscribe(params => {
+      this.req_id1 = +params['id'];
+    });
+    this.userDataService.getRequestDetails(this.req_id1).subscribe((response:any)=>{
       this.req_id=response.req_data[0]['req_id'];
       this.req_title=response.req_data[0]['req_title'];
       this.req_type=response.req_data[0]['req_type'];
@@ -48,10 +51,10 @@ export class UpdateRequestFormComponent implements OnInit {
   onSubmit(RequestData) {
     this.openSnackBar('Request Updated Successfully !');
   
-    this.UserDataService.addUpdateRequest(RequestData,this.UserDataService.viewReq.req_id);
+    this.UserDataService.addUpdateRequest(RequestData,this.req_id1);
     console.log("checkoutForm",RequestData);
     this.checkoutForm.reset();
-    this.router.navigateByUrl('dashboard/open');
+    this.router.navigateByUrl('main/open');
     
   }
   openSnackBar(message: string) {

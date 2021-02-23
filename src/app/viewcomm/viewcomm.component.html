@@ -1,179 +1,121 @@
-<div class="alert alert-warning mx-5 my-3 text-center" *ngIf = "this.userDataService.message !== ''">
-    {{this.userDataService.message}}
-</div>
-<div
-  class="container col-lg-6 py-2 px-2"
-  *ngIf="this.userDataService.userRole !== 8 "
-  style="
-    background-color: white;
-    margin-top: 10px;
-    box-shadow: 0px 0px 4px black;
-    border-radius: 6px;
-  "
->
-<div class="alert alert-info text-center">
-    Request Details
-</div>
-<table class="table table-light table-hover ">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Req Info</th>
-      <th scope="col">Data</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1.</td>
-      <td>Request ID</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_id }}</td>
-    </tr>
-    <tr>
-      <td>2.</td>
-      <td>Request Title</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_title }}</td>
-    </tr>
-    <tr>
-      <td>3.</td>
-      <td>Request Type</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_type }}</td>
-    </tr>
-    <tr>
-      <td>4.</td>
-      <td>Request Initiator Id</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_initiator_id }}</td>
-    </tr>
-    <tr>
-      <td>5.</td>
-      <td>Request Type</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_type }}</td>
-    </tr>
-    <tr>
-      <td>6.</td>
-      <td>Request sent on</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_date }}</td>
-    </tr>
-    <tr>
-      <td>7.</td>
-      <td>Request Budget</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_budget }}</td>
-    </tr>
-    <tr>
-      <td>8.</td>
-      <td>Request Description</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_description }}</td>
-    </tr>
-    <tr>
-      <td>9.</td>
-      <td>Request Status</td>
-      <td (click)="goToRequestAction(view.req_id)">{{ view.req_status }}</td>
-    </tr>
-    <tr>
-      <td>10.</td>
-      <td>Comment:</td>
-      <!-- (click)="goToRequestAction(view.req_id)" -->
-      <td >{{ view.acomment }}<textarea
-        rows="4"
-        style="
-          width: 70%;
-          height: 100%;
-          margin-top: 10px;
-          border: 2px slateblue solid;
-          border-radius: 1px;
-        "
-        placeholder="Write here"
-        [(ngModel)]="comment"
-      >
-      </textarea></td>
-    </tr>
-  </tbody>
-</table>
-  <div
-    class="row"
-    *ngIf="
-      this.userDataService.viewReq.req_status === 'Pending'
-    "
-  >
-    <div class="col-lg-3"></div>
-   
- 
-    <!-- <div class="text-center col-lg-6">
-      <button
-        class="btn btn-success btn-large"
-        style="width: 100%;"
-        (click)="userDataService.Approved(view.req_id);this.openSnackBar('Request Approved Successfully!');"
-        routerLink="/dashboard"
-        *ngIf = "userDataService.toBeApproved"
-      >
-        Approve
-      </button> -->
-   
-      <!-- <form [formGroup]="allocateForm" >
-
-        <div class="panel-body">
-           
-                <div class="col-md-12 col-sm-12">
-                    <div class="form-group col-md-3 col-sm-6">
-                      <label>Select User</label>
-                      <select formControlName="user" class="select" name="user">
-                        <option value="" selected data-default>Select User</option>
-                        <option *ngFor="let type of users" [value]="type.User_ID">{{type.User_Name}}</option>
-                      </select>
-                      <p class="error" *ngIf="allocateForm.get('user').invalid && allocateForm.get('user').touched">* User is Required</p>
-                    </div>
-                </div>
-          
+<div class="row my-3">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
+      action="#">
+      <h5 class="text-center">
+        Request Details
+      </h5>
+      <hr>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="inputdes">Request Type</label>
+          <select class="form-control" id="request"[(ngModel)]="req_type" name="RequestType" 
+           disabled required>
+            <option selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
+          </select>
         </div>
-      </form> -->
+        <div class="form-group col-md-6">
+          <label>Request Number</label>
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number"
+            name="req_number" readonly
+            required />
+        </div>
+      </div>
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>ME Type</label>
+          <select id="inputme" class="form-control" [(ngModel)]="me_type" 
+          name="METype" disabled required>
+            <option selected>Select the ME Type</option>
+            <option>Civil</option>
+            <option>Electrical</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>S/WON</label>
+          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" 
+          readonly name="RequestSwon"
+           placeholder="" required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Budget Type</label>
+          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type"
+            name="budgetType" disabled required>
+            <option selected>Select the Budget Type</option>
+            <option>Capex</option>
+            <option>Opex</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Available Budget(INR)</label>
+          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget"
+            name="availableBudget" readonly
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Consumed Budget(INR)</label>
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget"
+            name="consumedBudget" readonly
+            required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Balance Budget(INR)</label>
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget"
+            name="balanceBudget" readonly
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Request Subject</label>
+        <textarea placeholder="" id="subject" class="form-control" 
+        readonly [(ngModel)]="req_subject" name="ReqSubject"
+         name="RequestSubject" required></textarea>
       
-    <!-- </div> -->
-    <div class="col-lg-6"></div>
-    <div class="text-center col-lg-6">
-      <!-- <a routerLink="dashboard" >Resend</a>
-      <router-outlet></router-outlet>
-      <footer></footer> -->
-      <!-- (click)="goToUpgrade()" -->
-      <button type="button"  
-        class="btn btn-danger btn-large"
-        style="width: 60%;"
-        (click)="userDataService.ResendUpdate(view.req_id);this.openSnackBar('Request Resend Successfully!');"
-        > 
-      
-        Resend For Change
-      </button>
-    </div>
-     </div>
-  <hr />
-</div>
-<!-- This shows up if you are a Approver and want to give a feedback -->
-<div
-  class="container"
-  *ngIf="
-    view.req_status === 'UnderNeg' &&
-    view.req_status === 'Pending' &&
-    this.userDataService.userRole !== 1
-  "
-  style="
-    background-color: white;
-    margin-top: 10px;
-    box-shadow: 0px 0px 4px black;
-  "
->
-  <textarea
-    rows="6"
-    style="
-      width: 100%;
-      height: 100%;
-      margin-top: 10px;
-      border: 2px slateblue solid;
-      border-radius: 1px;
-    "
-    placeholder="Write here"
-    [(ngModel)]="comment"
-  >
-  </textarea>
-  <button (click)="submitFeedback()" class="btn btn-lg btn-primary">
-    Submit
-  </button>
- 
+      </div>
+
+      <div class="form-group">
+        <label for="reqdes">Request Description</label>
+        <textarea id="description" placeholder="" 
+        readonly [(ngModel)]="req_description"
+         class="form-control" name="Requestdes" maxlength="5000"
+          required></textarea>
+       
+      </div>
+      <div class="form-group" *ngIf="this.req_status!='Closed'">
+        <label for="reqdes">Add Comment</label>
+        <textarea id="comment" placeholder="" 
+         [(ngModel)]="comment"
+         class="form-control" name="comment"
+          ></textarea>
+       
+      </div>
+  
+      <div class="text-center"  *ngIf="this.req_status!='Closed'">
+        <button mat-raised-button class="col-bg-button" (click)="form.valid ? onSubmit() : null"
+          [disabled]="!form.valid">
+          Resend for change
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

@@ -1,0 +1,103 @@
+.example-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: transparent;
+    width: 100%;
+  
+  }
+  
+  .example-is-mobile .example-toolbar {
+    position: fixed;
+    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+    z-index: 2;
+  }
+  
+  
+  .example-sidenav-container {
+    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+    flex: 1;
+    width: 100%;
+    color: white;
+  }
+  .sidenav{
+    background-color: #000046da;
+    color: white;
+    width: 17%;
+  }
+  .example-is-mobile .sidenav{
+    background-color: #000046;
+    color: aliceblue;
+    width: 100%;
+  }
+  .example-is-mobile .example-sidenav-container {
+    /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
+       `<body>` to be our scrolling element for mobile layouts. */
+    flex: 1 0 auto;
+  }
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  .content{
+    width: 100%;
+    height: 100%;
+    /* background-image: url("../../assets/bgimg.png"); */
+    background-repeat: repeat;
+    background-size: 250px 100px;
+    /* background-color:  rgba(86, 123, 146, 0.445); */
+    /* background-color: rgb(54, 92, 134); */
+    background-color: rgba(239, 244, 250, 0.404);
+    padding: 0px 0px 0px 0px;
+    color: black;
+    padding-left: 10px;
+  }
+  .example-toolbar{
+    background: linear-gradient(to right, #000046, #1cb5e0);
+  }
+  .maindiv{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 10px;
+    border-radius: 100px;
+    border-color: black;
+    width: 100%;
+    width: 99%;
+    color: black;
+  }
+  .example-is-mobile .maindiv{
+    margin: 0px;
+    width: 100%;
+  }
+  .example-card{
+    margin-top: 5px;
+  }
+  mat-card-title{
+    /* background: linear-gradient(to right, #000046, #1cb5e0); */
+    width: 100% !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  mat-card{
+    background-color: rgba(70, 227, 238, 0.411);
+    background: white;
+  }
+  .sidenav .btn{
+    color: white;
+  }
+  .btn{
+    color: rgb(245, 237, 237);
+  }
+  .graph{
+    height: 50%;
+  }
+  .title{
+    background: linear-gradient(to right, #000046, #1cb5e0);
+    color: white;
+    padding-left: 5px;
+  }
+  

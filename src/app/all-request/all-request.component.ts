@@ -1,35 +1,28 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MatTableDataSource, MatPaginator,MatSort } from '@angular/material';
-import { RequestService} from'../Services/RequestService';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-all-request',
   templateUrl: './all-request.component.html',
   styleUrls: ['./all-request.component.css'],
-  providers:[RequestService]
 })
 export class AllRequestComponent implements OnInit {
-  displayedColumns: string[] = ['req_id', 'Requesttitle', 'Request Type', 'Requester Id' ,
-  'Request City', 'requestinitdate'  , 'status',  'view' , 'Approve'];
-  //public dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
+  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
+    'RequestDate', 'status', 'view', 'Approve'];
   dataSource = new MatTableDataSource();
-  members;
-  public userId;
-  updatedData = [];
-  //@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  // tslint:disable-next-line: no-shadowed-variable
-  @ViewChild(MatPaginator,{static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort,{static: true}) sort: MatSort;
-  constructor( public UserDataService: UserDataService,public requestService: RequestService , private changeDetectorRefs: ChangeDetectorRef) {}
-  ngOnInit() {
-      console.log("AllRequest Component");
-      this.userId = JSON.parse(localStorage.getItem('userId'));
-      console.log(this.userId);
-      return this.UserDataService.getAllRequest(this.userId).subscribe((response:any)=>{
 
-        this.dataSource.data=response.req_data;
-      })
-  
+
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  constructor(private route: Router, public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef) { }
+  ngOnInit() {
+    console.log("AllRequest Component");
+    return this.UserDataService.getAllRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+      console.log(response);
+      this.dataSource.data = response
+    });
+
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -37,28 +30,10 @@ export class AllRequestComponent implements OnInit {
   }
   ngOnDestroy() {
   }
-
-  approve(no: number , id: string) {}
-  findStatus(reqNo: number) {
-    let status: string;
-    // if (this.UserDataService.currUser.designation === 'Requester'
-    // || this.UserDataService.currUser.designation === 'admin') {
-    //   this.RequestDataService.allRequests.forEach(req => {
-    //     if (req.RequestNo === reqNo) {
-    //       status = req.status;
-    //     }
-    //   });
-    //   return status;
-    // }
-    // this.RequestDataService.allRequests.forEach(req => {
-    //   if (req.RequestNo === reqNo) {
-    //     req.ReqApprovers.forEach(app => {
-    //       if (app.name === this.UserDataService.currUser.firstname) {
-    //         status = app.status;
-    //       }
-    //     });
-    //   }
-    // });
-    return status;
+  status(reqId) {
+    this.route.navigate(['/main/status', reqId]);
+  }
+  view(req_id, pnc) {
+    this.route.navigate(['/main/request-form', req_id, pnc]);
   }
 }

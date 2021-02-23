@@ -1,10 +1,9 @@
+import { ReqSchema } from './../Services/ReqSchema';
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { ReqSchema } from '../Services/ReqSchema';
 import { MatSnackBar } from '@angular/material';
-import {Router} from '@angular/router';
-import {Location} from '@angular/common';
-import {FormBuilder,FormGroup,FormControl,Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router,ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-view-req',
@@ -12,93 +11,47 @@ import {FormBuilder,FormGroup,FormControl,Validators} from '@angular/forms';
   styleUrls: ['./view-req.component.css']
 })
 export class ViewReqComponent implements OnInit {
-  view: ReqSchema;
-  public req_id;
-  public req_title;
-  public req_type;
-  public req_budget;
-  public req_date;
-  public req_description;
-  public req_initiator_id;
-  public req_status;
-  public role_name;
-  public req_action;
-  workflow;
+  title = 'ambiencemax';
   comment = '';
+  userRole = '';
   Approvers = [];
   appExists = false;
-  constructor(public userDataService: UserDataService , private router: Router,public snackBar: MatSnackBar,private _location: Location) {
-    this.view = this.userDataService.viewReq;
-    this.workflow=this.userDataService.RoleMap;
-    if (this.userDataService.userRole !== null) {
-      localStorage.setItem('viewReq', JSON.stringify(this.view));
-      console.log(this.view);
-    }
-  }
-  currReqApprovers = [];
-  submitFeedback() {
-    // this.userDataService.viewReq.comment.push(this.comment);
-    // this.userDataService.viewReq.status = 'UnderNeg';
-    // console.log(this.userDataService.viewReq.comment);
-  }
-  goToUpgrade() {
-
-    this.router.navigate(['/dialogg', this.view.req_id]);
-    console.log(this.view.req_id, 'In resend button');
-  
-  }
-  onSubmit() {
-    // console.log(this.currReqApprovers);
-    // this.userDataService.viewReq.status = 'Pending';
-    // console.log(this.userDataService.viewReq.status);
-    // if (this.userDataService.currUser.designation === 'admin') {
-    //   this.currReqApprovers.forEach( e => {
-    //     this.userDataService.addApprovers(this.view, e );
-    //   });
-    // }
-  }
-  backClicked() {
-    this._location.back();
-    console.log( 'goBack()...' );
-    // let main='Pending';
-    //  this.router.navigate([`/dashboard/${main}`]);
-    //   console.log("dashboard");
-    
+  me_type;
+  req_id;
+  budget_type;
+  available_budget;
+  balance_budget;
+  consumed_budget;
+  req_description='';
+  req_swon;
+  req_subject;
+  req_type;
+  resendToId;
+  accessID;
+  user_name;
+  req_status;
+  req_number;
+  constructor(private actrouter: ActivatedRoute,public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   ngOnInit() {
-    this.userDataService.toBeApproved=false;
-    if ( this.userDataService.viewReq === null || this.userDataService.viewReq === undefined) {
-      this.userDataService.viewReq = JSON.parse(localStorage.getItem('viewReq'));
-      this.userDataService.toBeApproved = JSON.parse(localStorage.getItem('toBeApproved'));
-      this.userDataService.userRole=JSON.parse(localStorage.getItem('userRole'));
-      // console.log(JSON.parse(localStorage.getItem('toBeApproved')));
-      console.log(this.userDataService.viewReq);
-      this.view = this.userDataService.viewReq;
-      this.workflow=this.userDataService.RoleMap;
-      console.log(this.view);
-      this.userDataService.message = JSON.parse(localStorage.getItem('message'));
-      //this.userDataService.userRole = JSON.parse(localStorage.getItem('userData')).userRole;
-      //console.log("Role",this.userDataService.RoleMap);
-    }
-    this.userDataService.getViewRequestData(this.userDataService.viewReq.req_id).subscribe((response:any)=>{
-      this.req_id=response.req_data[0]['req_id'];
-      this.req_title=response.req_data[0]['req_title'];
-      this.req_type=response.req_data[0]['req_type'];
-      this.req_initiator_id=response.req_data[0]['req_initiator_id'];
-      this.req_date=response.req_data[0]['req_date'];
-      this.req_budget=response.req_data[0]['req_budget'];
-      this.req_description=response.req_data[0]['req_description'];
-      this.req_status=response.req_data[0]['req_status'];
-      this.role_name=response.role_name;
-      this.req_action=response.req_action;
-      //console.log(this.role_name);
+    this.actrouter.params.subscribe(params => {
+      this.req_id = +params['id'];
+      console.log('this.req_id ', this.req_id,this.resendToId);
     });
-    console.log(localStorage);
-  }
-  openSnackBar(message: string) {
-    this.snackBar.open(message, '', {
-      duration: 3500,
-      panelClass: ['simple-snack-bar']
+    this.user_name=JSON.parse(localStorage.getItem('user_name'));
+    this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));
+    this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+      this.budget_type = response[0]["BudgetType"];
+      this.me_type = response[0]["METype"];
+      this.available_budget = response[0]["RequestAvailableBudget"];
+      this.balance_budget = response[0]["RequestBalanceBudget"];
+      this.consumed_budget = response[0]["RequestConsumedBudget"];
+      this.req_description = response[0]["RequestDescription"];
+      this.req_swon = response[0]["RequestSWON"];
+      this.req_subject = response[0]["RequestSubject"];
+      this.req_type = response[0]["RequestType"];
+      this.req_status=response[0]["RequestStatus"];
+      this.req_number=response[0]["RequestNumber"];
     });
   }
 }

@@ -3,25 +3,16 @@ let express = require("express"),
     router = express.Router(),
     con = require("../mysql_config/config");
 
-router.post("/viewUpdateRequest", (req, res) => {
-    data = req.body;
-    req_id = data.reqId;
-    sql1 = `select * from requests where req_id='${req_id}';`
+router.post("/requestDetails", (req, res) => {
+    sql1 = `select * from datarumprequest where RUMPRequestPK=${req.body.reqId};`
     con.query(sql1, (err, result) => {
         if (err) {
-            console.log(err);
-        }
+            console.log(err);}
         else {
-            req_data = result
-            console.log(result);
-            res.send(
-                JSON.stringify({
-                    req_data: req_data
-                })
-            );
+            res.send(JSON.stringify(result));
         }
-    })
-})
+    });
+});
 
 router.post("/updateRequest", (req, res) => {
     data = req.body;

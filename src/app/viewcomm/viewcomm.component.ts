@@ -1,9 +1,9 @@
+import { ReqSchema } from './../Services/ReqSchema';
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { ReqSchema } from '../Services/ReqSchema';
 import { MatSnackBar } from '@angular/material';
-import {FormBuilder,FormGroup,FormControl,Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router,ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-viewcomm',
@@ -12,72 +12,66 @@ import {Router} from '@angular/router';
 })
 export class ViewcommComponent implements OnInit {
   title = 'ambiencemax';
-  view: ReqSchema;
-  // allocateForm:FormGroup;
-  // users:any=[];
   comment = '';
-  userRole='';
+  userRole = '';
   Approvers = [];
   appExists = false;
-  constructor(public userDataService: UserDataService , private route: Router,  private router: Router,public snackBar: MatSnackBar) {
-    // this.allocateForm = this.fb1.group({
-    //   user: ['', Validators.required]
-     
-    // }
-    // );
-  
-
-    this.view = this.userDataService.viewReq;
-    if (this.userDataService.userRole !== null) {
-      localStorage.setItem('viewReq', JSON.stringify(this.view));
-      console.log(this.view);
-    }
+  me_type;
+  req_id;
+  budget_type;
+  available_budget;
+  balance_budget;
+  consumed_budget;
+  req_description='';
+  req_swon;
+  req_subject;
+  req_type;
+  resendToId;
+  accessID;
+  user_name;
+  req_status;
+  req_number;
+  constructor(private actrouter: ActivatedRoute,public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   currReqApprovers = [];
   submitFeedback() {
-    // this.userDataService.viewReq.comment.push(this.comment);
-    // this.userDataService.viewReq.status = 'UnderNeg';
-    // console.log(this.userDataService.viewReq.comment);
+
   }
-// btnClick=function(){
-//   this.router.navigate(['add-dialog']);
-// }
-goToUpgrade() {
-  
-  //this.router.navigate(['/dialogg']);
-
-}
-goToRequestAction(req_id) {
-  this.route.navigate(['/reqform', req_id]);
-  console.log(req_id);
-}
-
-  onSubmit() {
-    // console.log(this.currReqApprovers);
-    // this.userDataService.viewReq.status = 'Pending';
-    // console.log(this.userDataService.viewReq.status);
-    // if (this.userDataService.currUser.designation === 'admin') {
-    //   this.currReqApprovers.forEach( e => {
-    //     this.userDataService.addApprovers(this.view, e );
-    //   });
-    // }
+  goToUpgrade() {
   }
-
+  goToRequestAction(req_id) {
+    this.route.navigate(['/reqform', req_id]);
+    console.log(req_id);
+  }
   ngOnInit() {
-    // this.userDataService.getusers().subscribe((data)=>{
-    //   this.users=data;
-    // })
-    if ( this.userDataService.viewReq === null || this.userDataService.viewReq === undefined) {
-      this.userDataService.viewReq = JSON.parse(localStorage.getItem('viewReq'));
-      this.userDataService.toBeApproved = JSON.parse(localStorage.getItem('toBeApproved'));
-      // console.log(JSON.parse(localStorage.getItem('toBeApproved')));
-      console.log(this.userDataService.viewReq);
-      this.view = this.userDataService.viewReq;
-      console.log(this.view);
-      this.userDataService.message = JSON.parse(localStorage.getItem('message'));
-      this.userDataService.userRole = JSON.parse(localStorage.getItem('userData')).userRole;
-    }
-    console.log(localStorage);
+    this.actrouter.params.subscribe(params => {
+      this.req_id = +params['reqId'];
+      this.resendToId=+params['id'];
+      console.log('this.req_id ', this.req_id,this.resendToId);
+    });
+    this.user_name=JSON.parse(localStorage.getItem('user_name'));
+    this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));
+    this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+      this.budget_type = response[0]["BudgetType"];
+      this.me_type = response[0]["METype"];
+      this.available_budget = response[0]["RequestAvailableBudget"];
+      this.balance_budget = response[0]["RequestBalanceBudget"];
+      this.consumed_budget = response[0]["RequestConsumedBudget"];
+      this.req_description = response[0]["RequestDescription"];
+      this.req_swon = response[0]["RequestSWON"];
+      this.req_subject = response[0]["RequestSubject"];
+      this.req_type = response[0]["RequestType"];
+      this.req_status=response[0]["RequestStatus"];
+      this.req_number=response[0]["RequestNumber"];
+    });
+  }
+  onSubmit() {
+    console.log("ggggg",this.comment);
+    this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.accessID,this.user_name).subscribe((ResData) => {
+      console.log("Successfully inserted!!");});
+;
+    this.openSnackBar("Request is Successfully Resend")
+    this.route.navigate(['/main/open']);
   }
   openSnackBar(message: string) {
     this.snackBar.open(message, '', {
@@ -85,8 +79,7 @@ goToRequestAction(req_id) {
       panelClass: ['simple-snack-bar']
 
     });
-    this.router.navigateByUrl('dashboard/open');
+    this.router.navigateByUrl('main/open');
   }
 }
 
-  

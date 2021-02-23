@@ -2,52 +2,45 @@ import { Label } from 'ng2-charts';
 import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { RequestService } from '../Services/RequestService';
 import { ReqSchema } from '../Services/ReqSchema';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-pending',
   templateUrl: './pending.component.html',
-  styleUrls: ['./pending.component.css'],
-  providers: [RequestService]
+  styleUrls: ['./pending.component.css']
 })
 export class PendingComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['req_id', 'Requesttitle', 'Request Type', 'Requester Id',
-    'Request City', 'requestinitdate', 'status', 'view', 'Approve'];
-  // public dataSource = new MatTableDataSource(this.UserDataService.desiredRequests);
+  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
+    'RequestDate', 'status', 'view', 'Approve'];
   dataSource = new MatTableDataSource();
   members;
-  public userId;
-  public pendingRequests: ReqSchema[] = [];
-  public roleId;
-  public h_id;
-  updatedData = [];
-
-
+  role_id;
+  accessId;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(public UserDataService: UserDataService, public requestService: RequestService, private changeDetectorRefs: ChangeDetectorRef) { }
+  constructor(private route: Router, public UserDataService: UserDataService) { }
   ngOnInit() {
     console.log("pending Component");
 
-    this.userId = JSON.parse(localStorage.getItem('userId'));
-    console.log(this.userId);
-    return this.UserDataService.getPendingRequest(this.userId).subscribe((response: any) => {
+    this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
+    this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    this.UserDataService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
 
-      this.dataSource.data = response.req_data;
+      this.dataSource.data = response;
     });
-    
+
   }
+  view(req_id, pnc) {
+    this.route.navigate(['/main/view', req_id]);
+  }
+  status(reqId) {
+    this.route.navigate(['/main/status', reqId]);
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnDestroy() {
   }
-
-  approve(no: number, id: string) { }
-  findStatus(reqNo: number) {
-    let status: string;
-    return status;
-  }
-
 }

@@ -8,50 +8,94 @@
       </h5>
       <hr>
       <div class="form-row">
+
         <div class="form-group col-md-6">
-          <label for="inputid">Requester ID</label>
-          <input type="text" id="inputid" class="form-control" name="RequesterId"
-            [(ngModel)]="this.currReq.req_initiator_id" #userId="ngModel" readonly required />
+          <label>ME Type</label>
+          <select id="inputme" class="form-control" [(ngModel)]="currReq.me_type" name="METype"
+            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+            <option selected>Select the ME Type</option>
+            <option>Civil</option>
+            <option>Electrical</option>
+          </select>
         </div>
+
         <div class="form-group col-md-6">
-          <label for="reqtitle">Request Title</label>
-          <input type="text" id="reqtitle" placeholder="" class="form-control" name="RequestTitle"
-            [(ngModel)]="currReq.req_title" required />
+          <label>S/WON</label>
+          <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon"
+            [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" name="RequestSwon" placeholder=""
+            required />
         </div>
+
       </div>
 
       <div class="form-row">
+
         <div class="form-group col-md-6">
-          <label for="inputbudget">Request Budget</label>
-          <input type="number" class="form-control" pattern="[0-9]+" min="1" id="inputbudget" name="RequestBudget"
-            [(ngModel)]="currReq.req_budget" required />
+          <label>Budget Type</label>
+          <select id="inputbudget" class="form-control" [(ngModel)]="currReq.budget_type" name="budgetType"
+            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+            <option selected>Select the Budget Type</option>
+            <option>Capex</option>
+            <option>Opex</option>
+          </select>
         </div>
+
+        <div class="form-group col-md-6">
+          <label>Available Budget(INR)</label>
+          <input class="form-control" id="available" type="number" [(ngModel)]="currReq.available_budget"
+            name="availableBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Consumed Budget(INR)</label>
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="currReq.consumed_budget"
+            name="consumedBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Balance Budget(INR)</label>
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="currReq.balance_budget"
+            name="balanceBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
         <div class="form-group col-md-6">
           <label for="inputdes">Request Type</label>
-          <select id="inputdes" class="form-control" name="RequestType" [(ngModel)]="currReq.req_type" required>
-            <option selected>Choose...</option>
-            <option>Request for new assets</option>
-            <option>Request for Repair </option>
-            <option>Request for Maintainance </option>
-            <option>Other </option>
+          <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
+            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+            <option selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
           </select>
         </div>
       </div>
-
+      <div class="form-group">
+        <label>Request Subject</label>
+        <textarea placeholder="" id="subject" class="form-control"
+          [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" [(ngModel)]="subject" name="ReqSubject"
+          (ngModelChange)="valueChange(subject)" maxlength="250" name="RequestSubject" required></textarea>
+        {{remainingText}} Characters left.
+      </div>
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="reqdes" placeholder="" class="form-control" name="Requestdes"
-          [(ngModel)]="currReq.req_description" required></textarea>
+        <textarea id="description" placeholder="" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)"
+          [(ngModel)]="description" (ngModelChange)="valueChangeDiscription(description)" class="form-control"
+          name="Requestdes" maxlength="5000" required></textarea>
+        {{remaining_description}} Characters left.
       </div>
-      <div class="form-group">
+      <div class="form-group" *ngIf="!((this.role_id == 0 && this.req_id) || this.role_id!=0)">
         <form>
 
-          <!-- <input type="file" name="images" multiple (change)="selectMultipleImage($event)" />
-            <button mat-button class="stylepopupbuttonconfirm" type="submit" (click)="onMultipleSubmit()">
-              Upload</button> -->
-              
-              <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
+          <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="fileInput.click()">Select File</button>
 
 
@@ -59,7 +103,9 @@
             multiple="true">
 
           <div *ngFor="let selected of listOfFiles;let index = index">
-            <label><h6>{{selected}}</h6> </label>
+            <label>
+              <h6>{{selected}}</h6>
+            </label>
             <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
               <mat-icon>delete</mat-icon>
             </button>
@@ -68,19 +114,223 @@
           <div class="alert alert-danger" role="alert" *ngIf="areCredentialsInvalid">
             File Size should not be greater than 10MB.
           </div>
+          <br>
         </form>
-
-
+      </div>
+      <div class="text-center" *ngIf="(!this.req_id)">
+        <button mat-raised-button class="col-bg-button" (click)="form.valid ? onSubmit() : null"
+          [disabled]="!form.valid">
+          Raise Request
+        </button>
       </div>
 
-
       <div class="text-center">
-        <button type="submit" class="btn btn-danger btn-lg" (click)="form.valid ? onSubmit() : null"
-          [disabled]="!form.valid">
-          Submit Request
-        </button>
+        <br>
+        <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
+          <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
+            <button mat-raised-button class="col-bg-button" (click)=" onApprove()">
+              Approve
+            </button>
+          </div>
+          <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
+          || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
+            <button mat-raised-button class="col-bg-button" (click)=onResend()>
+              Resend
+            </button>
+          </div>
+        </div>
+        <div class="text-center" *ngIf="(this.role_id ==0 && this.currReq.req_status=='Closed')">
+          <button mat-raised-button class="col-bg-button" (click)=onCompelete()>
+            Compelete
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- BOQ Form -->
+
+<div class="row my-3"
+  *ngIf="((this.boqDescription!=null && this.boqDescription!='')||this.role_id==3 || this.role_id==4)">
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;">
+    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
+      style="border-radius: 10px;" action="#">
+      <h5 class="text-center">
+        Enter BOQ Details
+      </h5>
+      <hr>
+      <div class="form-group">
+        <label>BOQ Description</label>
+        <textarea id="subject" class="form-control" [(ngModel)]="boqDescription"
+          [readonly]="(this.boqDescription!=null && this.boqDescription!='')" name="boqDescription" required></textarea>
+      </div>
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>BOQ Estimated Cost</label>
+          <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost"
+            [readonly]="(this.boqDescription!=null && this.boqDescription!='')" type="number" name="boqEstimatedCost"
+            required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>BOQ Estimated Time</label>
+          <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime"
+            [readonly]="(this.boqDescription!=null && this.boqDescription!='')" type="text" name="boqEstimatedTime"
+            required />
+        </div>
+      </div>
+      <div class="form-group" *ngIf="(this.role_id==3 || this.role_id==4)">
+        <form>
+          <label for="file">Upload File Here:</label><br>
+          <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
+          <button mat-raised-button (click)="fileInput.click()">Add</button>
+          <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
+            multiple="true">
+          <div *ngFor="let selected of listOfFiles;let index = index">
+            <label>
+              <h6>{{selected}}</h6>
+            </label>
+            <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <br>
+
+        </form>
+      </div>
+      <div class="text-center">
+        <div class="form-row">
+          <div class="form-group col-md-5" *ngIf="this.role_id==3 || this.role_id==4">
+            <button type="submit" mat-raised-button class="col-bg-button" (click)="BOQform.valid ? onBOQSubmit() : null"
+              [disabled]="!BOQform.valid">
+              Submit
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div class="col-md-3"></div>
 </div>
+<!-- BOQ End -->
+
+<!-- PNC Form -->
+<div class="row my-3" *ngIf="(this.is_pnc==1)">
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;">
+    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
+      style="border-radius: 10px;" action="#">
+      <h5 class="text-center">
+        PNC Upload & Vendor Tagging/Allocation
+      </h5>
+      <hr>
+
+      <div class="example-container mat-elevation-z8" *ngIf="selectedSpoc>0">
+
+        <mat-radio-group [(ngModel)]="selectedElement" [disabled]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')" name="selectedElement">
+
+          <table mat-table [dataSource]="dataSource" >
+
+            <!-- Selected Column -->
+            <ng-container matColumnDef="selected">
+              <th mat-header-cell *matHeaderCellDef>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <mat-radio-button [value]="element">
+                </mat-radio-button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Vendor Name">
+              <th mat-header-cell *matHeaderCellDef> Vendor Name</th>
+              <td mat-cell *matCellDef="let element"> {{element.venName}} </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="spoc1">
+              <th mat-header-cell *matHeaderCellDef> SPOC1</th>
+              <td mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="spoc2">
+              <th mat-header-cell *matHeaderCellDef> SPOC2 </th>
+              <td mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="spoc3">
+              <th mat-header-cell *matHeaderCellDef> SPOC3 </th>
+              <td mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+        </mat-radio-group>
+      </div>
+      <br>
+      <div class="form-group" *ngIf="selectedSpoc>0">
+
+        <label>Allocated Days</label>
+        <input class="form-control" id="consumed" type="number"
+          [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
+          [(ngModel)]="allocatedDays" name="consumedBudget" required />
+      </div>
+
+      <div class="form-group" *ngIf="selectedSpoc>0">
+        <label>Allocation Start Date</label>
+        <br>
+        <mat-form-field appearance="fill">
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker1" placeholder="Angular forms"
+            [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
+            [(ngModel)]="allocationStartDate" name="allocationStartDate">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <label>Actual Cost</label>
+        <input class="form-control" id="consumed" type="number"
+          [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
+          [(ngModel)]="actualCost" name="consumedBudget" required />
+      </div>
+
+
+      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed')">
+        <form>
+          <label for="file">Upload File Here:</label><br>
+          <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
+          <button mat-raised-button (click)="fileInput.click()">Add</button>
+          <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput>
+          <div *ngFor="let selected of listOfFiles;let index = index">
+            <label>
+              <h6>{{selected}}</h6>
+            </label>
+            <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <br>
+        </form>
+      </div>
+      <div class="text-center">
+        <div class="form-row">
+          <br>
+          <div class="form-group col-md-5"
+            *ngIf="((this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed'))">
+            <button type="submit" mat-raised-button class="col-bg-button" (click)="onPncSumbit()">
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+<!-- PNC end -->

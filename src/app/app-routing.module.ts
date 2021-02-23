@@ -6,10 +6,9 @@ import { RequestFormComponent } from './request-form/request-form.component';
 import { ViewcommComponent } from './viewcomm/viewcomm.component';
 
 
-const routes: Routes = [{
-  path: 'dialogg/:id', component: AddDialogComponent,
-
-},
+const routes: Routes = [
+  
+{path: 'dialogg/:id', component: AddDialogComponent,},
 {path: 'viewcomm' , component: ViewcommComponent},
 {path: 'reqform/:id',component:RequestFormComponent}
 ];

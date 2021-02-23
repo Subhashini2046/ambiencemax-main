@@ -48,14 +48,6 @@ export class AppComponent {
 
   title = 'AmbienceMax';
   logout() {
-    this.UsrDataService.userId = null;
-    this.UsrDataService.desiredRequests = [];
-    this.UsrDataService.allRequests = [];
-    this.UsrDataService.pendingRequests = [];
-    this.UsrDataService.closedRequests = [];
-    this.UsrDataService.openRequests = [];
-    this.UsrDataService.toBeApproved = false;
-    this.UsrDataService.message = '';
     this.UsrDataService.main = '';
     // this.UsrDataService.currUser = undefined;
   }

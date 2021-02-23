@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
-import {FormBuilder,FormGroup,FormControl,Validators} from '@angular/forms';
-import {Router,ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 
 
 import { ReqSchema } from '../Services/ReqSchema';
@@ -13,56 +13,34 @@ import { ReqSchema } from '../Services/ReqSchema';
   styleUrls: ['./add-dialog.component.css']
 })
 export class AddDialogComponent implements OnInit {
-  private SelectedCountry: any;
+  accessId;
+  allocateForm: FormGroup;
+  req_id;
+  users: any = [];
+  constructor(private fb1: FormBuilder, private router: Router,
+    private actrouter: ActivatedRoute, public userDataService: UserDataService) {
 
-  view: ReqSchema;
-  allocateForm:FormGroup;
-  getRole= [];
-  req_id: any;
-  submitted = false;
-  show=true;
-  users:any=[];
-  constructor(private fb1: FormBuilder,private router: Router,private actrouter: ActivatedRoute,public userDataService: UserDataService) {
-    this.view = this.userDataService.viewReq;
-  this.allocateForm = this.fb1.group({
+    this.allocateForm = this.fb1.group({
       request_actionnnn: ['', Validators.required]
-     
+
     });
   }
-  goToUpgrade() {
-    this.router.navigate(['/reqform']);
+  ngOnInit() {
+    this.actrouter.params.subscribe(params => {
+      this.req_id = +params['id'];
+    });
+    this.userDataService.getUsers(this.req_id).subscribe((data) => {
+      this.users = data;
+    })
   }
-  
-
   navigateTo() {
-    console.log('Clicked');
-  
-    this.router.navigate(['/viewcomm']);
-  
+    this.router.navigate(['main/viewcomm', this.accessId, this.req_id]);
+  }
+  onCancel() {
+    this.router.navigate(['/main/open']);
+  }
 }
-onChangeCountry($event) {
-  console.log("select user........");
-  this.SelectedCountry = $event.target.options[$event.target.options.selectedIndex].text;
-  console.log("Selected userrole",this.SelectedCountry);
-  this.userDataService.resendTo=this.SelectedCountry;
-
-}  
-
-ngOnInit() {
-  
-
-  this.actrouter.params.subscribe(params => {
-    this.req_id = +params['id'];
-  });
-  console.log(this.req_id,'RQID');
 
 
-  this.userDataService.getUsers(this.req_id).subscribe((data)=>{
-    this.users=data;
-  })
-}
-}
-  
-  
 
 

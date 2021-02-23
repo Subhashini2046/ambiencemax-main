@@ -1,11 +1,12 @@
 var moment = require('moment');
 var multer=require('multer');
 var mysql = require('mysql');
+const date = require('date-and-time');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "password",
-    database: "ambi1",
+    database: "ambience_max",
     insecureAuth : true,
     multipleStatements: true
 });
@@ -23,15 +24,15 @@ let mysqlConnection2 = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'password',
-    database: 'ambi1',
+    database: 'ambience_max',
     multipleStatements: true
 })
 
-var DIR = './uploads/';
-
+//var DIR = './uploads/';
+var DIR = 'C:\CommonFolderMirrorRUMP_Req_RUMP_Supporting_Docs';
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {
-      callBack(null, 'uploads')
+      callBack(null, 'C:\CommonFolderMirrorRUMP_Req_RUMP_Supporting_Docs')
   },
   filename: (req, file, callBack) => {
       callBack(null, `FunOfHeuristic_${file.originalname}`)
@@ -40,6 +41,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 app.post('/multipleFiles', upload.array('files'), (req, res, next) => {
+  const files = req.files;
+  console.log(files);
+  if (!files) {
+    const error = new Error('No File')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send({sttus:  'ok',
+    files:files
+  });
+})
+
+const storagepnc = multer.diskStorage({
+  destination: (req, file, callBack) => {
+      callBack(null, 'C:\CommonFolderMirrorRUMP_Req_PNC_Docs')
+  },
+  filename: (req, file, callBack) => {
+      callBack(null, `_${file.originalname}`)
+  }
+})
+const uploadpnc = multer({ storage: storagepnc })
+app.post('/pncFiles', uploadpnc.array('files'), (req, res, next) => {
   const files = req.files;
   console.log(files);
   if (!files) {
@@ -137,10 +160,9 @@ app.post("/resendReq",(req,res)=>{
     })
   })
   app.post("/addLogNewReq",(req,res)=>{
-    role = req.body.userRole;
-    reqId = req.body.req_id;
-    //aprocessingTime=moment(Date.now()).format('HH:mm:ss');;
-    sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Request Initiate","Initiator","Request Initiated")`
+    const now = new Date();
+    let req_date=date.format(now, 'YYYY-MM-DD HH:mm:ss')
+    sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},(SELECT  RUMPInitiatorId FROM datarumprequest WHERE RUMPRequestPK = ${req.body.req_id}),'Initiated Phase 1','${req_date}','${req.body.user_name}',1);`
     con.query(sql,function(err,result){
       if(err){
         console.log(err);
@@ -149,7 +171,7 @@ app.post("/resendReq",(req,res)=>{
         console.log(result);
         res.send(JSON.stringify({
           result:"passed",
-          id:res.insertId
+          id:res.insertId,
         }));
       }
     })
@@ -168,8 +190,12 @@ app.post("/resendReq",(req,res)=>{
 app.get('/api/users/:id', (req, res) => {
     let req_id = req.params.id;
     console.log(req_id);
-    mysqlConnection2.query(`select distinct aaction_taken_by from request_actionnnn where req_id=${req_id} ;`, (err, rows, fields) => {
-        if (!err) {
+    mysqlConnection2.query(`select distinct linkRUMPAdminAccessPK as accessId,
+    pickRUMPRoleDescription as role from linkrumpadminaccess inner join datarumprequestaction 
+    on(datarumprequestaction.RUMPRequestRole=linkrumpadminaccess.linkRUMPAdminAccessPK) 
+    inner join pickrumprole on(linkrumpadminaccess.linkRUMPRoleFK = pickrumprole.pickRUMPRolePK) 
+    where RUMPRequestFK = '${req_id}';`, (err, rows, fields) => {
+      if (!err) {
           console.log("..........//");
             console.log(rows);
             res.send(rows);

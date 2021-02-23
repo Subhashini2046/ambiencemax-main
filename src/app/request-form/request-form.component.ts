@@ -1,16 +1,17 @@
-import { Component, ViewChild,OnInit, SystemJsNgModuleLoader } from '@angular/core';
+import { vendor } from './../approve-request/approve-request.component';
+import { Component, ViewChild, OnInit, SystemJsNgModuleLoader } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
-import { Router } from '@angular/router';
 import { format } from 'url';
 import { ReqSchema } from '../Services/ReqSchema';
-import {FormsModule} from "@angular/forms";
-import {FileUploader,FileSelectDirective} from 'ng2-file-upload';
+import { FormsModule } from "@angular/forms";
+import { FileUploader, FileSelectDirective } from 'ng2-file-upload';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
-const URL = 'http://localhost:5600/api';
-//const uri = 'http://localhost:5600/file/upload';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
@@ -18,76 +19,139 @@ const URL = 'http://localhost:5600/api';
 })
 export class RequestFormComponent implements OnInit {
   public userId;
-  AllFileName:any[]=[];
-areCredentialsInvalid = false;
-public filepath=[];
-public fieldValue= [];
-uploader:FileUploader;
-  hasBaseDropZoneOver:boolean;
-  hasAnotherDropZoneOver:boolean;
-  response:string;
-
-
-  title = 'fileUpload';
+  public role_id;
+  req_id = 0;
+  is_pnc = 0;
+  remainingText = 250;
+  remaining_description = 5000;
+  description = "";
+  subject = "";
+  AllFileName: any[] = [];
+  areCredentialsInvalid = false;
+  public filepath = [];
+  public fieldValue = [];
+  requestDetails: any[] = [];
+  // for BOQ form
+  boqDescription: "";
+  boqEstimatedCost: number;
+  boqEstimatedTime: "";
+  filepnc: any[] = [];
+  // for PNC form
+  allocatedDays;
+  allocationStartDate: " ";
+  actualCost;
+  allocateStartDate;
   images;
   multipleImages = [];
- // uploader:FileUploader = new FileUploader({url:uri});
-  attachmentList:any = [];
-  constructor(private http: HttpClient, public UserDataService: UserDataService , private _snackBar: MatSnackBar,private router: Router) {
-  //   this.uploader.onCompleteItem = (item:any, response:any , status:any, headers:any) => {
-  //     this.attachmentList.push(JSON.parse(response));
-  // }
+  attachmentList: any = [];
+  RequestAllocatedVendor;
+  displayedColumns = ['selected', 'Vendor Name', 'spoc1', 'spoc2', 'spoc3'];
+  dataSource: any[] = [];
+  selectedElement: any[] = [];
+  date = new FormControl(new Date());
+  user_name;
+  admin_access_id;
+  constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
-  this.uploader = new FileUploader({
-    url: URL,
-    disableMultipart: true, // 'DisableMultipart' must be 'true' for formatDataFunction to be called.
-    formatDataFunctionIsAsync: true,
-    formatDataFunction: async (item) => {
-      return new Promise( (resolve, reject) => {
-        resolve({
-          name: item._file.name,
-          length: item._file.size,
-          contentType: item._file.type,
-          date: new Date()
-        });
-      });
-    }
-  });
-
-  this.hasBaseDropZoneOver = false;
-  this.hasAnotherDropZoneOver = false;
-
-  this.response = '';
-
-  this.uploader.response.subscribe( res => this.response = res );
-}
+  }
   Approvers = [];
   num = 0;
-  //reqno = this.RequestsDataService.allRequests.length + 1;
   currReq: ReqSchema = {
-    req_date: '' ,
-    req_description: '',
+    req_date: '',
     req_id: 0,
-    req_initiator_id: this.UserDataService.userId,
+    req_initiator_id: 0,
     req_level: 1,
     req_status: 'Pending',
-    req_title: '',
+    req_number: '',
     req_type: '',
     w_id: 0,
-    req_budget: 0
+    me_type: '',
+    req_swon: '',
+    budget_type: '',
+    available_budget: 0,
+    consumed_budget: 0,
+    balance_budget: 0,
+    req_subject: '',
+    req_description: ''
   };
- ngOnInit() {
+  ngOnInit() {
+    console.log('this.req_id ', this.req_id);
     this.userId = JSON.parse(localStorage.getItem('userId'));
-    console.log('user_id',this.userId);
-    this.currReq.req_initiator_id=this.userId;
+    console.log('user_id', this.userId);
+    this.currReq.req_initiator_id = this.userId;
+    this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    this.user_name = JSON.parse(localStorage.getItem('user_name'));
+    this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
+    this.actrouter.params.subscribe(params => {
+      this.req_id = +params['id'];
+      console.log('this.req_id ', this.req_id);
+    });
+    this.actrouter.params.subscribe(params => {
+      this.is_pnc = +params['pnc'];
+      if (this.is_pnc == 1) {
+        this.is_pnc = 1;
+      }
+      else
+        this.is_pnc = 0
+    });
+    console.log('is_pnc', this.is_pnc);
+    if (this.role_id == 3 || this.role_id == 4) {
+      return this.UserDataService.getRequestDetails(this.req_id).subscribe((response: any) => {
+        console.log(response)
+      });
+    }
   }
-  public fileOverBase(e:any):void {
-    this.hasBaseDropZoneOver = e;
+  public selectedSpoc;
+  ngAfterContentInit() {
+    if (this.is_pnc == 1) {
+      this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+        this.dataSource = response;
+        this.selectedElement = response;
+        this.selectedSpoc=this.dataSource.length;
+        console.log(response);
+      });
+    }
+    if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
+
+      this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+        this.requestDetails = response;
+        this.currReq.budget_type = this.requestDetails[0]["BudgetType"];
+        this.currReq.me_type = this.requestDetails[0]["METype"];
+        this.currReq.available_budget = this.requestDetails[0]["RequestAvailableBudget"];
+        this.currReq.balance_budget = this.requestDetails[0]["RequestBalanceBudget"];
+        this.currReq.consumed_budget = this.requestDetails[0]["RequestConsumedBudget"];
+        this.description = this.requestDetails[0]["RequestDescription"];
+        this.currReq.req_swon = this.requestDetails[0]["RequestSWON"];
+        this.subject = this.requestDetails[0]["RequestSubject"];
+        this.currReq.req_type = this.requestDetails[0]["RequestType"];
+        this.boqDescription = this.requestDetails[0]["BOQDescription"];
+        this.boqEstimatedCost = this.requestDetails[0]["BOQEstimatedCost"];
+        this.boqEstimatedTime = this.requestDetails[0]["BOQEstimatedTime"];
+        this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
+        this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
+        this.actualCost = this.requestDetails[0]["ActualCost"];
+        this.is_pnc = this.requestDetails[0]["ispnc"];
+        this.currReq.req_initiator_id=this.requestDetails[0]["initiatorId"];
+        this.currReq.req_level=this.requestDetails[0]["requestLevel"];
+        this.currReq.req_status=this.requestDetails[0]["RequestStatus"];
+        this.RequestAllocatedVendor=this.requestDetails[0]["RequestAllocatedVendor"];
+        // for(let i=0;i<this.selectedElement.length;i++){
+        //   if(this.RequestAllocatedVendor==this.selectedElement[i]["rumpvenVendorPK"]){
+
+        //   }
+        // }
+        console.log((this.currReq.req_status!='Closed'));
+      });
+    }
   }
 
-  public fileOverAnother(e:any):void {
-    this.hasAnotherDropZoneOver = e;
+  valueChange(value) {
+    this.remainingText = 250 - value.length;
   }
+  valueChangeDiscription(value) {
+    this.remaining_description = 5000 - value.length;
+  }
+
   selectImage(event) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -95,93 +159,132 @@ uploader:FileUploader;
     }
   }
 
-  selectMultipleImage(event){
+  selectMultipleImage(event) {
     if (event.target.files.length > 0) {
       this.multipleImages = event.target.files;
     }
   }
 
 
-  onMultipleSubmit(){
-  
-    var filesize=0;
+  onMultipleSubmit() {
+
+    var filesize = 0;
     const formData = new FormData();
-    console.log("nnnnn",this.multipleImages)
-    for(let img of this.multipleImages){
+    console.log("nnnnn", this.multipleImages)
+    for (let img of this.multipleImages) {
       formData.append('files', img);
-     filesize+=img['size'];
-     console.log("/////",img)
-     console.log("///",formData)
+      filesize += img['size'];
+      console.log("/////", img)
+      console.log("///", formData)
     }
-    var fileInMB=10485760;
-    if(filesize>fileInMB){
-      console.log("lll",filesize>fileInMB);
+    var fileInMB = 10485760;
+    if (filesize > fileInMB) {
+      console.log("lll", filesize > fileInMB);
       this.areCredentialsInvalid = true;
       return;
     }
     console.log("lll");
-  //   this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
-  //     for (let i = 0; i < res.files.length; i++) { 
-  //       this.filepath[i]=res.files[i]['path'];
-  //       this.fieldValue[i]=res.files[i]['originalname'];
-  //  // console.log(this.filepath);
-  //     }
-  //     console.log("nnnnnhh",this.fieldValue);
-  // });
+    //   this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
+    //     for (let i = 0; i < res.files.length; i++) { 
+    //       this.filepath[i]=res.files[i]['path'];
+    //       this.fieldValue[i]=res.files[i]['originalname'];
+    //  // console.log(this.filepath);
+    //     }
+    //     console.log("nnnnnhh",this.fieldValue);
+    // });
   }
-  @ViewChild('attachments',{static: false}) attachment: any;
+  @ViewChild('attachments', { static: false }) attachment: any;
 
   fileList: File[] = [];
   listOfFiles: any[] = [];
-  
+
   onFileChanged(event: any) {
-    var filesize=0;
-      for (var i = 0; i <= event.target.files.length - 1; i++) {
-        var selectedFile = event.target.files[i];
-        this.fileList.push(selectedFile);
-        filesize+=this.fileList[i]['size'];
-        this.listOfFiles.push(selectedFile.name);
+    var filesize = 0;
+    for (var i = 0; i <= event.target.files.length - 1; i++) {
+      var selectedFile = event.target.files[i];
+      this.fileList.push(selectedFile);
+      filesize += this.fileList[i]['size'];
+      this.listOfFiles.push(selectedFile.name);
     }
-    var fileInMB=10485760;
-    if(filesize>fileInMB){
-      console.log("lll",filesize>fileInMB);
+    var fileInMB = 10485760;
+    if (filesize > fileInMB) {
+      console.log("lll", filesize > fileInMB);
       this.areCredentialsInvalid = true;
       return;
     }
-    console.log("mmmm",this.fileList);
+    console.log("mmmm", this.fileList);
     this.attachment.nativeElement.value = '';
   }
-  
-  
-  
+
+
+
   removeSelectedFile(index) {
-   // Delete the item from fileNames list
-   this.listOfFiles.splice(index, 1);
-   // delete file from FileList
-   this.fileList.splice(index, 1);
+    this.listOfFiles.splice(index, 1);
+    this.fileList.splice(index, 1);
   }
   onSubmit() {
+    this.currReq.req_subject = this.subject;
+    this.currReq.req_description = this.description;
+    this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
     const formData = new FormData();
     for (let img of this.fileList) {
-      console.log("gggg",img);
       formData.append('files', img);
-      console.log("///",formData)
-  }
-    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
-      for (let i = 0; i < res.files.length; i++) { 
-        this.filepath[i]=res.files[i]['path'];
-        console.log("nnnnnhh",this.filepath[i]);
+    }
+    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+      for (let i = 0; i < res.files.length; i++) {
+        this.filepath[i] = res.files[i]['path'];
       }
-  });
+    });
     this.openSnackBar('Request Submitted Successfully !');
 
-    this.UserDataService.addRequest(this.currReq,this.filepath);
-    this.currReq.req_initiator_id = this.UserDataService.userId;
-    this.UserDataService.main = '';
-    this.UserDataService.mainSub.next(this.UserDataService.main);
-    this.router.navigateByUrl('/dashboard');
+    this.UserDataService.addRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath);
+    this.router.navigateByUrl('/main/dashboard');
+  }
+  onBOQSubmit() {
+    const formData = new FormData();
+    for (let img of this.fileList) {
+      formData.append('files', img);
+    }
+    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+      for (let i = 0; i < res.files.length; i++) {
+        this.filepath[i] = res.files[i]['path'];
+      }
+    });
+
+    this.openSnackBar('Request Submitted Successfully !');
+    this.UserDataService.addBOQDDetails(this.req_id, this.role_id, this.boqDescription, this.boqEstimatedCost, this.boqEstimatedTime, this.filepath);
+    this.router.navigateByUrl('/main/open');
+  }
+  onPncSumbit() {
+    let allocationStartDate = this.allocationStartDate;
+    const formData = new FormData();
+    for (let img of this.fileList) {
+      formData.append('files', img);
+    }
+    this.http.post<any>('http://localhost:5600/pncFiles', formData).subscribe((res) => {
+      for (let i = 0; i < res.files.length; i++) {
+        this.filepnc[i] = res.files[i]['path'];
+      }
+    });
+    let VendorPk = this.selectedElement["rumpvenVendorPK"];
+    this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc);
+    console.log("selectedElement", this.selectedElement["rumpvenVendorPK"]);
+    this.route.navigate(['/main/open']);
   }
 
+  onApprove() {
+    this.UserDataService.meType = this.currReq.me_type;
+    this.route.navigate(['/main/approveRequest', this.req_id]);
+  }
+  onResend() {
+    this.route.navigate(['/main/dialogg/', this.req_id]);
+  }
+  onCompelete(){
+    this.UserDataService.addCompleteRequest(this.req_id,this.admin_access_id, this.user_name).subscribe((ResData) => {
+      console.log(ResData);
+    })
+    this.route.navigateByUrl('/main/complete');
+  }
   openSnackBar(message: string) {
     this._snackBar.open(message, '', {
       duration: 3500,

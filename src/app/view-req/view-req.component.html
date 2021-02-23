@@ -1,335 +1,106 @@
-<div class="alert alert-warning mx-5 my-3 text-center" *ngIf = "this.userDataService.message !== ''">
-    {{this.userDataService.message}}
-</div>
-<div
-  class="container col-lg-6 py-2 px-2"
-  *ngIf="this.userDataService.userRole !== 8 "
-  style="
-    background-color: white;
-    margin-top: 10px;
-    box-shadow: 0px 0px 4px black;
-    border-radius: 6px;
-  "
->
-<div class="alert alert-info text-center">
-    Request Details
-</div>
-<table class="table table-light table-hover ">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Req Info</th>
-      <th scope="col">Data</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1.</td>
-      <td>Request ID</td>
-      <td>{{ req_id }}</td>
-    </tr>
-    <tr>
-      <td>2.</td>
-      <td>Request Title</td>
-      <td>{{ req_title }}</td>
-    </tr>
-    <tr>
-      <td>3.</td>
-      <td>Request Type</td>
-      <td>{{ req_type }}</td>
-    </tr>
-    <tr>
-      <td>4.</td>
-      <td>Request Initiator Id</td>
-      <td>{{ req_initiator_id }}</td>
-    </tr>
-    <tr>
-      <td>5.</td>
-      <td>Request sent on</td>
-      <td>{{ req_date }}</td>
-    </tr>
-    <tr>
-      <td>6.</td>
-      <td>Request Budget</td>
-      <td>{{ req_budget }}</td>
-    </tr>
-    <tr>
-      <td>7.</td>
-      <td>Request Description</td>
-      <td>{{ req_description }}</td>
-    </tr>
-    <tr>
-      <td>8.</td>
-      <td>Request Status</td>
-      <td>{{ req_status }}</td>
-    </tr>
-    <tr>
-      <td>9.</td>
-      <td>Request Action</td>
-      <td>{{ req_action }}</td>
-    </tr>
-    <tr>
-      <td>10.</td>
-      <td>Last Approved By</td>
-      <td>{{role_name}}</td>
-    </tr>
- </tbody>
-</table>
-  <div
-    class="row"
-    *ngIf="
-      this.userDataService.viewReq.req_status === 'Pending' 
-    "
-  >
-    <div class="col-lg-3"></div>
-    <div class="text-center col-lg-3">
-      <button
-        class="btn btn-success btn-large"
-        (click)="userDataService.Approved(req_id);this.userDataService.userRole;this.openSnackBar('Request Approved Successfully!');"
-        routerLink="/dashboard"
-        *ngIf = "userDataService.toBeApproved &&
-        this.userDataService.userRole !== 1"
-      >
-        Approve
-      </button>
-    </div>
-    <div class="text-center col-lg-3">
-      <button type="button"  
-        class="btn btn-danger btn-large"
-        style="width: 60%;"
-        (click)="goToUpgrade()"
-      >
-        Resend
-      </button>
-    </div>
- 
-  <hr />
-</div>
-<div class="alert alert-info text-center" >
-  <button
-    mat-raised-button
-    color = "warn"
-    (click) = 'backClicked()'
-    >
-    Go Back
-    </button>
-    </div>
-<!-- This shows up if you are a Approver and want to give a feedback -->
-<div
-  class="container"
-  *ngIf="
-    view.req_status === 'UnderNeg' &&
-    view.req_status === 'Pending' &&
-    this.userDataService.userRole !== 1
-  "
-  style="
-    background-color: white;
-    margin-top: 10px;
-    box-shadow: 0px 0px 4px black;
-  "
->
-  <textarea
-    rows="6"
-    style="
-      width: 100%;
-      height: 100%;
-      margin-top: 10px;
-      border: 2px slateblue solid;
-      border-radius: 1px;
-    "
-    placeholder="Write here"
-    [(ngModel)]="comment"
-  >
-  </textarea>
-  <button (click)="submitFeedback()" class="btn btn-lg btn-primary">
-    Submit
-  </button>
-</div>
-<!-- This Shows up only if you are a requester or a admin -->
-<!-- <div
-  class="container"
-  style="
-    background-color: white;
-    margin-top: 10px;
-    box-shadow: 0px 0px 4px black;
-  "
-  *ngIf="
-    (view.req_status === 'UnderNeg' &&
-      this.userDataService.userRole === 1) ||
-    this.userDataService.userRole === 8
-  "
->
-<hr>
-<div class="alert alert-warning my-2" style="margin-top: 5px;">
-  <h3 *ngIf = "view.comment.length !== 0" >Feedbacks</h3>
-  <li *ngFor="let elm of view.comment">
-      {{
-        elm
-      }}
-  </li>
-</div>
-  <div class="form-row">
-    <div class="col-md-6">
-      <label for="inputEmail4">Request ID </label>
-      <input
-        disabled
-        type="number"
-        class="form-control"
-        placeholder=""
-        name="RequestNo"
-        [(ngModel)]="view.req_id"
-      />
-    </div>
-    <div class="col-md-6">
-      <label for="inputdes">Request Type</label>
-      <select
-        disabled
-        id="inputdes"
-        class="form-control"
-        name="RequestType"
-        [(ngModel)]="view.req_type"
-      >
-        <option selected>Choose...</option>
-        <option>Request for new assets</option>
-        <option>Request for Repair </option>
-        <option>Request for Maintainance </option>
-        <option>Other </option>
-      </select>
-    </div>
-  </div> -->
-  <!-- <div class="form-row">
-     <div class="form-group col-md-6">
-      <label for="inputbudget">Request Budget</label>
-      <input
-        type="number"
-        [disabled]="this.userDataService.currUser.designation === 'admin'"
-        class="form-control"
-        id="inputbudget"
-        name="RequestBudget"
-        [(ngModel)]="view.RequestBudget"
-      />
-    </div>
-    <div class="form-group col-md-6">
-      <label for="inputid">Requester ID</label>
-      <input
-        disabled
-        type="text"
-        class="form-control"
-        id="inputid"
-        name="RequesterId"
-        [(ngModel)]="view.req_initiator_id"
-      />
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="reqtitle">Request Title</label>
-    <input
-      [disabled]="this.userDataService.currUser.designation === 'admin'"
-      type="text"
-      class="form-control"
-      id="reqtitle"
-      placeholder=""
-      name="RequestTitle"
-      [(ngModel)]="view.req_title"
-    />
-  </div>
-  <div class="form-group">
-    <label for="reqdes">Request Description</label>
-    <textarea
-      [disabled]="this.userDataService.currUser.designation === 'admin'"
-      class="form-control"
-      id="reqdes"
-      placeholder=""
-      name="Requestdes"
-      [(ngModel)]="view.req_description"
-    ></textarea>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputCity">City</label>
-      <input
-        disabled
-        type="text"
-        class="form-control"
-        id="inputCity"
-        name="RequestCity"
-        [(ngModel)]="view.RequestCity"
-      />
-    </div>
-    <div class="form-group col-md-2">
-      <label for="inputZip">Zip</label>
-      <input
-        disabled
-        type="text"
-        class="form-control"
-        id="inputZip"
-        name="RequestZip"
-        [(ngModel)]="view.RequestZip"
-      />
-    </div>
-    <div class="form-group col-md-6">
-      <label for="inputadd">Address</label>
-      <input
-        disabled
-        type="text"
-        class="form-control"
-        id="inputadd"
-        name="RequestAddress"
-        [(ngModel)]="view.RequestAddress"
-      />
-    </div>
-  </div> -->
-  <!-- This is for choosing approvers -->
-  <!-- <div class="form-row">
-    <div
-      class="form-group col-md-12"
-      *ngIf="this.userDataService.currUser.designation === 'admin' && !this.appExists"
-    >
-      <mat-form-field class="app">
-        <mat-label>Choose Approvers</mat-label>
-        <mat-select
-          name="Approvers"
-          multiple
-          class="app"
-          [(ngModel)]="currReqApprovers"
-        >
-          <mat-label> List Of Approvers </mat-label>
-          <mat-option *ngFor="let app of Approvers"
-          [value]="app"
-            >{{ "(" + app.firstname+ ")" + " " + app.lastname }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
-  <div class="form-row">
-    <div
-      class="form-group col-md-12"
-      *ngIf="this.userDataService.currUser.designation === 'admin' && this.appExists"
-    >
-    <div class="alert alert-success">
-      <h5>
-        The Approvers for this request are already chosen !
+<div class="row my-3">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
+      action="#">
+      <h5 class="text-center">
+        Request Details
       </h5>
       <hr>
-      <h5>
-        Approvers
-      </h5>
-      <div *ngFor = "let app of currReqApprovers">
-        <li>
-          {{app.firstname }}
-        </li>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="inputdes">Request Type</label>
+          <select class="form-control" id="request"[(ngModel)]="req_type" name="RequestType" 
+           disabled required>
+            <option selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Request Number</label>
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number"
+            name="req_number" readonly
+            required />
+        </div>
       </div>
-    </div>
-    </div>
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>ME Type</label>
+          <select id="inputme" class="form-control" [(ngModel)]="me_type" 
+          name="METype" disabled required>
+            <option selected>Select the ME Type</option>
+            <option>Civil</option>
+            <option>Electrical</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>S/WON</label>
+          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" 
+          readonly name="RequestSwon"
+           placeholder="" required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Budget Type</label>
+          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type"
+            name="budgetType" disabled required>
+            <option selected>Select the Budget Type</option>
+            <option>Capex</option>
+            <option>Opex</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Available Budget(INR)</label>
+          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget"
+            name="availableBudget" readonly
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Consumed Budget(INR)</label>
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget"
+            name="consumedBudget" readonly
+            required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Balance Budget(INR)</label>
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget"
+            name="balanceBudget" readonly
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Request Subject</label>
+        <textarea placeholder="" id="subject" class="form-control" 
+        readonly [(ngModel)]="req_subject" name="ReqSubject"
+         name="RequestSubject" required></textarea>
+      
+      </div>
+
+      <div class="form-group">
+        <label for="reqdes">Request Description</label>
+        <textarea id="description" placeholder="" 
+        readonly [(ngModel)]="req_description"
+         class="form-control" name="Requestdes" maxlength="5000"
+          required></textarea>
+       
+      </div>
+    </form>
   </div>
-  <button
-    mat-raised-button
-    color="primary"
-   *ngIf="!this.appExists || this.userDataService.currUser.designation === 'Requester' "
-   (click)="onSubmit()"
-   routerLink="/submitted">
-    Submit
-  </button>
-  <hr>
-</div> -->
+</div>

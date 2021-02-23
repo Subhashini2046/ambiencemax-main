@@ -12,7 +12,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatFormFieldModule, MatSelectModule, MatTableModule, MatChipsModule ,
   MatMenuModule, MatCardModule, MatButtonModule, MatSidenavModule, MatToolbarModule, MatIconModule,
   MatListModule, MatSnackBarModule, MatPaginatorModule} from '@angular/material';
-import { RequestTableComponent } from './request-table/request-table.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SubmittedComponent } from './submitted/submitted.component';
 import { UserDataService } from './Services/UserDataService';
@@ -34,39 +33,40 @@ import { AllRequestComponent } from './all-request/all-request.component';
 import {FileUploadModule} from 'ng2-file-upload';
 import { UpdateRequestFormComponent } from './update-request-form/update-request-form.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import { MainNavComponent } from './main-nav/main-nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
+import { NavigationHomeComponent } from './navigation-home/navigation-home.component';
+import { ApproveRequestComponent } from './approve-request/approve-request.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatRadioModule} from '@angular/material';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule,MatInputModule} from '@angular/material';
+import { MatMomentDateModule } from "@angular/material-moment-adapter";
+import { CompleteComponent } from './complete/complete.component';
 const appRoutes = [
-  {path: 'dashboard' , component: DashboardComponent,},
-
-{path: 'pending' , component: PendingComponent,},
-  {path: 'dashboard/view' , component: ViewReqComponent},
-  {path: 'status' , component: ViewStatusComponent},
-  {path: 'dashboard' , component: DashboardComponent},
+  {path: 'main' ,component: DashboardComponent,
+  children: [
+    {path: 'dialogg/:id', component: AddDialogComponent,},
+    {path: 'viewcomm/:id/:reqId' , component: ViewcommComponent},
+    {path: 'reqform/:id',component:RequestFormComponent},
+    {path: 'status/:id' , component: ViewStatusComponent},
+    {path: 'view/:id' , component: ViewReqComponent},
+    {path: 'dashboard' , component: NavigationHomeComponent},
+    {path: 'request-form' , component: RequestFormComponent},
+    {path: 'request-form/:id/:pnc' , component: RequestFormComponent},
+    {path: 'close' , component: CloseComponent },
+    {path: 'open' , component: OpenComponent},
+    {path: 'update/:id' , component:  UpdateRequestFormComponent},
+    {path: 'pending' , component: PendingComponent},
+    {path: 'allRequest' , component: AllRequestComponent},
+    {path: 'admin' , component: AdminPanelComponent},
+    {path: 'approveRequest/:id' , component: ApproveRequestComponent},
+    {path: 'complete' , component: CompleteComponent},
+  ]
+},
   {path: 'submitted' , component: SubmittedComponent},
   {path: '' , component: HomeComponent},
-  {path: 'dashboard/request-form' , component: RequestFormComponent},
-  {path: 'dashboard/view' , component: ViewReqComponent},
-  {path: 'dashboard/status' , component: ViewStatusComponent},
   {path: 'admin' , component: AdminPanelComponent},
 
- {path: 'dashboard/pending' , component: PendingComponent},
-  {path: 'dashboard/pending/status' , component: ViewStatusComponent},
-  {path: 'dashboard/pending/view' , component: ViewReqComponent},
-
-  {path: 'dashboard/open' , component: OpenComponent},
-  {path: 'dashboard/open/status' , component: ViewStatusComponent},
-  {path: 'dashboard/open/view' , component: ViewReqComponent},
-
- {path: 'dashboard/close' , component: CloseComponent},
-  {path: 'dashboard/close/status' , component: ViewStatusComponent},
-  {path: 'dashboard/close/view' , component: ViewReqComponent},
-
-  {path: 'dashboard/all' , component: AllRequestComponent},
-  {path: 'dashboard/all/status' , component:  AllRequestComponent},
-  {path: 'dashboard/all/view' , component:  AllRequestComponent},
-
-  {path: 'dashboard/open/update' , component:  UpdateRequestFormComponent}
 ];
 @NgModule({
   declarations: [
@@ -76,7 +76,6 @@ const appRoutes = [
     DashboardComponent,
     HomeComponent,
     RequestFormComponent,
-    RequestTableComponent,
     SubmittedComponent,
     ViewReqComponent,
     ViewStatusComponent,
@@ -91,7 +90,9 @@ const appRoutes = [
     PendingComponent,
     AllRequestComponent,
     UpdateRequestFormComponent,
-    MainNavComponent,
+    NavigationHomeComponent,
+    ApproveRequestComponent,
+    CompleteComponent,
   ],
   imports: [
     BrowserModule,
@@ -118,7 +119,13 @@ const appRoutes = [
     MatDialogModule,
     FileUploadModule,
     FlexLayoutModule,
-    LayoutModule
+    LayoutModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatDatepickerModule,
+    MatNativeDateModule, 
+    MatMomentDateModule,
+    MatInputModule
   ],
   providers: [ UserDataService],
   bootstrap: [AppComponent]

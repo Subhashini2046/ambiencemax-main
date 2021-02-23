@@ -4,36 +4,40 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { DatePipe } from '@angular/common';
 import { Location } from '@angular/common';
-import { RequestService } from '../Services/RequestService';
 import { MatTableDataSource, MatPaginator, MatSort, throwMatDialogContentAlreadyAttachedError } from '@angular/material';
 import { getTreeNoValidDataSourceError } from '@angular/cdk/tree';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
 
   selector: 'app-view-status',
   templateUrl: './view-status.component.html',
-  styleUrls: ['./view-status.component.css'],
-  providers: [RequestService]
+  styleUrls: ['./view-status.component.css']
 })
 
 
 export class ViewStatusComponent implements OnInit {
-  main = this.UsrDataService.main;
-  view_id=null;
-  view_name=null;
-  view_status=null;
-  public viewStatus:views1;
-  public viewStatus1:views1[]=[];
+  req_id: any;
+  view_id = null;
+  view_name = null;
+  view_status = null;
+  public viewStatus: views1;
+  public viewStatus1: views1[] = [];
   displayedColumns: string[] = ['aaction_taken_by', 'req_action', 'req_date', 'req_time'];
   displayedColumns1: string[] = ['id', 'name', 'status'];
   dataSource = new MatTableDataSource();
   dataSource1 = new MatTableDataSource();
   members;
   public userId;
+  w_flow: any[] = [];
+  role: any[] = [];
+  req_level;
+  reqStatus;
+  initiator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(public UsrDataService: UserDataService, public requestService: RequestService, private _location: Location) {
+  constructor(private actrouter: ActivatedRoute, public UsrDataService: UserDataService, private _location: Location) {
   }
 
   backClicked() {
@@ -41,45 +45,74 @@ export class ViewStatusComponent implements OnInit {
     console.log('goBack()...');
 
   }
- 
+  space
   ngOnInit() {
- 
-   //  console.log("this.viewStatus///",this.viewStatus1);
-    console.log(this.UsrDataService.viewReq.req_id);
-   // this.dataSource1.data= this.UsrDataService.viewStatus1;
-    console.log("this.dataSource1.data",this.dataSource1.data);
-    return this.UsrDataService.getViewRequestLog(this.UsrDataService.viewReq.req_id).subscribe((response: any) => {
-      console.log(response.req_data['req_date']);
-      this.dataSource.data = response.req_data;
-      console.log("this.dataSource.data",this.dataSource.data);
-      for(let role of this.UsrDataService.role1){
-        this.view_id=role.role_id;
-         this.view_name=role.role_name;
-         if(role.role_id >= this.UsrDataService.viewReq.req_level)
-           this.view_status=this.UsrDataService.viewReq.req_status;
-         else
-           this.view_status="Approved";
-        this.viewStatus={
-          id:this.view_id,
-          name:this.view_name,
-          status:this.view_status
-        };
-        this.viewStatus1.push(this.viewStatus);
-        this.dataSource1.data=this.viewStatus1;
-       }
+    this.actrouter.params.subscribe(params => {
+      this.req_id = +params['id'];
     });
-    
-    
+    this.UsrDataService.getViewRequestStatus(this.req_id).subscribe((res => {
+      this.dataSource.data = res.reqLog;
+      this.w_flow = res.w_flow;
+      this.req_level = res.requestLevel;
+      this.initiator = res.intiator_id;
+      this.reqStatus = res.reqStatus;
+      let j = 0;
+      for (let i = 0; i < res.role.length; i++) {
+        this.role[i] = res.role[i][0]["pickRUMPRoleDescription"];
+      }
+      for (let i = 0; i < this.w_flow.length; i++) {
+        if ((this.req_level.toString().trim() == this.w_flow[i]) &&
+          (this.reqStatus.toString().trim() === 'Pending')) {
+
+          for (j; j < i; j++) {
+            this.view_id = this.w_flow[j];
+            this.view_name = this.role[j];
+            this.view_status = "Approved";
+            this.viewStatus = {
+              id: this.view_id,
+              name: this.view_name,
+              status: this.view_status
+            };
+            this.viewStatus1.push(this.viewStatus);
+          }
+          for (j; j < 8; j++) {
+            this.view_id = this.w_flow[j];
+            this.view_name = this.role[j];
+            this.view_status = "Pending";
+            this.viewStatus = {
+              id: this.view_id,
+              name: this.view_name,
+              status: this.view_status
+            };
+            this.viewStatus1.push(this.viewStatus);
+          }
+        }
+        if ((this.req_level == this.initiator) &&
+          (this.reqStatus.toString().trim() === 'Closed')) {
+
+          this.view_id = this.w_flow[i];
+          this.view_name = this.role[i];
+          this.view_status = "Closed";
+          this.viewStatus = {
+            id: this.view_id,
+            name: this.view_name,
+            status: this.view_status
+          };
+          this.viewStatus1.push(this.viewStatus);
+
+        }
+      }
+      console.log(this.viewStatus1);
+      this.dataSource1.data = this.viewStatus1;
+    }));
+
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
- 
-
-
 }
-export interface views1{
-  id:number;
-  name:String;
-  status:String;
+export interface views1 {
+  id: number;
+  name: String;
+  status: String;
 }
