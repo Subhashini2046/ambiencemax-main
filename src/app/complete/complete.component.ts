@@ -10,11 +10,12 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 })
 export class CompleteComponent implements OnInit {
   displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
-  'RequestDate', 'status', 'view', 'Approve'];
+  'RequestDate', 'status', 'view'];
 
 dataSource = new MatTableDataSource();
 members;
 public userId;
+public message="";
 updatedData = [];
 role_id;
 accessId;
@@ -26,8 +27,11 @@ ngOnInit() {
   this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
   this.role_id = JSON.parse(localStorage.getItem('role_id'));
   return this.UserDataService.getCompleteRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
-
     this.dataSource.data = response;
+    if(this.dataSource.data.length<1){
+      this.message="No data is available";
+    }
+
   });
 
 }

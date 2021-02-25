@@ -34,3 +34,12 @@
     border-collapse: collapse;
     width: 100%;
   }
+  mat-card-title{
+    /* background: linear-gradient(to right, #000046, #1cb5e0); */
+    width: 100% !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size:large;
+  }
+  mat-card{
+    background-color: rgba(71, 99, 255, 0.301);
+  }

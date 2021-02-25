@@ -187,14 +187,15 @@ app.post("/resendReq",(req,res)=>{
   //     }
   //   })
   // })
-app.get('/api/users/:id', (req, res) => {
-    let req_id = req.params.id;
+app.post("/users", (req, res) => {
+    let req_id = req.body.req_id;
+    let accessId=req.body.accessId;
     console.log(req_id);
     mysqlConnection2.query(`select distinct linkRUMPAdminAccessPK as accessId,
     pickRUMPRoleDescription as role from linkrumpadminaccess inner join datarumprequestaction 
     on(datarumprequestaction.RUMPRequestRole=linkrumpadminaccess.linkRUMPAdminAccessPK) 
     inner join pickrumprole on(linkrumpadminaccess.linkRUMPRoleFK = pickrumprole.pickRUMPRolePK) 
-    where RUMPRequestFK = '${req_id}';`, (err, rows, fields) => {
+    where RUMPRequestFK = ${req_id} and RUMPRequestRole!=${accessId};`, (err, rows, fields) => {
       if (!err) {
           console.log("..........//");
             console.log(rows);

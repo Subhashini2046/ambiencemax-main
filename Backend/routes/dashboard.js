@@ -80,7 +80,7 @@ console.log(space,role,"/////////////////////")
         con.query(`select count(*) as "all" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}); 
         select count(*) as "completed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Completed'; 
         select count(*) as "closed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Closed';
-        select count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Pending' and t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role};
+        select count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Pending' and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role});
         select count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and linkrumprolefk=${role} and linkRUMPSpace=${space} `,
          (err, result) => {
             if (err) throw err;
@@ -124,7 +124,7 @@ console.log(space,role,"/////////////////////")
         con.query(`select count(*) as "all" from datarumprequest where rumprequestflowfk in(${narr}); 
         select count(*) as "completed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Completed'; 
         select count(*) as "closed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Closed'; 
-        select count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Pending' and t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role}; 
+        select count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Pending' and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role}); 
         select count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestflowfk in(${narr}) and linkrumprolefk=${role} and linkRUMPSpace=${space};`,
            (err, result) => {
             if (err) throw err;

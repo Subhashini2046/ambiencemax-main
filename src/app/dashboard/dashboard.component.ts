@@ -17,6 +17,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   main = this.UsrDataService.main;
   public role_id;
+  menus=[];
   private reqSub: Subscription;
   Buttons: Options[] = [
     { name: 'All Requests', func: 'all' },
@@ -57,7 +58,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
-  console.log('user_id',this.role_id);
+    this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
+      console.log(data);
+      this.menus=JSON.parse(JSON.stringify(data));
+    })
   }
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
@@ -66,5 +70,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     localStorage.clear();
     // this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
     this.UsrDataService.main = '';
+  }
+  navigateToDashboard(role,space){
+    localStorage.setItem('role_id', JSON.stringify(role));
+    localStorage.setItem('space', JSON.stringify(space));
+    this.router.navigateByUrl('/main/dashboard');
+    this.UsrDataService.changedetectInRole.next({role:role,space:space})
+  }
+  getRoleName(name,roledesc){
+    return roledesc+" | "+name
   }
 }

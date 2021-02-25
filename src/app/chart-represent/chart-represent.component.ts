@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { Subscription } from 'rxjs';
 import { UserDataService } from '../Services/UserDataService';
 
 @Component({
@@ -8,7 +9,7 @@ import { UserDataService } from '../Services/UserDataService';
   templateUrl: './chart-represent.component.html',
   styleUrls: ['./chart-represent.component.css'],
 })
-export class ChartRepresentComponent implements OnInit {
+export class ChartRepresentComponent implements OnInit ,OnDestroy{
   public Pending;
   public Closed;
   public Open;
@@ -31,13 +32,17 @@ export class ChartRepresentComponent implements OnInit {
   barChartData: ChartDataSets[];
   space;
   role;
+  countSubsription:Subscription;
   constructor(public userDataService: UserDataService) { }
-
+  ngOnDestroy(){
+    this.countSubsription.unsubscribe();
+  }
   ngOnInit() {
 
-    this.role = JSON.parse(localStorage.getItem('role_id'));
-    this.space = JSON.parse(localStorage.getItem('space'));
-    this.userDataService.getRequestCount(this.role, this.space)
+    this.countSubsription= this.userDataService.changedetectInRole.subscribe(data=>{
+      this.role = JSON.parse(localStorage.getItem('role_id'));
+      this.space = JSON.parse(localStorage.getItem('space'));
+      this.userDataService.getRequestCount(this.role, this.space)
       .subscribe(res => {
         let pending = res['req_stats'].Pending
         let close = res['req_stats'].Closed
@@ -59,6 +64,7 @@ export class ChartRepresentComponent implements OnInit {
         ];
         console.log('horizontalBar Called!');
       })
+    })
   }
 }
 

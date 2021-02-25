@@ -246,7 +246,7 @@ router.post("/BOQRequests", (req, res) => {
 });
 
 router.post("/requestDetail", (req, res) => {
-  sql = `select RUMPRequestAllocatedVendor as RequestAllocatedVendor,RUMPInitiatorId as initiatorId,RumprequestLevel as requestLevel,ispnc,RUMPRequestBOQDescription as BOQDescription,RUMPRequestBOQEstimatedCost as BOQEstimatedCost,
+  sql = `select RUMPRequestPNCUrl as PNCUrl, RUMPRequestAllocatedVendor as RequestAllocatedVendor,RUMPInitiatorId as initiatorId,RumprequestLevel as requestLevel,ispnc,RUMPRequestBOQDescription as BOQDescription,RUMPRequestBOQEstimatedCost as BOQEstimatedCost,
   RUMPRequestBOQEstimatedTime as BOQEstimatedTime,RUMPRequestVendorAllocatedDays as AllocatedDays,
   RUMPRequestVendorAllocationStartDate as AllocationStartDate,RUMPRequestActualCost as ActualCost,RUMPRequestStatus as RequestStatus,RUMPRequestNumber as RequestNumber, RUMPRequestPK,if(RUMPRequestMEType=0,"Civil","Electrical") as METype,RUMPRequestSWON as RequestSWON,RUMPRequestAvailableBudget as RequestAvailableBudget,
   RUMPRequestConsumedBudget as RequestConsumedBudget,RUMPRequestBalanceBudget as RequestBalanceBudget,

@@ -1,5 +1,10 @@
 <div class="text-center container" style="background-color: white; margin-top: 20px;">
   <br>
+  <mat-card class="example-card1">
+    <mat-card-title> All Requests</mat-card-title>
+  </mat-card>
+  <br>
+  <mat-card class="example-card1">
   <table class="table" mat-table [dataSource]="this.dataSource">
 
     <!-- REQUEST NO COULMN -->
@@ -40,7 +45,7 @@
     <ng-container matColumnDef="view">
       <th class="thead-light" mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button class="col-bg-button" (click)='view(element.RUMPRequestPK,element.ispnc)'>
+        <button mat-button class="stylepopupbuttonconfirm" (click)='view(element.RUMPRequestPK,element.ispnc)'>
           View
         </button>
 
@@ -50,7 +55,7 @@
     <ng-container matColumnDef="Approve">
       <th class="thead-light" mat-header-cell *matHeaderCellDef style=" text-align: center;"></th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button class="col-bg-accent"
+        <button mat-button class="stylepopupbuttonconfirm"
           (click)='status(element.RUMPRequestPK)'>
           View Status
         </button>
@@ -71,5 +76,6 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  </mat-card>
   <mat-paginator [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
 </div>

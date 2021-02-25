@@ -58,7 +58,12 @@ export class ViewStatusComponent implements OnInit {
       this.reqStatus = res.reqStatus;
       let j = 0;
       for (let i = 0; i < res.role.length; i++) {
-        this.role[i] = res.role[i][0]["pickRUMPRoleDescription"];
+        if((res.role[i][0]==null)){
+          this.role[i]=null;
+        }
+        else{
+          this.role[i] = res.role[i][0]["pickRUMPRoleDescription"];}
+
       }
       for (let i = 0; i < this.w_flow.length; i++) {
         if ((this.req_level.toString().trim() == this.w_flow[i]) &&
@@ -68,6 +73,7 @@ export class ViewStatusComponent implements OnInit {
             this.view_id = this.w_flow[j];
             this.view_name = this.role[j];
             this.view_status = "Approved";
+            if(this.role[j]==null){this.view_status=null}
             this.viewStatus = {
               id: this.view_id,
               name: this.view_name,
@@ -79,6 +85,7 @@ export class ViewStatusComponent implements OnInit {
             this.view_id = this.w_flow[j];
             this.view_name = this.role[j];
             this.view_status = "Pending";
+            if(this.role[j]==null){this.view_status=null}
             this.viewStatus = {
               id: this.view_id,
               name: this.view_name,
@@ -89,10 +96,10 @@ export class ViewStatusComponent implements OnInit {
         }
         if ((this.req_level == this.initiator) &&
           (this.reqStatus.toString().trim() === 'Closed')) {
-
           this.view_id = this.w_flow[i];
           this.view_name = this.role[i];
-          this.view_status = "Closed";
+          this.view_status = "Approved";
+          if(this.role[i]==null){this.view_status=null}
           this.viewStatus = {
             id: this.view_id,
             name: this.view_name,
@@ -101,6 +108,23 @@ export class ViewStatusComponent implements OnInit {
           this.viewStatus1.push(this.viewStatus);
 
         }
+        if ((this.req_level == this.initiator) &&
+        (this.reqStatus.toString().trim() === 'Completed')) {
+
+        this.view_id = this.w_flow[i];
+        this.view_name = this.role[i];
+        this.view_status = "Approved";
+        if(this.role[i]==null){this.view_status=null}
+        this.viewStatus = {
+          id: this.view_id,
+          name: this.view_name,
+          status: this.view_status
+        };
+        this.viewStatus1.push(this.viewStatus);
+
+      }
+
+        
       }
       console.log(this.viewStatus1);
       this.dataSource1.data = this.viewStatus1;

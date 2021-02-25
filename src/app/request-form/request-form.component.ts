@@ -36,6 +36,9 @@ export class RequestFormComponent implements OnInit {
   boqEstimatedCost: number;
   boqEstimatedTime: "";
   filepnc: any[] = [];
+ public boqDescription1: "";
+public boqEstimatedCost1: number;
+   boqEstimatedTime1: "";
   // for PNC form
   allocatedDays;
   allocationStartDate: " ";
@@ -124,9 +127,10 @@ export class RequestFormComponent implements OnInit {
         this.currReq.req_swon = this.requestDetails[0]["RequestSWON"];
         this.subject = this.requestDetails[0]["RequestSubject"];
         this.currReq.req_type = this.requestDetails[0]["RequestType"];
+        this.boqDescription1 = this.requestDetails[0]["BOQDescription"];
         this.boqDescription = this.requestDetails[0]["BOQDescription"];
         this.boqEstimatedCost = this.requestDetails[0]["BOQEstimatedCost"];
-        this.boqEstimatedTime = this.requestDetails[0]["BOQEstimatedTime"];
+        this.boqEstimatedTime= this.requestDetails[0]["BOQEstimatedTime"];
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];

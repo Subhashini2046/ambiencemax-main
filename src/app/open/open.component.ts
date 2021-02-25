@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class OpenComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
-    'RequestDate', 'status', 'view', 'Approve'];
+    'RequestDate', 'status', 'view'];
 
   dataSource = new MatTableDataSource();
   members;

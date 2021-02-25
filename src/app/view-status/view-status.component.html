@@ -4,11 +4,12 @@
     <div class="column_left">
       <div class="text-center container" style="background-color: white;">
         <hr>
-        <div class="alert alert-info">
-          <h3>Approval Status</h3>
-        </div>
+        <mat-card class="example-card1">
+          <mat-card-title>Approval Status</mat-card-title>
+        </mat-card>
         <div class="text-center container">
           <br>
+          <mat-card class="example-card1">
           <table class="table" mat-table [dataSource]="this.dataSource1">
 
                   <ng-container matColumnDef="id">
@@ -30,22 +31,25 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
           </table>
-          <div class="col">
+        </mat-card>
+          <!-- <div class="col">
             <button mat-raised-button color="accent" (click)="backClicked()">
               Go Back
             </button>
-          </div>
+          </div> -->
         </div>
+      
       </div>
     </div>
     <div class="column">
       <div class="text-center container" style="background-color: white;">
         <hr>
-        <div class="alert alert-info">
-          <h3>Request Log</h3>
-        </div>
+        <mat-card class="example-card1">
+          <mat-card-title>Request Log</mat-card-title>
+        </mat-card>
         <div class="text-center container">
           <br>
+          <mat-card class="example-card1">
           <table class="table" mat-table [dataSource]="this.dataSource">
 
             <ng-container matColumnDef="aaction_taken_by">
@@ -72,8 +76,9 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
+        </mat-card>
           <div class="col">
-            <button mat-raised-button color="accent" (click)="backClicked()">
+            <button mat-button class="stylepopupbuttonconfirm" (click)="backClicked()">
               Go Back
             </button>
           </div>

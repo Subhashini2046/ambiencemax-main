@@ -36,6 +36,7 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
     { name: 'Closed Requests', func: 'closed' },
     { name: 'Completed Requests', func: 'complete' }
   ];
+  countSubsription:Subscription;
   private _mobileQueryListener: () => void;
   constructor(
     public UsrDataService: UserDataService,
@@ -64,9 +65,10 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     console.log('ngOnint Dashboard!');
-    this.role = JSON.parse(localStorage.getItem('role_id'));
-    this.space= JSON.parse(localStorage.getItem('space')); 
-    this.UsrDataService.getRequestCount(this.role,this.space).subscribe((response:any)=>{
+    this.countSubsription=   this.UsrDataService.changedetectInRole.subscribe(data=>{
+      this.role = JSON.parse(localStorage.getItem('role_id'));
+      this.space= JSON.parse(localStorage.getItem('space')); 
+      this.UsrDataService.getRequestCount(this.role,this.space).subscribe((response:any)=>{
     this.Pending=response.req_stats.Pending,
     this.All = response.req_stats.All;
     this.Open = response.req_stats.Open;
@@ -74,8 +76,10 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
     this.Completed=response.req_stats.Completed;
    console.log(this.Completed,"llll");
   });
+});
   }
   ngOnDestroy(): void {
+    this.countSubsription.unsubscribe();
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   

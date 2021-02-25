@@ -1,70 +1,54 @@
-<div class="row graph">
-  <div style="margin-left: 2.5em" class="col-lg-5">
-    <div class="col">
+<div style="margin-top:2.5em"class="row graph">
+  <div class="row" style="width: 100%">
+    <div  style="margin-left: 2.5em" class="form-group col">
+      <mat-card style="width:100%;" class="example-card1 button1" (click)="Request('Pending')">
+        <mat-card-title> Pending Requests: {{ Pending }}</mat-card-title>
+      </mat-card>
+    </div>
+    <div class="form-group col">
+      <mat-card style="width:100%" class="example-card2 button2" (click)="Request('open')">
+        <mat-card-title> Open Requests: {{ Open }}
+        </mat-card-title>
+      </mat-card>
+    </div>
+    <div  class="form-group col">
+      <mat-card style="width:100%" class="example-card3 button3" (click)="Request('closed')">
+        <mat-card-title> Closed Requests:{{ Closed }}
+        </mat-card-title>
+      </mat-card>
+    </div>
+    <div class="form-group col">
+      <mat-card style="width:100%" class="example-card4 button4" (click)="Request('complete')">
+        <mat-card-title>Completed Requests: {{ Completed }}
+        </mat-card-title>
+      </mat-card>
+    </div>
+  </div>
+  <div class="col-lg-6">
       <mat-card class="example-card">
 
         <mat-card-content class="example-card">
           <app-bar-chart-component></app-bar-chart-component>
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col">
+    <!-- <div class="col">
       <mat-card class="example-card">
 
         <mat-card-content class="example-card">
           <app-doughnut-chart></app-doughnut-chart>
         </mat-card-content>
       </mat-card>
-    </div>
+    </div> -->
 
   </div>
 
-  <div class="col-lg-4">
-    <div class="col">
-      <mat-card style="width: 120%" class="example-card">
-        <mat-card-title>Pending Requests: {{ Pending }}
-          <button mat-button class="stylepopupbuttonconfirm" mat-button (click)="Request('Pending')"
-            routerLink="pending">
-            View All
-          </button>
-        </mat-card-title>
-      </mat-card>
-    </div>
-    <div class="col">
-      <mat-card style="width: 120%" class="example-card">
-        <mat-card-title>Open Requests: {{ Open }}
-          <button mat-button class="stylepopupbuttonconfirm" (click)="Request('open')" routerLink="open">
-            View All
-          </button>
-        </mat-card-title>
-      </mat-card>
-    </div>
-    <div class="col">
-      <mat-card style="width: 120%" class="example-card">
-        <mat-card-title>Closed Requests:{{ Closed }}
-          <button mat-button class="stylepopupbuttonconfirm" (click)="Request('closed')" routerLink="close">
-            View All
-          </button>
-        </mat-card-title>
-      </mat-card>
-    </div>
-    <div class="col">
-      <mat-card style="width: 120%" class="example-card">
-        <mat-card-title>Completed Requests: {{ Completed }}
-          <button mat-button class="stylepopupbuttonconfirm" mat-button (click)="Request('complete')"
-            routerLink="complete">
-            View All
-          </button>
-        </mat-card-title>
-      </mat-card>
-    </div>
-    <div class="col">
-      <mat-card style="width: 120%" class="example-card">
+  <div class="col-lg-6">
+      <mat-card class="example-card">
 
         <mat-card-content class="example-card">
-          <app-chart-represent></app-chart-represent>
+          <app-doughnut-chart></app-doughnut-chart>
+          <!-- <app-chart-represent></app-chart-represent> -->
         </mat-card-content>
       </mat-card>
-    </div>
   </div>
 </div>

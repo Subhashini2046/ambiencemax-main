@@ -95,12 +95,102 @@
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder="" 
+        <textarea id="description" placeholder=""  rows="4"
         readonly [(ngModel)]="req_description"
          class="form-control" name="Requestdes" maxlength="5000"
           required></textarea>
        
       </div>
     </form>
+
+
+    
   </div>
 </div>
+
+<!-- BOQ Form -->
+
+<div class="row my-3"
+  *ngIf="((boqDescription!=null && boqDescription!='') || this.role_id==3 || this.role_id==4)">
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;">
+    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
+      style="border-radius: 10px;" action="#">
+      <h5 class="text-center">
+        Enter BOQ Details
+      </h5>
+      <hr>
+      <div class="form-group">
+        <label>BOQ Description</label>
+        <textarea id="subject" rows="4" class="form-control" [(ngModel)]="boqDescription" 
+          readonly name="boqDescription" required></textarea>
+      </div>
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>BOQ Estimated Cost</label>
+          <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost" 
+            readonly type="number" name="boqEstimatedCost"
+            required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>BOQ Estimated Time</label>
+          <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime"
+            readonly type="text" name="boqEstimatedTime"
+            required />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+<!-- BOQ End -->
+
+<!-- PNC Form -->
+<div class="row my-3"*ngIf="allocationStartDate!=null || this.allocatedDays!=null || this.pncurl!=null" >
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;">
+    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
+      style="border-radius: 10px;" action="#">
+      <h5 class="text-center">
+        PNC Upload & Vendor Tagging/Allocation
+      </h5>
+      <hr>
+      <br>
+      <div class="form-group"  *ngIf="allocationStartDate!=null">
+        <label>Allocation Start Date</label>
+        <br>
+        <mat-form-field appearance="fill">
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker1" placeholder="Angular forms"
+            readonly
+            [(ngModel)]="allocationStartDate" name="allocationStartDate">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-group" *ngIf="this.allocatedDays!=null">
+
+        <label>Allocated Days</label>
+        <input class="form-control" id="allocatedDays" type="number"
+          readonly
+          [(ngModel)]="allocatedDays" name="allocatedDays" required />
+      </div>
+      <div class="form-group" *ngIf="this.actualCost!=null">
+        <label>Actual Cost</label>
+        <input class="form-control" id="consumed" type="number"
+          readonly
+          [(ngModel)]="actualCost" name="consumedBudget" required />
+      </div>
+      <div class="form-group" *ngIf="this.pncurl!=null">
+        <label>PNC Document</label>
+        <br>
+        <label  style="color:rgb(46, 46, 141)"> {{this.pncurl}}</label>
+      </div>
+
+    </form>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+<!-- PNC end -->

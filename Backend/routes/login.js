@@ -5,7 +5,7 @@ let express = require("express"),
 
 router.post("/login", (req, res) => {
   console.log("Login Route");
-  var sql = `select admAdminPK,admName from dataadmin where admAdminPK = '${req.body.userId}' and admpwd = '${req.body.password}';`
+  var sql = `select admAdminPK,admName from dataadmin where admAdminPK = '${req.body.userId}' and admpwd = '${req.body.password}'`;
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
@@ -16,7 +16,7 @@ router.post("/login", (req, res) => {
         user_id = result[0].admAdminPK;
         console.log("user_id",user_id);
         user_name=result[0].admName;
-        var sql2 = `select linkRUMPAdminAccessPK,linkRUMPRoleFK,linkRuMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${user_id} order by linkRUMPRoleFK limit 1;`
+        var sql2 = `select linkRUMPAdminAccessPK,linkRUMPRoleFK,linkRuMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${user_id} order by linkRUMPRoleFK desc limit 1;`
         con.query(sql2, function (err, result) {
           if (err) {
             console.log(err);
@@ -140,4 +140,20 @@ router.post("/getLatestReqs", (req,res)=>{
   })
   }
 });
+
+router.get('/roles',(req,res)=>{
+let getrolesquery=`select linkrumpadminaccess.linkrumprolefk as role,linkrumpspace as space,
+COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as roledesc from linkrumpadminaccess 
+left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
+left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
+left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
+left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
+inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
+where linkrumpadminfk=? order by linkrumprolefk
+`;
+con.query(getrolesquery,[req.query.userid],(err,result)=>{
+  if(err) throw err;
+  res.send(JSON.stringify(result));
+})  
+})
 module.exports = router;

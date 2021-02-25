@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChartType } from 'chart.js';
 import { MultiDataSet, Label } from 'ng2-charts';
+import { Subscription } from 'rxjs';
 import { UserDataService } from '../Services/UserDataService';
 
 @Component({
@@ -8,18 +9,23 @@ import { UserDataService } from '../Services/UserDataService';
   templateUrl: './doughnut-chart.component.html',
   styleUrls: ['./doughnut-chart.component.css'],
 })
-export class DoughnutChartComponent implements OnInit {
+export class DoughnutChartComponent implements OnInit ,OnDestroy{
   space;
   role;
   doughnutChartLabels: Label[] = ['Pending', 'Closed', 'Open','Completed'];
   doughnutChartType: ChartType = 'doughnut';
   doughnutChartData: MultiDataSet[];
+  countSubsription:Subscription;
   constructor(public userDataService: UserDataService) { }
-  ngOnInit() {
-    this.role = JSON.parse(localStorage.getItem('role_id'));
-    this.space = JSON.parse(localStorage.getItem('space'));
+  ngOnDestroy(){
+    this.countSubsription.unsubscribe();
+  }
 
-    this.userDataService.getRequestCount(this.role, this.space).subscribe((response: any) => {
+  ngOnInit() {
+    this.countSubsription=  this.userDataService.changedetectInRole.subscribe(data=>{
+      this.role = JSON.parse(localStorage.getItem('role_id'));
+      this.space = JSON.parse(localStorage.getItem('space'));
+      this.userDataService.getRequestCount(this.role, this.space).subscribe((response: any) => {
       let Pending = response.req_stats.Pending;
       let Open = response.req_stats.Open;
       let Closed = response.req_stats.Closed;
@@ -31,5 +37,6 @@ export class DoughnutChartComponent implements OnInit {
       ];
       this.doughnutChartType;
     });
+  })
   }
 }

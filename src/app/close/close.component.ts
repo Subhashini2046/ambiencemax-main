@@ -9,7 +9,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 })
 export class CloseComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
-    'RequestDate', 'status', 'view', 'Approve'];
+    'RequestDate', 'status', 'view'];
 
   dataSource = new MatTableDataSource();
   members;

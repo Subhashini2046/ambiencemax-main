@@ -31,6 +31,20 @@ export class ViewReqComponent implements OnInit {
   user_name;
   req_status;
   req_number;
+  boqDescription: "";
+  boqEstimatedCost: number;
+  boqEstimatedTime: "";
+  filepnc: any[] = [];
+ public boqDescription1: "";
+public boqEstimatedCost1: number;
+   boqEstimatedTime1: "";
+  // for PNC form
+  allocatedDays;
+  allocationStartDate= "";
+  actualCost;
+  allocateStartDate;
+  pncurl="";
+  allocatedSpoc="";
   constructor(private actrouter: ActivatedRoute,public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   ngOnInit() {
@@ -52,6 +66,14 @@ export class ViewReqComponent implements OnInit {
       this.req_type = response[0]["RequestType"];
       this.req_status=response[0]["RequestStatus"];
       this.req_number=response[0]["RequestNumber"];
+      this.boqDescription = response[0]["BOQDescription"];
+      this.boqEstimatedCost = response[0]["BOQEstimatedCost"];
+      this.boqEstimatedTime = response[0]["BOQEstimatedTime"];
+      this.allocatedDays = response[0]["AllocatedDays"];
+      console.log("//",this.allocatedDays);
+      this.allocationStartDate = response[0]["AllocationStartDate"];
+      this.actualCost = response[0]["ActualCost"];
+      this.pncurl=response[0]["PNCUrl"];
     });
   }
 }

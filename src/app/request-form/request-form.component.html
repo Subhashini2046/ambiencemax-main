@@ -151,7 +151,7 @@
 <!-- BOQ Form -->
 
 <div class="row my-3"
-  *ngIf="((this.boqDescription!=null && this.boqDescription!='')||this.role_id==3 || this.role_id==4)">
+  *ngIf="((this.boqDescription1!=null && this.boqDescription1!='') || this.role_id==3 || this.role_id==4)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
@@ -163,21 +163,24 @@
       <div class="form-group">
         <label>BOQ Description</label>
         <textarea id="subject" class="form-control" [(ngModel)]="boqDescription"
-          [readonly]="(this.boqDescription!=null && this.boqDescription!='')" name="boqDescription" required></textarea>
+        [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
+        name="boqDescription" required></textarea>
       </div>
       <div class="form-row">
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Cost</label>
           <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost"
-            [readonly]="(this.boqDescription!=null && this.boqDescription!='')" type="number" name="boqEstimatedCost"
+          [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
+          type="number" name="boqEstimatedCost"
             required />
         </div>
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Time</label>
           <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime"
-            [readonly]="(this.boqDescription!=null && this.boqDescription!='')" type="text" name="boqEstimatedTime"
+            [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
+            type="text" name="boqEstimatedTime"
             required />
         </div>
       </div>

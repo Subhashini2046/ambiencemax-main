@@ -29,7 +29,8 @@ export class AddDialogComponent implements OnInit {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
     });
-    this.userDataService.getUsers(this.req_id).subscribe((data) => {
+    this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
+    this.userDataService.getRoles(this.req_id,this.accessId).subscribe((data) => {
       this.users = data;
     })
   }

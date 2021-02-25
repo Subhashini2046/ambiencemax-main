@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './bar-chart-component.component.html',
   styleUrls: ['./bar-chart-component.component.css']
 })
-export class BarChartComponentComponent implements OnInit {
+export class BarChartComponentComponent implements OnInit ,OnDestroy{
   barChartOptions: ChartOptions = {
     responsive: true,
     scales: {
@@ -30,15 +30,21 @@ export class BarChartComponentComponent implements OnInit {
   barChartData: ChartDataSets[];
   role;
   space;
+  countSubsription:Subscription;
   constructor(public userDataService: UserDataService) {
 
   }
 
+  ngOnDestroy(){
+    this.countSubsription.unsubscribe();
+  }
+
   ngOnInit() {
 
-    this.role = JSON.parse(localStorage.getItem('role_id'));
-    this.space = JSON.parse(localStorage.getItem('space'));
-    this.userDataService.getRequestCount(this.role, this.space)
+    this.userDataService.changedetectInRole.subscribe(data=>{
+      this.role = JSON.parse(localStorage.getItem('role_id'));
+      this.space = JSON.parse(localStorage.getItem('space'));
+       this.countSubsription= this.userDataService.getRequestCount(this.role, this.space)
       .subscribe(res => {
         let pending = res['req_stats'].Pending
         let close = res['req_stats'].Closed
@@ -61,5 +67,6 @@ export class BarChartComponentComponent implements OnInit {
         ];
         console.log('bar Called!');
       })
+    })
   }
 }

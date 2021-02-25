@@ -2,11 +2,12 @@ import { map } from 'rxjs/operators';
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ReqSchema } from './ReqSchema';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
 @Injectable()
 export class UserDataService {
+  changedetectInRole=new BehaviorSubject(null);
   usersURL = "http://localhost:5600/api/users";
   httpOptions = {
 
@@ -37,14 +38,15 @@ export class UserDataService {
     this.http.post<{ result: string, space: string, user_id: string, role_id: number, admin_access_id: number, user_name: string }>
       ('http://localhost:3000/login', { userId, password })
       .subscribe((ResData) => {
-        this.router.navigateByUrl('/main/dashboard');
-        if (ResData.role_id !== null) {
+        console.log(ResData)
+        if (ResData.role_id !== undefined) {
           console.log(this.userId);
           localStorage.setItem('role_id', JSON.stringify(ResData.role_id));
           localStorage.setItem('userId', JSON.stringify(ResData.user_id));
           localStorage.setItem('space', JSON.stringify(ResData.space));
           localStorage.setItem('admin_access_id', JSON.stringify(ResData.admin_access_id));
           localStorage.setItem('user_name', JSON.stringify(ResData.user_name));
+          this.router.navigateByUrl('/main/dashboard');
         }
       });
   }
@@ -177,8 +179,16 @@ export class UserDataService {
     }
   }
 
-  getUsers(req_id) {
-    return this.http.get(this.usersURL + `/${req_id}`);
+  getUsers(id) {
+    return this.http.get(`http://localhost:3000/roles?userid=${id}`);
+  }
+
+  getUserRoles(req_id){
+    return this.http.get(this.usersURL + `/`)
+  }
+  getRoles(req_id,accessId) {
+    return this.http.post('http://localhost:5600/users', {req_id,accessId});
+    //return this.http.get(this.usersURL + `/${req_id},accessId`);
   }
 
 }

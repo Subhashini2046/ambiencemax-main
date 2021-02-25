@@ -1,6 +1,11 @@
 
   <div class="text-center container" style="background-color: white; margin-top: 20px;">
     <br>
+    <mat-card class="example-card1">
+      <mat-card-title> Pending Requests</mat-card-title>
+    </mat-card>
+    <br>
+    <mat-card class="example-card1">
   <table class="table" mat-table [dataSource]="this.dataSource">
   
     <!-- REQUEST NO COULMN -->
@@ -44,18 +49,20 @@
     </ng-container>
   
     <ng-container matColumnDef="view">
-      <th class="thead-light" mat-header-cell *matHeaderCellDef></th>
+      <th class="thead-light" mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-raised-button
-        class="col-bg-button"
+        <button mat-button class="stylepopupbuttonconfirm"
         (click) = 'view(element.RUMPRequestPK)'>
           View
         </button>
-        
+        <button mat-button class="stylepopupbuttonconfirm"
+        (click) = 'status(element.RUMPRequestPK)'>
+        View Status
+        </button>
       </td>
     </ng-container>
    
-    <ng-container  matColumnDef="Approve">
+    <!-- <ng-container  matColumnDef="Approve">
       <th class="thead-light" mat-header-cell *matHeaderCellDef style=" text-align: center;"></th>
       <td mat-cell *matCellDef="let element">
         <button
@@ -65,7 +72,7 @@
         View Status
         </button>
       </td>
-    </ng-container>
+    </ng-container> -->
     <!-- <ng-container matColumnDef="Update">
       <th class="thead-light" mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
@@ -81,7 +88,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  </mat-card>
   <mat-paginator [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
+  <mat-card-title *ngIf="this.dataSource.data.length<1">No data is available</mat-card-title>
+
   </div>
   
   
