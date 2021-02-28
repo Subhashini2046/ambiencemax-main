@@ -6,35 +6,15 @@ let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
 
-// var store = multer.diskStorage({
-//     destination:function(req,file,cb){
-//         cb(null, './uploads');
-//     },
-//     filename:function(req,file,cb){
-//         cb(null, Date.now()+'.'+file.originalname);
-//     }
-// });
-
-
-// var upload = multer({storage:store}).single('file');
-
-// router.post('/upload', function(req,res,next){
-//     upload(req,res,function(err){
-//         if(err){
-//             return res.status(501).json({error:err});
-//         }
-//         //do all database record saving activity
-//         return res.json({originalname:req.file.originalname, uploadname:req.file.filename});
-//     });
-// });
-
 
 router.post("/fileUpload", (req, res) => {
   reqId = req.body.req_id;
   filepath = req.body.filepath;
-  console.log("\\\\\\\\\\/////", reqId, filepath);
-  sql1 = `insert into datarumprequestfiles (RUMPRequestFilesPath,RUMPRequestFK,RUMPRequestFilesStage) values ('${filepath}','${reqId}',0)`
-  con.query(sql1, (err, result) => {
+  const fileAddress = 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\' + filepath;
+
+  sql1 = `insert into datarumprequestfiles (RUMPRequestFilesPath,RUMPRequestFK,RUMPRequestFilesStage) 
+  values (?,'${reqId}',0)`
+  con.query(sql1, fileAddress, (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -90,10 +70,11 @@ router.post("/newReq", (req, response) => {
     return spaceCollection;
   }
   //console.log("+++",spaceCollection.join("','"));
-  sql = `select work_id,b_id from linkrumprequestinitiators where b_id in('" + ${spaceCollection.join("','")} + "') order by b_id desc limit 1;`;
-  con.query(sql, (err, res) => {
+  sql = `select work_id,b_id from linkrumprequestinitiators where b_id in(?) order by b_id desc limit 1;`;
+  con.query(sql, [spaceCollection], (err, res) => {
     if (err) {
       console.log(err);
+      response.send(JSON.stringify({ result: "failed" }));
     } else {
       console.log(res);
       w_id = res[0].work_id;
@@ -101,7 +82,7 @@ router.post("/newReq", (req, response) => {
       console.log('w_id.......', w_id);
       w_flow = [];
       w_flow1 = 0;
-      sql = `Select w_flow from linkrumprequestflow where w_id=${w_id};`
+      sql = `Select w_flow from linkrumprequestflow where linkrumprequestflowpk=${w_id};`
       con.query(sql, function (err, result) {
         if (err) {
           console.log(err);
@@ -134,9 +115,9 @@ router.post("/newReq", (req, response) => {
               let requestNumber = "";
               if (req.body.request.req_type == "Repair") {
                 requestNumber = locShortName + "/" + startEndDate + "/" + "Form1" + "/";
-              }else if (req.body.request.req_type == "Upgrade") {
+              } else if (req.body.request.req_type == "Upgrade") {
                 requestNumber = locShortName + "/" + startEndDate + "/" + "Form2" + "/";
-              }else if (req.body.request.req_type == "Maintenance") {
+              } else if (req.body.request.req_type == "Maintenance") {
                 requestNumber = locShortName + "/" + startEndDate + "/" + "Form3" + "/";
               }
 
@@ -148,32 +129,32 @@ router.post("/newReq", (req, response) => {
                   console.log(err);
                 } else {
                   nextValue = result[0].nextval;
-                  if(nextValue==null){
-                    nextValue=1;
+                  if (nextValue == null) {
+                    nextValue = 1;
                   }
-                  requestNumber=requestNumber+nextValue
-                  console.log("nextValue---",requestNumber)
-                  let me_type=0
-                  if(req.body.request.me_type=="Civil"){
-                      me_type=0;
-                  }else if(req.body.request.me_type=="Electrical"){
-                      me_type=1;
+                  requestNumber = requestNumber + nextValue
+                  console.log("nextValue---", requestNumber)
+                  let me_type = 0
+                  if (req.body.request.me_type == "Civil") {
+                    me_type = 0;
+                  } else if (req.body.request.me_type == "Electrical") {
+                    me_type = 1;
                   }
 
-                  let budget_type=0
-                  if(req.body.request.budget_type=="Capex"){
-                       budget_type=0;
-                  }else if(req.body.request.budget_type=="Opex"){
-                       budget_type=1;
+                  let budget_type = 0
+                  if (req.body.request.budget_type == "Capex") {
+                    budget_type = 0;
+                  } else if (req.body.request.budget_type == "Opex") {
+                    budget_type = 1;
                   }
                   const now = new Date();
-                  let req_date=date.format(now, 'YYYY-MM-DD HH:mm:ss')
+                  let req_date = date.format(now, 'YYYY-MM-DD HH:mm:ss')
                   console.log('nn', req_date);
-      
+
                   sql_nested = `insert into datarumprequest (RUMPRequestType,RUMPRequestNumber,RUMPRequestUnreadStatus,RUMPRequestCancelStatus,RUMPRequestMEType,RUMPRequestSWON,
                             RUMPRequestSWONType,RUMPRequestBudgetType,RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,
                             RUMPRequestBalanceBudget,RUMPRequestSubject,RUMPRequestDescription,RUMPRequestDate,RUMPRequestFlowFK,RUMPRequestStatus,RUMPRequestStage,RUMPInitiatorId,RumprequestLevel,ispnc) 
-                            values ('${req.body.request.req_type}','${requestNumber}',0,0,'${me_type}','${req.body.request.req_swon}',
+                            values ('${req.body.request.req_type}','${requestNumber}',1,0,'${me_type}','${req.body.request.req_swon}',
                             'NA',${budget_type},
                             ${req.body.request.available_budget},${req.body.request.consumed_budget},
                             ${req.body.request.balance_budget},'${req.body.request.req_subject}',
@@ -186,8 +167,8 @@ router.post("/newReq", (req, response) => {
                       console.log(res);
                       console.log(res.insertId, "req_id");
                       response.send(JSON.stringify({
-                         id: res.insertId,
-                       }))
+                        id: res.insertId,
+                      }))
                     }
                   })
                 }
@@ -201,48 +182,104 @@ router.post("/newReq", (req, response) => {
   })
 })
 
+
+router.post("/updateRequests", (req, res) => {
+  var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      let wflowdata = result[0].wflow.split(',');
+      let nextValue = 0;
+      wflowdata = wflowdata.filter(data => data.includes('i')).map(data => {
+        let index = wflowdata.indexOf(data);
+        index = index + 1;
+        nextValue = wflowdata[index];
+        console.log("next----", nextValue);
+      })
+      let me_type = 0
+      if (req.body.request.me_type == "Civil") {
+        me_type = 0;
+      } else if (req.body.request.me_type == "Electrical") {
+        me_type = 1;
+      }
+
+      let budget_type = 0
+      if (req.body.request.budget_type == "Capex") {
+        budget_type = 0;
+      } else if (req.body.request.budget_type == "Opex") {
+        budget_type = 1;
+      }
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestMEType='${me_type}',RUMPRequestSWON='${req.body.request.req_swon}',
+      RUMPRequestBudgetType=${budget_type},RUMPRequestAvailableBudget=${req.body.request.available_budget},
+      RUMPRequestConsumedBudget=${req.body.request.consumed_budget},RUMPRequestBalanceBudget=${req.body.request.balance_budget},RUMPRequestSubject='${req.body.request.req_subject}',
+      RUMPRequestDescription='${req.body.request.req_description}',RumprequestLevel=${nextValue} where rumprequestpk=${req.body.req_id};`
+
+      con.query(sql, (err, ressult) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(ressult);
+          const now = new Date();
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Submitted','${actionTime}','Submitted','${req.body.role_name}',1);`
+          con.query(sql, (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(JSON.stringify({ result: "Updated" }));
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
 // Add BOQ Details //
 router.post("/BOQRequests", (req, res) => {
   let myrole = req.body.role;
-  var sql = `select w_id as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.w_id where RUMPRequestPK=${req.body.reqId};`
+  var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.reqId};`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
       let wflowdata = result[0].wflow.split(',');
-      let nextValue=0;
-          if (myrole == 3) {
-            console.log("bbb",wflowdata)
-            wflowdata = wflowdata.filter(data => data.includes('c')).map(data => {
-             // console.log("index",wflowdata.indexOf(data))
-              let index=wflowdata.indexOf(data);
-              index=index+1;
-              nextValue=wflowdata[index];
-            })
-          }
-          else if (myrole == 4) {
-            wflowdata = wflowdata.filter(data => data.includes('e')).map(data => {
-              let index=wflowdata.indexOf(data);
-              index=index+1;
-              nextValue=wflowdata[index];
-            })
-          }
-          //console.log("workFlow data--",nextValue);
-  sql1 = `update datarumprequest set RUMPRequestBOQDescription='${req.body.boqDescription}',
+      let nextValue = 0;
+      if (myrole == 3) {
+        console.log("bbb", wflowdata)
+        wflowdata = wflowdata.filter(data => data.includes('c')).map(data => {
+          // console.log("index",wflowdata.indexOf(data))
+          let index = wflowdata.indexOf(data);
+          index = index + 1;
+          nextValue = wflowdata[index];
+        })
+      }
+      else if (myrole == 4) {
+        wflowdata = wflowdata.filter(data => data.includes('e')).map(data => {
+          let index = wflowdata.indexOf(data);
+          index = index + 1;
+          nextValue = wflowdata[index];
+        })
+      }
+      //console.log("workFlow data--",nextValue);
+      sql1 = `update datarumprequest set RUMPRequestBOQDescription='${req.body.boqDescription}',
           RUMPRequestBOQEstimatedCost='${req.body.boqEstimatedCost}',RUMPRequestBOQEstimatedTime='${req.body.boqEstimatedTime}',
           RumprequestLevel=${nextValue} where RUMPRequestPK=${req.body.reqId};`
-  con.query(sql1, (err, result) => {
-    if (err) {
-      console.log(err);
-    }else {
-      console.log(result);
-      res.send(JSON.stringify({result: "passed" }));
+      con.query(sql1, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+          res.send(JSON.stringify({ result: "passed" }));
+        }
+      });
     }
   });
-}
-});
 });
 
 router.post("/requestDetail", (req, res) => {
@@ -272,84 +309,86 @@ router.post("/resendRequest", (req, res) => {
       console.log(err);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-  let role = result[0].role;
-  let request_action = "Resend to"+role;
-  sql = `update datarumprequest set ispnc=0,RumprequestLevel=${req.body.resendToId} 
+      let role = result[0].role;
+      let request_action = "Resend to " + role;
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=0,RumprequestLevel=${req.body.resendToId} 
   where rumprequestpk=${req.body.req_id};`
-  con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(result);
-      res.send(result);
-      const now = new Date();
-      let actionTime=date.format(now, 'YYYY-MM-DD HH:mm:ss')
-      sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'${request_action}','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
       con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(result);
-      res.send(result);
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+          // res.send(result);
+          const now = new Date();
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'${request_action}','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+          con.query(sql, function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(result);
+            }
+          })
+        }
+      })
     }
-  })
-    }
-  })
-}
   });
 });
 router.post("/addPnc", (req, res) => {
-  var sql = `select w_id as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.w_id where RUMPRequestPK=${req.body.req_id};`
+  var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-  let wflowdata = result[0].wflow.split(',');
-  let nextValue=0;
-  let VendorPk =req.body.VendorPk;
-  let allocatedDays=req.body.allocatedDays;
-  let allocationStartDate=req.body.allocationStartDate;
-  
-  if(VendorPk==null){
-    VendorPk=null;
-  }
-            console.log("bbb",wflowdata)
-            wflowdata = wflowdata.filter(data => data.includes('i')).map(data => {
-              let index=wflowdata.indexOf(data);
-              index=index+1;
-              nextValue=wflowdata[index];
-              console.log("next----",nextValue);
-            })
-    if(allocationStartDate==null){
-      sql = `update datarumprequest set RUMPRequestAllocatedVendor=${VendorPk},
+      let wflowdata = result[0].wflow.split(',');
+      let nextValue = 0;
+      let VendorPk = req.body.VendorPk;
+      let allocatedDays = req.body.allocatedDays;
+      let allocationStartDate = req.body.allocationStartDate;
+
+      if (VendorPk == null) {
+        VendorPk = null;
+      }
+      console.log("bbb", wflowdata)
+      wflowdata = wflowdata.filter(data => data.includes('i')).map(data => {
+        let index = wflowdata.indexOf(data);
+        index = index + 1;
+        nextValue = wflowdata[index];
+        console.log("next----", nextValue);
+      })
+      if (allocationStartDate == null) {
+        sql = `update datarumprequest set RUMPRequestAllocatedVendor=${VendorPk},
   RUMPRequestVendorAllocatedDays=${allocatedDays},
   RUMPRequestVendorAllocationStartDate=null,RumprequestLevel=${nextValue},
   RUMPRequestActualCost=${req.body.actualCost} where rumprequestpk=${req.body.req_id};`
-    }
-  else{  
-    allocationStartDate=req.body.allocationStartDate.toString().substr(0, 10);
-  sql = `update datarumprequest set RUMPRequestAllocatedVendor=${VendorPk},
+      }
+      else {
+        allocationStartDate = req.body.allocationStartDate.toString().substr(0, 10);
+        sql = `update datarumprequest set RUMPRequestAllocatedVendor=${VendorPk},
   RUMPRequestVendorAllocatedDays=${allocatedDays},
   RUMPRequestVendorAllocationStartDate='${allocationStartDate}',RumprequestLevel=${nextValue},
   RUMPRequestActualCost=${req.body.actualCost} where rumprequestpk=${req.body.req_id};`
-  }
-  con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(result);
-      res.send(result);
+      }
+      con.query(sql, function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+          res.send(result);
+        }
+      })
     }
-  })
-}
   });
 });
 router.post("/pncfileUpload", (req, res) => {
-  console.log("filepath-----",req.body.filepath);
-  sql = `update datarumprequest set RUMPRequestPNCUrl ='${req.body.filepath}' where rumprequestpk=${req.body.req_id};`
-  con.query(sql, function (err, result) {
+  console.log("filepath-----", req.body.filepath);
+  filepath = req.body.filepath;
+  const fileAddress = 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\' + filepath;
+  sql = `update datarumprequest set RUMPRequestPNCUrl =? where rumprequestpk=${req.body.req_id};`
+  con.query(sql, fileAddress, function (err, result) {
     if (err) {
       console.log(err);
     } else {
@@ -358,5 +397,40 @@ router.post("/pncfileUpload", (req, res) => {
     }
   })
 });
+router.post("/check_asRead", (req, res) => {
+
+  accessID = req.body.access_id;
+  reqId = req.body.req_id;
+  sql = `update datarumprequest set RUMPRequestUnreadStatus = 0 where RUMPRequestPK = ${reqId};`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.send(JSON.stringify({
+        result: "passed"
+      }));
+    }
+  })
+});
+
+
+
+router.post("/check_asUnRead", (req, res) => {
+  accessID = req.body.access_id;
+  reqId = req.body.req_id;
+  sql = `update datarumprequest set RUMPRequestUnreadStatus = 1 where RUMPRequestPK = '${reqId}';`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.send(JSON.stringify({
+        result: "passed"
+      }));
+    }
+  })
+});
+
 
 module.exports = router;

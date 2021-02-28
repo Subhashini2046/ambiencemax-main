@@ -10,8 +10,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="inputdes">Request Type</label>
-          <select class="form-control" id="request"[(ngModel)]="req_type" name="RequestType" 
-           disabled required>
+          <select class="form-control" id="request" [(ngModel)]="req_type" name="RequestType" disabled required>
             <option selected>Select the Request Type</option>
             <option>Upgrade</option>
             <option>Repair</option>
@@ -20,8 +19,7 @@
         </div>
         <div class="form-group col-md-6">
           <label>Request Number</label>
-          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number"
-            name="req_number" readonly
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number" name="req_number" readonly
             required />
         </div>
       </div>
@@ -29,8 +27,7 @@
 
         <div class="form-group col-md-6">
           <label>ME Type</label>
-          <select id="inputme" class="form-control" [(ngModel)]="me_type" 
-          name="METype" disabled required>
+          <select id="inputme" class="form-control" [(ngModel)]="me_type" name="METype" disabled required>
             <option selected>Select the ME Type</option>
             <option>Civil</option>
             <option>Electrical</option>
@@ -39,9 +36,8 @@
 
         <div class="form-group col-md-6">
           <label>S/WON</label>
-          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" 
-          readonly name="RequestSwon"
-           placeholder="" required />
+          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" readonly name="RequestSwon"
+            placeholder="" required />
         </div>
 
       </div>
@@ -50,8 +46,7 @@
 
         <div class="form-group col-md-6">
           <label>Budget Type</label>
-          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type"
-            name="budgetType" disabled required>
+          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type" name="budgetType" disabled required>
             <option selected>Select the Budget Type</option>
             <option>Capex</option>
             <option>Opex</option>
@@ -60,9 +55,8 @@
 
         <div class="form-group col-md-6">
           <label>Available Budget(INR)</label>
-          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget"
-            name="availableBudget" readonly
-            required />
+          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget" name="availableBudget"
+            readonly required />
         </div>
 
       </div>
@@ -71,47 +65,46 @@
 
         <div class="form-group col-md-6">
           <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget"
-            name="consumedBudget" readonly
-            required />
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget" name="consumedBudget"
+            readonly required />
         </div>
 
         <div class="form-group col-md-6">
           <label>Balance Budget(INR)</label>
-          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget"
-            name="balanceBudget" readonly
-            required />
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget" name="balanceBudget"
+            readonly required />
         </div>
 
       </div>
 
       <div class="form-group">
         <label>Request Subject</label>
-        <textarea placeholder="" id="subject" class="form-control" 
-        readonly [(ngModel)]="req_subject" name="ReqSubject"
-         name="RequestSubject" required></textarea>
-      
+        <textarea placeholder="" id="subject" class="form-control" readonly [(ngModel)]="req_subject" name="ReqSubject"
+          name="RequestSubject" required></textarea>
+
       </div>
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder=""  rows="4"
-        readonly [(ngModel)]="req_description"
-         class="form-control" name="Requestdes" maxlength="5000"
-          required></textarea>
-       
+        <textarea id="description" placeholder="" rows="4" readonly [(ngModel)]="req_description" class="form-control"
+          name="Requestdes" maxlength="5000" required></textarea>
+
+      </div>
+      <div class="text-center" *ngIf="(this.role_id==0 && this.req_status=='Closed')">
+        <button mat-raised-button class="col-bg-button" (click)=onCompelete()>
+          Compelete
+        </button>
       </div>
     </form>
 
 
-    
+
   </div>
 </div>
 
 <!-- BOQ Form -->
 
-<div class="row my-3"
-  *ngIf="((boqDescription!=null && boqDescription!='') || this.role_id==3 || this.role_id==4)">
+<div class="row my-3" *ngIf="((boqDescription!=null && boqDescription!='') || this.role_id==3 || this.role_id==4)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
@@ -122,23 +115,21 @@
       <hr>
       <div class="form-group">
         <label>BOQ Description</label>
-        <textarea id="subject" rows="4" class="form-control" [(ngModel)]="boqDescription" 
-          readonly name="boqDescription" required></textarea>
+        <textarea id="subject" rows="4" class="form-control" [(ngModel)]="boqDescription" readonly name="boqDescription"
+          required></textarea>
       </div>
       <div class="form-row">
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Cost</label>
-          <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost" 
-            readonly type="number" name="boqEstimatedCost"
-            required />
+          <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost" readonly type="number"
+            name="boqEstimatedCost" required />
         </div>
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Time</label>
-          <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime"
-            readonly type="text" name="boqEstimatedTime"
-            required />
+          <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime" readonly type="text"
+            name="boqEstimatedTime" required />
         </div>
       </div>
     </form>
@@ -148,7 +139,7 @@
 <!-- BOQ End -->
 
 <!-- PNC Form -->
-<div class="row my-3"*ngIf="allocationStartDate!=null || this.allocatedDays!=null || this.pncurl!=null" >
+<div class="row my-3" *ngIf="allocationStartDate!=null || this.allocatedDays!=null || this.pncurl!=null">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
@@ -158,13 +149,12 @@
       </h5>
       <hr>
       <br>
-      <div class="form-group"  *ngIf="allocationStartDate!=null">
+      <div class="form-group" *ngIf="allocationStartDate!=null">
         <label>Allocation Start Date</label>
         <br>
         <mat-form-field appearance="fill">
           <mat-label>Choose a date</mat-label>
-          <input matInput [matDatepicker]="picker1" placeholder="Angular forms"
-            readonly
+          <input matInput [matDatepicker]="picker1" placeholder="Angular forms" disabled
             [(ngModel)]="allocationStartDate" name="allocationStartDate">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
@@ -173,22 +163,22 @@
       <div class="form-group" *ngIf="this.allocatedDays!=null">
 
         <label>Allocated Days</label>
-        <input class="form-control" id="allocatedDays" type="number"
-          readonly
-          [(ngModel)]="allocatedDays" name="allocatedDays" required />
+        <input class="form-control" id="allocatedDays" type="number" readonly [(ngModel)]="allocatedDays"
+          name="allocatedDays" required />
       </div>
       <div class="form-group" *ngIf="this.actualCost!=null">
         <label>Actual Cost</label>
-        <input class="form-control" id="consumed" type="number"
-          readonly
-          [(ngModel)]="actualCost" name="consumedBudget" required />
+        <input class="form-control" id="consumed" type="number" readonly [(ngModel)]="actualCost" name="consumedBudget"
+          required />
       </div>
       <div class="form-group" *ngIf="this.pncurl!=null">
         <label>PNC Document</label>
         <br>
-        <label  style="color:rgb(46, 46, 141)"> {{this.pncurl}}</label>
+        <button  *ngIf="this.role_id==0"mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download()">
+          Download Document
+        </button>
+        <label> {{this.filename}}</label>
       </div>
-
     </form>
   </div>
   <div class="col-md-3"></div>

@@ -1,13 +1,23 @@
-<div class="cnt mx-2 my-1">
-  <div class="alert alert-info">
-    <h5 class="text-center">
-      Existing assigned workflows
-    </h5>
-  </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<mat-toolbar class="col-bg-header">
+  <a class="navbar-brand">
+    <div class="logo">
+      <!-- <img class="text-center" src="../assets/Logo.svg" width="100" height="30" alt="" class="d-align-block" /> -->
+      <span class="apptype" style="margin-left: 16px; color: white;">AmbienceMax</span>
+    </div>
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+  </a>
+  <span class="example-spacer"></span>
+  
+</mat-toolbar>
+  <div class="row my-3">
+    <div class="col-md-3"></div>
+    <div class="col-md-6" style="border-radius: 10px;">
+  <mat-card>
+    <mat-card class="ex1 text-center">
+      <mat-card-title> Existing assigned workflows</mat-card-title>
+    </mat-card>
+    <br>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <!-- Position Column -->
     <ng-container matColumnDef="ID" >
@@ -18,7 +28,7 @@
        </th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
-          {{element.id}}
+          {{element.linkrumprequestflowpk}}
         </p>
       </td>
     </ng-container>
@@ -32,7 +42,7 @@
       </th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
-          {{element.flow}}
+          {{element.w_flow}}
         </p>
         </td>
     </ng-container>
@@ -46,7 +56,10 @@
       </th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
-          {{element.location}}
+          <button mat-button class="stylepopupbuttonconfirm"
+          (click)='openDialog()'>
+          View Details
+        </button>
         </p>
       </td>
     </ng-container>
@@ -55,14 +68,15 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   <mat-paginator [pageSizeOptions]="[4]" ></mat-paginator>
-  <div class="alert alert-info my-1">
-    <h5 class="text-center">
-      Add new workflows & hierarchies
-    </h5>
-  </div>
+  </mat-card>
+  <br>
   <div class="row my-1">
     <div class="col-lg-12">
       <mat-card>
+        <mat-card class="ex1 text-center">
+          <mat-card-title> Add new workflows & hierarchies</mat-card-title>
+        </mat-card>
+        <br>
         <h5 class="text-center">
           Add Workflow
           <hr>
@@ -92,7 +106,7 @@
       </mat-card>
       <hr>
     </div>
-    <div class="col-lg-6">
+    <!-- <div class="col-lg-6">
       <mat-card>
         <h5 class="text-center">
           Add Hierarchy
@@ -102,7 +116,6 @@
           <div class="form-group col">
             <label for="id"> Hierarchy id</label>
             <input type="text" name="" id="id"  class="form-control" [(ngModel)] ="h_id">
-            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
           </div>
           <div class="form-group col">
             <label for="id"> Hierarchy Level</label>
@@ -126,29 +139,31 @@
           <div class="col"></div>
         </div>
       </mat-card>
-    </div>
-    <div class="col-lg-6">
+    </div> -->
+
+    <div class="col-lg-12">
+
       <mat-card>
-        <h5 class="text-center">
-          Link Hierarchy to Workflow
-        </h5>
-        <hr>
+        <mat-card class="ex1 text-center">
+          <mat-card-title> Link Hierarchy to Workflow</mat-card-title>
+        </mat-card>
+        <br>
         <form action="" #hform = "ngForm">
           <div class="row">
             <div class="form-group col" >
               <label for="H_id"> Building Id</label>
-              <input type="text" name="h_id" id="H_id" [(ngModel)] ="b_id"  class="form-control">
+              <input type="number" name="h_id" id="H_id" min="13" [(ngModel)] ="b_id"  class="form-control" required>
             </div>
             <div class="form-group col">
               <label for="w_id"> Workflow Id</label>
-              <input type="number" name="w_id" id="w_id" [(ngModel)] = "work_id" class="form-control">
+              <input type="number" name="w_id" id="w_id" min="1" [(ngModel)] = "work_id" class="form-control" required>
             </div>
           </div>
           <div class="row">
             <div class="col"></div>
             <div class="col">
             <button mat-raised-button color="primary" style="width: 100%;"
-            [disabled] = "b_id ==='' || work_id ===''"
+            [disabled]="!hform.valid"
             (click) = "onAddLink(); hform.reset()">
             Submit
           </button>
@@ -157,6 +172,7 @@
           </div>
         </form>
       </mat-card>
-    </div>
+      </div>
   </div>
-</div>
+</div></div>
+

@@ -5,16 +5,17 @@ let express = require("express"),
 
 router.post("/allReq", (req, res) => {
   if (req.body.role == 0) {
-    con.query(`select * from datarumprequest
+    con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+    RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
-    where linkrumprolefk=0 and linkRUMPSpace=?`, req.body.space, (err, result) => {
+    where linkrumprolefk=0 and linkRUMPSpace=? order by RUMPRequestdate desc`, req.body.space, (err, result) => {
       if (err) throw err;
       res.end(JSON.stringify(result))
     })
   } else if (req.body.role == 3 || req.body.role == 4) {
     let myrole = req.body.role;
     let narr = [];
-    con.query(`select w_id as wid,w_flow as wflow from linkrumprequestflow;
+    con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
     select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
       if (err) throw err;
       for (let i = 0; i < result[0].length; i++) {
@@ -42,7 +43,8 @@ router.post("/allReq", (req, res) => {
       if(myrole==3){
         metype=0;
       }
-      con.query(`select * from datarumprequest where rumprequestmetype=? and rumprequestflowfk in(?)  `,
+      con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestmetype=? and rumprequestflowfk in(?) order by RUMPRequestdate desc `,
         [metype,narr], (err, result) => {
           if (err) throw err;
           res.end(JSON.stringify(result))
@@ -51,7 +53,7 @@ router.post("/allReq", (req, res) => {
     })
   } else {
     let narr = [];
-    con.query(`select w_id as wid,w_flow as wflow from linkrumprequestflow;
+    con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
     select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
       if (err) throw err;
       for (let i = 0; i < result[0].length; i++) {
@@ -67,7 +69,8 @@ router.post("/allReq", (req, res) => {
           }
         }
       }
-      con.query(`select * from datarumprequest where rumprequestflowfk in(?)`,
+      con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestflowfk in(?) order by RUMPRequestdate desc`,
         [narr], (err, result) => {
           if (err) throw err;
           res.end(JSON.stringify(result))

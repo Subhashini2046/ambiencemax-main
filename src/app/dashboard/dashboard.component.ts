@@ -1,3 +1,4 @@
+import { Role } from './../Services/RequestService';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MediaMatcher } from '@angular/cdk/layout';
@@ -17,14 +18,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   main = this.UsrDataService.main;
   public role_id;
+  public space;
+ public UnreadStatuspending;
+ public UnreadStatusAll;
+ public  UnreadStatusclosed;
+ public UnreadStatuscompleted;
+  public UnreadStatusopen;
   menus=[];
   private reqSub: Subscription;
   Buttons: Options[] = [
-    { name: 'All Requests', func: 'all' },
-    { name: 'Pending Requests', func: 'Pending' },
-    { name: 'Open Requests', func: 'open' },
-    { name: 'Closed Requests', func: 'closed' },
-    { name: 'Completed Requests', func: 'complete' },
+    { name: 'Pending Request', func: 'Pending' },
+    { name: 'Open Request', func: 'open' },
+    { name: 'Closed Request', func: 'closed' },
+    { name: 'Completed Request', func: 'complete' },
+    { name: 'All Request', func: 'all' },
   ];
   private _mobileQueryListener: () => void;
   constructor(
@@ -38,32 +45,56 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
+  countSubsription:Subscription;
   Request(type: string) {
     this.main = type;
     
     if (type === 'Pending') {
-      this.router.navigate(['/main/pending']);
+      this.router.navigate(['/AmbienceMax/pending']);
     }
     else if (type === 'all') {
-      this.router.navigate(['/main/allRequest']);
+      this.router.navigate(['/AmbienceMax/allRequest']);
     }
      else if (type === 'closed') {
-      this.router.navigate(['/main/close']);
+      this.router.navigate(['/AmbienceMax/close']);
       console.log('Closed Called');
     } else if (type === 'open') {
-      this.router.navigate(['/main/open']);
+      this.router.navigate(['/AmbienceMax/open']);
     }else if (type === 'complete') {
-      this.router.navigate(['/main/complete']);
+      this.router.navigate(['/AmbienceMax/complete']);
     }
   }
   ngOnInit() {
-    this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
+    console.log("ng!!!!");
+    this.countSubsription=   this.UsrDataService.changedetectInRole.subscribe(data=>{
+      this.role_id = JSON.parse(localStorage.getItem('role_id'));
+      this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
       console.log(data);
       this.menus=JSON.parse(JSON.stringify(data));
     })
+    this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    this.space= JSON.parse(localStorage.getItem('space')); 
+    this.UsrDataService.getRequestCount(this.role_id,this.space).subscribe((res)=>{
+    this.UnreadStatuspending=res["UnreadStatuspending"];
+    this.UnreadStatusAll=res["UnreadStatusAll"];
+    this.UnreadStatusclosed=res["UnreadStatusclosed"];
+    this.UnreadStatuscompleted=res["UnreadStatuscompleted"];
+    this.UnreadStatusopen=res["UnreadStatusopen"];
+    if(this.UnreadStatuspending==null){this.UnreadStatuspending=0;}
+    if(this.UnreadStatusAll==null){this.UnreadStatusAll=0;}
+    if(this.UnreadStatusclosed==null){this.UnreadStatusclosed=0;}
+    if(this.UnreadStatuscompleted==null){this.UnreadStatuscompleted=0;}
+    if(this.UnreadStatusopen==null){this.UnreadStatusopen=0;}
+});
+  });
+ // this.role_id = JSON.parse(localStorage.getItem('role_id'));
+      // this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
+      // console.log(data);
+      // this.menus=JSON.parse(JSON.stringify(data));
+
   }
   ngOnDestroy(): void {
+    this.countSubsription.unsubscribe();
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   logout() {
@@ -71,11 +102,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
     this.UsrDataService.main = '';
   }
-  navigateToDashboard(role,space){
+  navigateToDashboard(role,space,id){
+    console.log(id,"id");
     localStorage.setItem('role_id', JSON.stringify(role));
     localStorage.setItem('space', JSON.stringify(space));
-    this.router.navigateByUrl('/main/dashboard');
-    this.UsrDataService.changedetectInRole.next({role:role,space:space})
+    localStorage.setItem('admin_access_id', JSON.stringify(id));
+    this.router.navigateByUrl('/AmbienceMax/dashboard');
+    this.UsrDataService.changedetectInRole.next({role:role,space:space,id:id})
   }
   getRoleName(name,roledesc){
     return roledesc+" | "+name

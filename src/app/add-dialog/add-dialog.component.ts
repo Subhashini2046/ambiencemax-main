@@ -35,10 +35,10 @@ export class AddDialogComponent implements OnInit {
     })
   }
   navigateTo() {
-    this.router.navigate(['main/viewcomm', this.accessId, this.req_id]);
+    this.router.navigate(['AmbienceMax/viewcomm', this.accessId, this.req_id]);
   }
   onCancel() {
-    this.router.navigate(['/main/open']);
+    this.router.navigate(['AmbienceMax/open']);
   }
 }
 

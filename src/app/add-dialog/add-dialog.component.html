@@ -9,7 +9,7 @@
       <div class="text-center">
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>Select User</mat-label>
-          <mat-select formControlName="request_actionnnn" [(ngModel)]="accessId" name="food">
+          <mat-select formControlName="request_actionnnn" [(ngModel)]="accessId" name="food" required>
             <mat-option *ngFor="let type of users" [value]="type.accessId">
               {{type.role}}
             </mat-option>

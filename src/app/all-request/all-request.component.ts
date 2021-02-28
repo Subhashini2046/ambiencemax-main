@@ -8,11 +8,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./all-request.component.css'],
 })
 export class AllRequestComponent implements OnInit {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
+  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
     'RequestDate', 'status', 'view', 'Approve'];
   dataSource = new MatTableDataSource();
 
-
+  reqStatus
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   constructor(private route: Router, public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef) { }
@@ -31,9 +31,20 @@ export class AllRequestComponent implements OnInit {
   ngOnDestroy() {
   }
   status(reqId) {
-    this.route.navigate(['/main/status', reqId]);
+    this.route.navigate(['/AmbienceMax/status', reqId]);
   }
-  view(req_id, pnc) {
-    this.route.navigate(['/main/request-form', req_id, pnc]);
+  view(req_id, pnc,reqStatus) {
+    console.log(reqStatus,reqStatus.toString().trim() === 'Pending');
+    if(reqStatus.toString().trim() === 'Pending'){
+      this.route.navigate(['AmbienceMax/view', req_id]);
+    }
+   else if(reqStatus.toString().trim() === 'Completed'){
+      this.route.navigate(['AmbienceMax/view', req_id]);
+    }
+    else if(reqStatus.toString().trim() === 'Closed'){
+      this.route.navigate(['AmbienceMax/view', req_id]);
+    }
+    else
+        this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
   }
 }

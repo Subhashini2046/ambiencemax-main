@@ -1,16 +1,12 @@
-
-<div
-class="example-container"
-[class.example-is-mobile]="mobileQuery.matches"
-*ngIf="this.UsrDataService.userId !== undefined"
->
-<mat-toolbar  class="col-bg-header">
-  <button mat-icon-button (click)="snav.toggle()">
-    <mat-icon style="color: rgb(245, 236, 236);">menu</mat-icon>
-  </button>
-  <a routerLink="/main/dashboard" class="navbar-brand" (click)="main = ''">
-    <div class="logo">
-      <!-- <img
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches"
+  *ngIf="this.UsrDataService.userId !== undefined">
+  <mat-toolbar class="col-bg-header">
+    <button mat-icon-button style="outline:none;" (click)="snav.toggle()">
+      <mat-icon style="color: rgb(245, 236, 236);">menu</mat-icon>
+    </button>
+    <a routerLink="/AmbienceMax/dashboard" class="navbar-brand" (click)="main = ''">
+      <div class="logo">
+        <!-- <img
         class="text-center"
         src="../assets/Logo.svg"
         width="100"
@@ -20,83 +16,61 @@ class="example-container"
       /> -->
         <span class="apptype" style="margin-left: 16px; color: rgb(245, 236, 236);">AmbienceMax</span>
       </div>
-  </a>
-  <span class="example-spacer"></span>
-  <div class="form-inline" *ngIf="this.userId!== null">
-    <button
-      class="btn btn-lg btn-danger"
-      mat-button
-      [matMenuTriggerFor]="beforeMenu"
-    >
-      <mat-icon
-        class="example-icon"
-        aria-hidden="false"
-        aria-label="Example settings icon"
-        style="color: rgb(245, 236, 236);"
-        >settings</mat-icon
-      >
-    </button>
-    <mat-menu #beforeMenu="matMenu" xPosition="before">
-      <button mat-menu-item>View Profile</button>
-      <button mat-menu-item>All Settings</button>
-      <button mat-menu-item [matMenuTriggerFor]="switchMenu">Switch Role</button>
-      <button mat-menu-item routerLink="" (click)="logout()">
-        Logout
-      </button>
-    </mat-menu>
-    <mat-menu  #switchMenu="matMenu" xPosition="before">
-      <button mat-menu-item *ngFor="let i of menus" (click)="navigateToDashboard(i.role,i.space)">{{getRoleName(i.name,i.roledesc)}}</button>
-    </mat-menu>
-  </div>
-</mat-toolbar>
-<mat-sidenav-container style="color: rgb(245, 236, 236);"
-  class="example-sidenav-container"
-  [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
->
-  <mat-sidenav
-    #snav
-    [mode]="'over'"
-    [fixedInViewport]="mobileQuery.matches"
-    fixedTopGap="56"
-    class="col-bg-sidenav"
-  >
+    </a>
+    <span class="example-spacer"></span>
+    <div class="form-inline" *ngIf="this.userId!== null">
+      <button mat-button class="stylepopupbuttonconfirm" style="color: rgb(245, 236, 236);outline:none;"
+        [matMenuTriggerFor]="switchMenu">Switch Role</button>
+      <button mat-button class="stylepopupbuttonconfirm" style="color: rgb(245, 236, 236);outline:none;"
+        (click)="logout()">Logout</button>
+      <mat-menu #switchMenu="matMenu" xPosition="before">
+        <button style="outline:none;" mat-menu-item *ngFor="let i of menus"
+          (click)="navigateToDashboard(i.role,i.space,i.sid)">{{getRoleName(i.name,i.roledesc)}}</button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+  <mat-sidenav-container style="color: rgb(245, 236, 236);" class="example-sidenav-container"
+    [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [mode]="'over'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56" class="col-bg-sidenav">
 
-    <mat-nav-list style="color: rgb(245, 236, 236);">
-      <a
-        class="btn"
-        (click)="snav.toggle();"
-        routerLink="dashboard"
-        mat-list-item
-      >
-        Dashboard
-      </a>
-      <a
-        class="btn"
-        *ngIf="this.role_id==0"
-        (click)="snav.toggle()"
-        routerLink="request-form"
-        mat-list-item
-      >
-        New Request
-      </a>
+      <mat-nav-list style="color: rgb(245, 236, 236);">
+        <a class="btn" (click)="snav.toggle();" routerLink="dashboard" mat-list-item>
+          Dashboard
+        </a>
+        <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="request-form" mat-list-item>Raise
+          Request </a>
+        <a class="btn"  (click)="snav.toggle()" routerLink="pending" mat-list-item>
+          <span matBadge={{this.UnreadStatuspending}} matBadgeColor="warn" matBadgeOverlap="false"> Pending Requests</span>
+        </a>
 
-      <a
-        class="btn"
-        *ngFor="let chip of Buttons"
-        (click)="Request(chip.func); snav.toggle(); main = chip.func;
-        this.UsrDataService.main = chip.func;"
-        mat-list-item
-      >
-        {{ chip.name }}</a
-      >
-    </mat-nav-list>
-  </mat-sidenav>
-  
-  <mat-sidenav-content class="content">
-    <div class="maindiv">
-      <router-outlet></router-outlet>
-  </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+        <a class="btn"  (click)="snav.toggle()" routerLink="open" mat-list-item>
+          <span matBadge={{this.UnreadStatusopen}} matBadgeOverlap="false" matBadgeColor="warn"> Open Requests</span>
+        </a>
+
+        <a class="btn" (click)="snav.toggle()" routerLink="close" mat-list-item>
+          <span matBadge={{this.UnreadStatusclosed}} matBadgeColor="warn" matBadgeOverlap="false"> Closed Requests</span>
+        </a>
+
+        <a class="btn" (click)="snav.toggle()" routerLink="complete" mat-list-item>
+          <span matBadge={{this.UnreadStatuscompleted}} matBadgeColor="warn" matBadgeOverlap="false">Completed Requests</span>
+
+        </a>
+
+        <a class="btn" (click)="snav.toggle()" routerLink="allRequest" mat-list-item>
+          <span matBadge={{this.UnreadStatusAll}} matBadgeColor="warn" matBadgeOverlap="false">All
+            Request</span>
+          </a>
+
+        <!-- <a class="btn" *ngFor="let chip of Buttons" (click)="Request(chip.func); snav.toggle(); main = chip.func;
+        this.UsrDataService.main = chip.func;" mat-list-item>
+          {{ chip.name }} <mat-icon> message</mat-icon>.</a> -->
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="content">
+      <div class="maindiv">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
-

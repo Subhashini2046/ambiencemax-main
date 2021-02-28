@@ -91,6 +91,6 @@ export class ApproveRequestComponent implements OnInit {
         console.log("Successfully Inserted");
       });
 
-    this.route.navigate(['/main/open']);
+    this.route.navigate(['/AmbienceMax/open']);
   }
 }

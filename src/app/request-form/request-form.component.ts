@@ -22,7 +22,7 @@ export class RequestFormComponent implements OnInit {
   public role_id;
   req_id = 0;
   is_pnc = 0;
-  remainingText = 250;
+  remainingText = 25;
   remaining_description = 5000;
   description = "";
   subject = "";
@@ -33,12 +33,12 @@ export class RequestFormComponent implements OnInit {
   requestDetails: any[] = [];
   // for BOQ form
   boqDescription: "";
-  boqEstimatedCost: number;
+  boqEstimatedCost= 0;
   boqEstimatedTime: "";
   filepnc: any[] = [];
- public boqDescription1: "";
-public boqEstimatedCost1: number;
-   boqEstimatedTime1: "";
+  public boqDescription1: "";
+  public boqEstimatedCost1: number;
+  boqEstimatedTime1: "";
   // for PNC form
   allocatedDays;
   allocationStartDate: " ";
@@ -54,9 +54,11 @@ public boqEstimatedCost1: number;
   date = new FormControl(new Date());
   user_name;
   admin_access_id;
+
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
   }
+  
   Approvers = [];
   num = 0;
   currReq: ReqSchema = {
@@ -83,6 +85,7 @@ public boqEstimatedCost1: number;
     console.log('user_id', this.userId);
     this.currReq.req_initiator_id = this.userId;
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    console.log('this.role_id', this.role_id);
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
     this.actrouter.params.subscribe(params => {
@@ -97,7 +100,8 @@ public boqEstimatedCost1: number;
       else
         this.is_pnc = 0
     });
-    console.log('is_pnc', this.is_pnc);
+    //console.log((this.role_id != 0 && this.is_pnc!=0),this.role_id != 0,this.is_pnc!=0);
+    console.log('is_pnc', this.is_pnc,(this.role_id != 0 && this.is_pnc!=0));
     if (this.role_id == 3 || this.role_id == 4) {
       return this.UserDataService.getRequestDetails(this.req_id).subscribe((response: any) => {
         console.log(response)
@@ -106,11 +110,16 @@ public boqEstimatedCost1: number;
   }
   public selectedSpoc;
   ngAfterContentInit() {
+    if (this.req_id > 0) {
+      this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
+        console.log(response, "check_asRead");
+      });
+    }
     if (this.is_pnc == 1) {
       this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
         this.dataSource = response;
         this.selectedElement = response;
-        this.selectedSpoc=this.dataSource.length;
+        this.selectedSpoc = this.dataSource.length;
         console.log(response);
       });
     }
@@ -130,73 +139,48 @@ public boqEstimatedCost1: number;
         this.boqDescription1 = this.requestDetails[0]["BOQDescription"];
         this.boqDescription = this.requestDetails[0]["BOQDescription"];
         this.boqEstimatedCost = this.requestDetails[0]["BOQEstimatedCost"];
-        this.boqEstimatedTime= this.requestDetails[0]["BOQEstimatedTime"];
+        this.boqEstimatedTime = this.requestDetails[0]["BOQEstimatedTime"];
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];
         this.is_pnc = this.requestDetails[0]["ispnc"];
-        this.currReq.req_initiator_id=this.requestDetails[0]["initiatorId"];
-        this.currReq.req_level=this.requestDetails[0]["requestLevel"];
-        this.currReq.req_status=this.requestDetails[0]["RequestStatus"];
-        this.RequestAllocatedVendor=this.requestDetails[0]["RequestAllocatedVendor"];
+        this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
+        this.currReq.req_level = this.requestDetails[0]["requestLevel"];
+        this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
+        this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
         // for(let i=0;i<this.selectedElement.length;i++){
         //   if(this.RequestAllocatedVendor==this.selectedElement[i]["rumpvenVendorPK"]){
 
         //   }
         // }
-        console.log((this.currReq.req_status!='Closed'));
+        console.log((this.role_id == 0 && this.currReq.req_status == 'Closed'));
+        console.log(this.RequestAllocatedVendor, "hh");
+        console.log((this.currReq.req_status != 'Closed'));
       });
     }
   }
 
   valueChange(value) {
-    this.remainingText = 250 - value.length;
+    this.remainingText = 25 - value.length;
   }
   valueChangeDiscription(value) {
     this.remaining_description = 5000 - value.length;
   }
+  // onMultipleSubmit() {
 
-  selectImage(event) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.images = file;
-    }
-  }
-
-  selectMultipleImage(event) {
-    if (event.target.files.length > 0) {
-      this.multipleImages = event.target.files;
-    }
-  }
-
-
-  onMultipleSubmit() {
-
-    var filesize = 0;
-    const formData = new FormData();
-    console.log("nnnnn", this.multipleImages)
-    for (let img of this.multipleImages) {
-      formData.append('files', img);
-      filesize += img['size'];
-      console.log("/////", img)
-      console.log("///", formData)
-    }
-    var fileInMB = 10485760;
-    if (filesize > fileInMB) {
-      console.log("lll", filesize > fileInMB);
-      this.areCredentialsInvalid = true;
-      return;
-    }
-    console.log("lll");
-    //   this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) =>{
-    //     for (let i = 0; i < res.files.length; i++) { 
-    //       this.filepath[i]=res.files[i]['path'];
-    //       this.fieldValue[i]=res.files[i]['originalname'];
-    //  // console.log(this.filepath);
-    //     }
-    //     console.log("nnnnnhh",this.fieldValue);
-    // });
-  }
+  //   var filesize = 0;
+  //   const formData = new FormData();
+  //   console.log("nnnnn", this.multipleImages)
+  //   for (let img of this.multipleImages) {
+  //     formData.append('files', img);
+  //     filesize += img['size'];}
+  //   var fileInMB = 10485760;
+  //   if (filesize > fileInMB) {
+  //     console.log("lll", filesize > fileInMB);
+  //     this.areCredentialsInvalid = true;
+  //     return;
+  //   }
+  // }
   @ViewChild('attachments', { static: false }) attachment: any;
 
   fileList: File[] = [];
@@ -221,10 +205,32 @@ public boqEstimatedCost1: number;
   }
 
 
-
   removeSelectedFile(index) {
     this.listOfFiles.splice(index, 1);
     this.fileList.splice(index, 1);
+  }
+  fileList1: File[] = [];
+  listOfFiles1: any[] = [];
+  onPncFileChanged(event: any) {
+    var filesize = 0;
+    for (var i = 0; i <= event.target.files.length - 1; i++) {
+      var selectedFile = event.target.files[i];
+      this.fileList1.push(selectedFile);
+      filesize += this.fileList1[i]['size'];
+      this.listOfFiles1.push(selectedFile.name);
+    }
+    var fileInMB = 10485760;
+    if (filesize > fileInMB) {
+      console.log("lll", filesize > fileInMB);
+      this.areCredentialsInvalid = true;
+      return;
+    }
+    console.log("mmmm", this.fileList1);
+    this.attachment.nativeElement.value = '';
+  }
+  removePncSelectedFile(index) {
+    this.listOfFiles1.splice(index, 1);
+    this.fileList1.splice(index, 1);
   }
   onSubmit() {
     this.currReq.req_subject = this.subject;
@@ -236,58 +242,71 @@ public boqEstimatedCost1: number;
     }
     this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
-        this.filepath[i] = res.files[i]['path'];
+        this.filepath[i] = res.files[i]['filename'];
       }
     });
-    this.openSnackBar('Request Submitted Successfully !');
 
+    console.log(this.filepath,"this.filepath");
+    //this.openSnackBar('Request Submitted Successfully !');
     this.UserDataService.addRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath);
-    this.router.navigateByUrl('/main/dashboard');
+  }
+  onSumbitForUpdate(){
+    this.currReq.req_subject = this.subject;
+    this.currReq.req_description = this.description;
+    this.UserDataService.updateRequest(this.currReq,this.admin_access_id,this.req_id, JSON.parse(localStorage.getItem('user_name'))).subscribe((res)=>{
+      this.openSnackBar('Request Updated Successfully !');
+      this.router.navigateByUrl('/AmbienceMax/open');
+    });
   }
   onBOQSubmit() {
     const formData = new FormData();
+    let id = '' + this.req_id;
+    formData.append('id', id);
     for (let img of this.fileList) {
       formData.append('files', img);
     }
-    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>('http://localhost:5600/BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
-        this.filepath[i] = res.files[i]['path'];
+        this.filepath[i] = res.files[i]['filename'];
       }
+
     });
 
     this.openSnackBar('Request Submitted Successfully !');
     this.UserDataService.addBOQDDetails(this.req_id, this.role_id, this.boqDescription, this.boqEstimatedCost, this.boqEstimatedTime, this.filepath);
-    this.router.navigateByUrl('/main/open');
+    this.router.navigateByUrl('/AmbienceMax/open');
   }
   onPncSumbit() {
     let allocationStartDate = this.allocationStartDate;
     const formData = new FormData();
-    for (let img of this.fileList) {
+    let id = '' + this.req_id;
+    formData.append('id', id);
+    for (let img of this.fileList1) {
       formData.append('files', img);
     }
     this.http.post<any>('http://localhost:5600/pncFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
-        this.filepnc[i] = res.files[i]['path'];
+        this.filepnc[i] = res.files[i]['filename'];
       }
     });
     let VendorPk = this.selectedElement["rumpvenVendorPK"];
     this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc);
-    console.log("selectedElement", this.selectedElement["rumpvenVendorPK"]);
-    this.route.navigate(['/main/open']);
+    this.route.navigate(['/AmbienceMax/open']);
   }
 
   onApprove() {
     this.UserDataService.meType = this.currReq.me_type;
-    this.route.navigate(['/main/approveRequest', this.req_id]);
+    this.route.navigate(['/AmbienceMax/approveRequest', this.req_id]);
   }
   onResend() {
-    this.route.navigate(['/main/dialogg/', this.req_id]);
+  // this.UserDataService.updateRequest(this.currReq,this.req_id,this.filepath); 
+    this.route.navigate(['/AmbienceMax/dialogg/', this.req_id]);
   }
-  onCompelete(){
-    this.UserDataService.addCompleteRequest(this.req_id,this.admin_access_id, this.user_name).subscribe((ResData) => {
+  onCompelete() {
+    this.UserDataService.addCompleteRequest(this.req_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
       console.log(ResData);
     })
-    this.route.navigateByUrl('/main/complete');
+    this.route.navigateByUrl('/AmbienceMax/complete');
   }
   openSnackBar(message: string) {
     this._snackBar.open(message, '', {

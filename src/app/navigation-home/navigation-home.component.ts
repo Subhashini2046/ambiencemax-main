@@ -25,6 +25,11 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
   public userRole;
   public w_id;
   public Completed;
+  public UnreadStatuspending;
+ public UnreadStatusAll;
+ public  UnreadStatusclosed;
+ public UnreadStatuscompleted;
+  public UnreadStatusopen;
   role;
   space;
 
@@ -52,15 +57,15 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
   Request(type: string) {
     this.main = type;
     if (type === 'Pending') {
-      this.router.navigate(['main/pending']);
+      this.router.navigate(['AmbienceMax/pending']);
     } else if (type === 'all') {
-      this.router.navigate(['main/all-request']);
+      this.router.navigate(['AmbienceMax/all-request']);
     } else if (type === 'closed') {
-      this.router.navigate(['main/close']);
+      this.router.navigate(['AmbienceMax/close']);
     } else if (type === 'open') {
-      this.router.navigate(['main/open']);
+      this.router.navigate(['AmbienceMax/open']);
     }else if (type === 'complete') {
-      this.router.navigate(['/main/complete']);
+      this.router.navigate(['AmbienceMax/complete']);
     }
   }
   ngOnInit() {
@@ -68,13 +73,22 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
     this.countSubsription=   this.UsrDataService.changedetectInRole.subscribe(data=>{
       this.role = JSON.parse(localStorage.getItem('role_id'));
       this.space= JSON.parse(localStorage.getItem('space')); 
-      this.UsrDataService.getRequestCount(this.role,this.space).subscribe((response:any)=>{
-    this.Pending=response.req_stats.Pending,
-    this.All = response.req_stats.All;
-    this.Open = response.req_stats.Open;
-    this.Closed = response.req_stats.Closed;
-    this.Completed=response.req_stats.Completed;
-   console.log(this.Completed,"llll");
+      this.UsrDataService.getRequestCount(this.role,this.space).subscribe((res:any)=>{
+    this.Pending=res.req_stats.Pending,
+    this.All = res.req_stats.All;
+    this.Open = res.req_stats.Open;
+    this.Closed = res.req_stats.Closed;
+    this.Completed=res.req_stats.Completed;
+    this.UnreadStatuspending=res["UnreadStatuspending"];
+    this.UnreadStatusAll=res["UnreadStatusAll"];
+    this.UnreadStatusclosed=res["UnreadStatusclosed"];
+    this.UnreadStatuscompleted=res["UnreadStatuscompleted"];
+    this.UnreadStatusopen=res["UnreadStatusopen"];
+    if(this.UnreadStatuspending==null){this.UnreadStatuspending=0;}
+    if(this.UnreadStatusAll==null){this.UnreadStatusAll=0;}
+    if(this.UnreadStatusclosed==null){this.UnreadStatusclosed=0;}
+    if(this.UnreadStatuscompleted==null){this.UnreadStatuscompleted=0;}
+    if(this.UnreadStatusopen==null){this.UnreadStatusopen=0;}
   });
 });
   }

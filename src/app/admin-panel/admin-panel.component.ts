@@ -1,8 +1,11 @@
+import { WorkflowDialogComponent } from './../workflow-dialog/workflow-dialog.component';
+import { UserDataService } from './../Services/UserDataService';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { format } from 'url';
+import { MatDialog } from '@angular/material';
+
 export interface Workflow {
   id: number;
   flow: string;
@@ -29,31 +32,50 @@ export class AdminPanelComponent implements OnInit {
   ];
   dataSource;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  constructor(private http: HttpClient) {
-    http.get<{data: any[]}>('http://localhost:3000/getFlow').subscribe((ResData) => {
-      console.log(ResData);
-      ResData.data.forEach((e) => {
-        this.workflowDetails.push({
-          id: e.w_id,
-          flow: e.w_flow,
-          location: e.h_name
-        });
-      });
-      this.dataSource = new MatTableDataSource(this.workflowDetails);
-      this.dataSource.paginator = this.paginator;
-    });
-    console.log(this.workflowDetails);
+  constructor(private http: HttpClient,private userDataService:UserDataService,public dialog: MatDialog) {
+    // http.get<{data: any[]}>('http://localhost:3000/getFlow').subscribe((ResData) => {
+    //   console.log(ResData);
+    //   ResData.data.forEach((e) => {
+    //     this.workflowDetails.push({
+    //       id: e.w_id,
+    //       flow: e.w_flow,
+    //       location: e.h_name
+    //     });
+    //   });
+    //   this.dataSource = new MatTableDataSource(this.workflowDetails);
+    //   this.dataSource.paginator = this.paginator;
+    // });
+    // console.log(this.workflowDetails);
   }
+  openDialog(): void {
+    let dialogRef = this.dialog.open(WorkflowDialogComponent, {width: '250px',
+    data: { name: "hello", animal:"hello" }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    //  this.animal = result;
+    });
+  }
   ngOnInit() {
     console.log(this.dataSource);
+    this.userDataService.getFlow().subscribe((data)=>{
+      this.dataSource=data;
+      console.log(data);
+    });
   }
   onAddLink() {
-    this.http.post('http://localhost:3000/addLink', {work_id: this.work_id, b_id: this.b_id}).subscribe(() => {
-      console.log('Sent!!!');
+    this.userDataService.addLink(this.work_id,this.b_id).subscribe((data)=>{
+      console.log('Successfully Added');
     });
+    // this.http.post('http://localhost:3000/addLink', {work_id: this.work_id, b_id: this.b_id}).subscribe(() => {
+    //   console.log('Sent!!!');
+    // });
+    
+    console.log(this.work_id,this.b_id);
     this.work_id = '';
     this.b_id = '';
+
   }
   onAddHierarchy() {
     this.http.post('http://localhost:3000/addHierarchy', {h_id: this.h_id, h_level: this.h_level , h_name: this.h_name}).subscribe(() => {

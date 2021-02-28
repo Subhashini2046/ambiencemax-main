@@ -9,8 +9,8 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
   styleUrls: ['./complete.component.css']
 })
 export class CompleteComponent implements OnInit {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
-  'RequestDate', 'status', 'view'];
+  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 
+  'RequestDate', 'status', 'view','progress'];
 
 dataSource = new MatTableDataSource();
 members;
@@ -37,10 +37,10 @@ ngOnInit() {
 }
 
   view(req_id) {
-    this.route.navigate(['/main/view', req_id]);
+    this.route.navigate(['/AmbienceMax/view', req_id]);
   }
   status(reqId) {
-    this.route.navigate(['/main/status', reqId]);
+    this.route.navigate(['/AmbienceMax/status', reqId]);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

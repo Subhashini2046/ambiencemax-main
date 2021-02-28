@@ -10,8 +10,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./open.component.css'],
 })
 export class OpenComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 'Requester Id',
-    'RequestDate', 'status', 'view'];
+  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
+    'RequestDate', 'status', 'view','progress'];
 
   dataSource = new MatTableDataSource();
   members;
@@ -29,14 +29,14 @@ export class OpenComponent implements OnInit, OnDestroy {
 
   }
   view(req_id, pnc) {
-    this.route.navigate(['/main/request-form', req_id, pnc]);
+    this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
   }
   status(reqId) {
-    this.route.navigate(['/main/status', reqId]);
+    this.route.navigate(['/AmbienceMax/status', reqId]);
   }
 
   update(req_id) {
-    this.route.navigate(['/main/update', req_id]);
+    this.route.navigate(['/AmbienceMax/update', req_id]);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

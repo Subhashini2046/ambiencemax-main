@@ -25,7 +25,6 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { ChartRepresentComponent } from './chart-represent/chart-represent.component';
 import { AddDialogComponent } from './add-dialog/add-dialog.component';
 import { ViewcommComponent } from './viewcomm/viewcomm.component';
-import { MatDialogModule } from '@angular/material/dialog';
 import { OpenComponent } from './open/open.component';
 import { CloseComponent } from './close/close.component';
 import { PendingComponent } from './pending/pending.component';
@@ -42,8 +41,11 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule,MatInputModule} from '@angular/material';
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
 import { CompleteComponent } from './complete/complete.component';
+import {MatBadgeModule} from '@angular/material/badge';
+import  { MatDialogModule } from '@angular/material/dialog'; 
+import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.component';
 const appRoutes = [
-  {path: 'main' ,component: DashboardComponent,
+  {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
     {path: 'dialogg/:id', component: AddDialogComponent,},
     {path: 'viewcomm/:id/:reqId' , component: ViewcommComponent},
@@ -93,7 +95,9 @@ const appRoutes = [
     NavigationHomeComponent,
     ApproveRequestComponent,
     CompleteComponent,
+    WorkflowDialogComponent,
   ],
+  entryComponents: [WorkflowDialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -125,7 +129,8 @@ const appRoutes = [
     MatDatepickerModule,
     MatNativeDateModule, 
     MatMomentDateModule,
-    MatInputModule
+    MatInputModule,
+    MatBadgeModule,
   ],
   providers: [ UserDataService],
   bootstrap: [AppComponent]

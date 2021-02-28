@@ -71,7 +71,7 @@ export class ViewcommComponent implements OnInit {
       console.log("Successfully inserted!!");});
 ;
     this.openSnackBar("Request is Successfully Resend")
-    this.route.navigate(['/main/open']);
+    this.route.navigate(['/AmbienceMax/open']);
   }
   openSnackBar(message: string) {
     this.snackBar.open(message, '', {
@@ -79,7 +79,7 @@ export class ViewcommComponent implements OnInit {
       panelClass: ['simple-snack-bar']
 
     });
-    this.router.navigateByUrl('main/open');
+    //this.router.navigateByUrl('main/open');
   }
 }
 

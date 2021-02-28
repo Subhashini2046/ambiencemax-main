@@ -53,11 +53,12 @@ $reddish-app-theme: mat-light-theme($reddish-app-primary, $reddish-app-accent, $
     background-color: mat-color($reddish-app-primary);
 }
 .col-bg-header{
-    background: linear-gradient(mat-color($reddish-app-primary) , mat-color($reddish-app-accent) );
+   // background: linear-gradient(mat-color($reddish-app-primary) , mat-color($reddish-app-accent) );
+   background: linear-gradient(rgba(2, 7, 34, 0.589) , rgba(26, 18, 99, 0.589) );
    // background:"primary";
 }
 .col-bg-sidenav{
-    background: linear-gradient( rgba(106, 135, 223, 0.589), #9868f1);
+    background: linear-gradient( rgba(121, 150, 204, 0.589), #ae9fc9);
    // background:"primary";
 }
 .col-for-primary

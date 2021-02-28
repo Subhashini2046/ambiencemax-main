@@ -29,13 +29,12 @@ let mysqlConnection2 = mysql.createConnection({
 })
 
 //var DIR = './uploads/';
-var DIR = 'C:\CommonFolderMirrorRUMP_Req_RUMP_Supporting_Docs';
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {
-      callBack(null, 'C:\CommonFolderMirrorRUMP_Req_RUMP_Supporting_Docs')
+      callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\')
   },
   filename: (req, file, callBack) => {
-      callBack(null, `FunOfHeuristic_${file.originalname}`)
+      callBack(null, `${file.originalname}`)
   }
 })
 
@@ -55,16 +54,40 @@ app.post('/multipleFiles', upload.array('files'), (req, res, next) => {
 
 const storagepnc = multer.diskStorage({
   destination: (req, file, callBack) => {
-      callBack(null, 'C:\CommonFolderMirrorRUMP_Req_PNC_Docs')
+    console.log(req.body.id+"///")
+      callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\')
   },
   filename: (req, file, callBack) => {
-      callBack(null, `_${file.originalname}`)
+
+      callBack(null, `${req.body.id}-${file.originalname}`)
   }
 })
 const uploadpnc = multer({ storage: storagepnc })
 app.post('/pncFiles', uploadpnc.array('files'), (req, res, next) => {
   const files = req.files;
-  console.log(files);
+  if (!files) {
+    const error = new Error('No File')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send({sttus:  'ok',
+    files:files
+  });
+})
+
+
+const storageboq = multer.diskStorage({
+  destination: (req, file, callBack) => {
+      callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\')
+  },
+  filename: (req, file, callBack) => {
+
+      callBack(null, `${req.body.id}-${file.originalname}`)
+  }
+})
+const uploadboq = multer({ storage: storageboq })
+app.post('/BoqFiles', uploadboq.array('files'), (req, res, next) => {
+  const files = req.files;
   if (!files) {
     const error = new Error('No File')
     error.httpStatusCode = 400
@@ -85,29 +108,6 @@ mysqlConnection2.connect((err) => {
     }
 })
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, callBack) => {
-//       callBack(null, 'uploads')
-//   },
-//   filename: (req, file, callBack) => {
-//       callBack(null, `FunOfHeuristic_${file.originalname}`)
-//   }
-// })
-
-// const upload = multer({ storage: storage })
-app.get('/api', function (req, res) {
-  res.end('file catcher example');
-});
- 
-app.post('/api', function (req, res) {
-  upload(req, res, function (err) {
-    if (err) {
-      return res.end(err.toString());
-    }
- 
-    res.end('File is uploaded');
-  });
-});
  
 app.post("/resendReq",(req,res)=>{
     role = req.body.userRole;
@@ -176,17 +176,11 @@ app.post("/resendReq",(req,res)=>{
       }
     })
   })
-  // app.get("/selectNewReqId",(req,res)=>{
-  //   sql = `SELECT req_id FROM requests ORDER BY req_id DESC LIMIT 1`;
-  //   con.query(sql,function(err,result){
-  //     if(err){
-  //       console.log(err);
-  //     }else{
-  //       console.log(result,"req_id in Select");
-  //        return result;
-  //     }
-  //   })
-  // })
+  app.get('/download', (req, res) => {
+    const file='C:/CommonFolderMirrorRUMP_Req_PNC_Docs/'+req.query.filename;
+    console.log(req.query.filename,file);
+    res.download(file);
+});
 app.post("/users", (req, res) => {
     let req_id = req.body.req_id;
     let accessId=req.body.accessId;
@@ -206,6 +200,11 @@ app.post("/users", (req, res) => {
             console.log(err);
         }
     })
+});
+
+app.get("/addLink",(req,res)=>{
+
+  
 });
 
 app.listen(port, () => {

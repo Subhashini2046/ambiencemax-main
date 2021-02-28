@@ -12,7 +12,7 @@
         <div class="form-group col-md-6">
           <label>ME Type</label>
           <select id="inputme" class="form-control" [(ngModel)]="currReq.me_type" name="METype"
-            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+          [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
             <option selected>Select the ME Type</option>
             <option>Civil</option>
             <option>Electrical</option>
@@ -22,7 +22,7 @@
         <div class="form-group col-md-6">
           <label>S/WON</label>
           <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon"
-            [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" name="RequestSwon" placeholder=""
+          [disabled]="(this.role_id != 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
             required />
         </div>
 
@@ -33,7 +33,7 @@
         <div class="form-group col-md-6">
           <label>Budget Type</label>
           <select id="inputbudget" class="form-control" [(ngModel)]="currReq.budget_type" name="budgetType"
-            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+            [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
             <option selected>Select the Budget Type</option>
             <option>Capex</option>
             <option>Opex</option>
@@ -42,8 +42,8 @@
 
         <div class="form-group col-md-6">
           <label>Available Budget(INR)</label>
-          <input class="form-control" id="available" type="number" [(ngModel)]="currReq.available_budget"
-            name="availableBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+          <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" [(ngModel)]="currReq.available_budget"
+            name="availableBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
         </div>
 
       </div>
@@ -52,14 +52,14 @@
 
         <div class="form-group col-md-6">
           <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number" [(ngModel)]="currReq.consumed_budget"
-            name="consumedBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+          <input class="form-control" id="consumed" type="number"  min="1" [(ngModel)]="currReq.consumed_budget"
+            name="consumedBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
         </div>
 
         <div class="form-group col-md-6">
           <label>Balance Budget(INR)</label>
-          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="currReq.balance_budget"
-            name="balanceBudget" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required />
+          <input type="number" class="form-control" id="balancebudget" min="0" [(ngModel)]="currReq.balance_budget"
+            name="balanceBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
         </div>
 
       </div>
@@ -69,7 +69,7 @@
         <div class="form-group col-md-6">
           <label for="inputdes">Request Type</label>
           <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
-            [disabled]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" required>
+          [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
             <option selected>Select the Request Type</option>
             <option>Upgrade</option>
             <option>Repair</option>
@@ -80,19 +80,19 @@
       <div class="form-group">
         <label>Request Subject</label>
         <textarea placeholder="" id="subject" class="form-control"
-          [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)" [(ngModel)]="subject" name="ReqSubject"
-          (ngModelChange)="valueChange(subject)" maxlength="250" name="RequestSubject" required></textarea>
+        [disabled]="((this.role_id != 0 && this.is_pnc==0))" [(ngModel)]="subject" name="ReqSubject"
+          (ngModelChange)="valueChange(subject)" maxlength="25" name="RequestSubject" required></textarea>
         {{remainingText}} Characters left.
       </div>
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder="" [readonly]="((this.role_id == 0 && this.req_id) || this.role_id!=0)"
+        <textarea id="description" placeholder="" [disabled]="((this.role_id != 0 && this.is_pnc==0))"
           [(ngModel)]="description" (ngModelChange)="valueChangeDiscription(description)" class="form-control"
           name="Requestdes" maxlength="5000" required></textarea>
         {{remaining_description}} Characters left.
       </div>
-      <div class="form-group" *ngIf="!((this.role_id == 0 && this.req_id) || this.role_id!=0)">
+      <div class="form-group" *ngIf="(!this.req_id)">
         <form>
 
           <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
@@ -134,16 +134,19 @@
           </div>
           <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
           || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
-            <button mat-raised-button class="col-bg-button" (click)=onResend()>
+            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" (click)=onResend()>
               Resend
+            </button>
+            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" (click)=onSumbitForUpdate()>
+             Sumbit
             </button>
           </div>
         </div>
-        <div class="text-center" *ngIf="(this.role_id ==0 && this.currReq.req_status=='Closed')">
+        <!-- <div class="text-center" *ngIf="(this.role_id==0 && this.currReq.req_status=='Closed')">
           <button mat-raised-button class="col-bg-button" (click)=onCompelete()>
             Compelete
           </button>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
@@ -170,9 +173,9 @@
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Cost</label>
-          <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost"
+          <input type="number" class="form-control" min="0" pattern="[0-9]+" id="estimatedCost" [(ngModel)]="boqEstimatedCost"
           [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
-          type="number" name="boqEstimatedCost"
+           name="boqEstimatedCost"
             required />
         </div>
 
@@ -204,13 +207,12 @@
         </form>
       </div>
       <div class="text-center">
-        <div class="form-row">
-          <div class="form-group col-md-5" *ngIf="this.role_id==3 || this.role_id==4">
+          <div class="form-group col-md-5" *ngIf="(this.role_id==3 || this.role_id==4)">
             <button type="submit" mat-raised-button class="col-bg-button" (click)="BOQform.valid ? onBOQSubmit() : null"
               [disabled]="!BOQform.valid">
               Submit
             </button>
-          </div>
+         
         </div>
       </div>
     </form>
@@ -279,7 +281,7 @@
       <div class="form-group" *ngIf="selectedSpoc>0">
 
         <label>Allocated Days</label>
-        <input class="form-control" id="consumed" type="number"
+        <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0"
           [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
           [(ngModel)]="allocatedDays" name="consumedBudget" required />
       </div>
@@ -298,7 +300,7 @@
       </div>
       <div class="form-group">
         <label>Actual Cost</label>
-        <input class="form-control" id="consumed" type="number"
+        <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0"
           [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
           [(ngModel)]="actualCost" name="consumedBudget" required />
       </div>
@@ -309,8 +311,8 @@
           <label for="file">Upload File Here:</label><br>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="fileInput.click()">Add</button>
-          <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput>
-          <div *ngFor="let selected of listOfFiles;let index = index">
+          <input style="display: none" #attachments type="file" (change)="onPncFileChanged($event)" #fileInput>
+          <div *ngFor="let selected of listOfFiles1;let index = index">
             <label>
               <h6>{{selected}}</h6>
             </label>
