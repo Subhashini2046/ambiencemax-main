@@ -17,6 +17,7 @@ export class AddDialogComponent implements OnInit {
   allocateForm: FormGroup;
   req_id;
   users: any = [];
+  is_pnc;
   constructor(private fb1: FormBuilder, private router: Router,
     private actrouter: ActivatedRoute, public userDataService: UserDataService) {
 
@@ -28,10 +29,18 @@ export class AddDialogComponent implements OnInit {
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
+      this.is_pnc=+params['pnc'];
+      console.log(this.is_pnc,"pnc");
     });
     this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
     this.userDataService.getRoles(this.req_id,this.accessId).subscribe((data) => {
       this.users = data;
+
+      if(this.is_pnc==1){
+        
+        this.users.push("Initiator(PNC)");
+      }
+      console.log(this.users);
     })
   }
   navigateTo() {

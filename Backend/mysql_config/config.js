@@ -177,10 +177,17 @@ app.post("/resendReq",(req,res)=>{
     })
   })
   app.get('/download', (req, res) => {
-    const file='C:/CommonFolderMirrorRUMP_Req_PNC_Docs/'+req.query.filename;
+    const file='C:/CommonFolderMirror/RUMP_Req_PNC_Docs/'+req.query.filename;
     console.log(req.query.filename,file);
     res.download(file);
 });
+
+app.get('/RequestFle', (req, res) => {
+  const file='C:/CommonFolderMirror/RUMP_Req_RUMP_Supporting_Docs/'+req.query.filename;
+  console.log(req.query.filename,file);
+  res.download(file);
+});
+
 app.post("/users", (req, res) => {
     let req_id = req.body.req_id;
     let accessId=req.body.accessId;

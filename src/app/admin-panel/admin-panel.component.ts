@@ -19,7 +19,7 @@ export interface Workflow {
 export class AdminPanelComponent implements OnInit {
   Approvers = new FormControl();
   AppList: string[] = [ 'Location Head', 'Cluster Head', 'City Head', 'State Head', 'Country Head', 'Geography Head'];
-  displayedColumns: string[] = ['ID', 'Flow', 'Location'];
+  displayedColumns: string[] = ['ID', 'Flow', 'Location','details'];
   approverArray = [];
   workflowToSend = '';
   h_id = '';
@@ -49,7 +49,7 @@ export class AdminPanelComponent implements OnInit {
   }
   openDialog(): void {
     let dialogRef = this.dialog.open(WorkflowDialogComponent, {width: '250px',
-    data: { name: "hello", animal:"hello" }
+    data: { name: "hello"}
     });
 
     dialogRef.afterClosed().subscribe(result => {

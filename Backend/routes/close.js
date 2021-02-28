@@ -164,7 +164,7 @@ let express = require("express"),
     });
 
     router.post("/addCompeteRequest", (req, res) => {
-        sql = `update datarumprequest set RUMPRequestUnreadStatus=0,RUMPRequestStatus='Completed' where RUMPRequestPK = '${req.body.req_id}';`
+        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestStatus='Completed' where RUMPRequestPK = '${req.body.req_id}';`
     
         con.query(sql,function(err,result){
         if(err){

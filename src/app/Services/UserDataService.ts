@@ -1,3 +1,4 @@
+import { Workflow } from './../../../../../AmbienceMax1/ambiencemax-main/src/app/admin-panel/admin-panel.component';
 import { Options } from './../navigation-home/navigation-home.component';
 import { map } from 'rxjs/operators';
 import { Injectable, OnInit } from '@angular/core';
@@ -92,6 +93,7 @@ export class UserDataService {
   getRequestDetail(req_id) {
     return this.http.post<any>('http://localhost:3000/requestDetail', { req_id });
   }
+
  //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
   addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath) {
     //console.log(filepath1)
@@ -133,8 +135,8 @@ export class UserDataService {
       this.router.navigateByUrl('/AmbienceMax/dashboard');
     });
   }
-  updateRequest(request: ReqSchema,accessID, req_id,role_name){
-   return this.http.post('http://localhost:3000/updateRequests', { request:request,accessID, req_id,role_name});
+  updateRequest(is_pnc,request: ReqSchema,accessID, req_id,role_name){
+   return this.http.post('http://localhost:3000/updateRequests', {is_pnc, request:request,accessID, req_id,role_name});
     
   }
   addUpdateRequest(RequestData, reqId: number) {
@@ -170,7 +172,7 @@ export class UserDataService {
   addBOQfile(reqId, filepath) {
     for (let i = 0; i < filepath.length; i++) {
       filepath[i] = filepath[i];
-      this.http.post('http://localhost:3000/fileUpload', { req_id: reqId, filepath: filepath[i] })
+      this.http.post('http://localhost:3000/fileBoqUpload', { req_id: reqId, filepath: filepath[i] })
         .subscribe((ResData) => {
         });
     }
@@ -194,6 +196,16 @@ export class UserDataService {
     };
     return this.http.get('http://localhost:5600/download', { ...options, responseType: 'blob' });
   }
+getRequestFile(req_id){
+  return this.http.post('http://localhost:3000/getfiles', { req_id});
+}
+  getFiles(x: string): Observable<any> {
+    const param = new HttpParams().set('filename', x);
+    const options = {
+      params: param
+    };
+    return this.http.get('http://localhost:5600/RequestFle', { ...options, responseType: 'blob' });
+  }
   check_asRead(req_id){
     return this.http.post('http://localhost:3000/check_asRead',{req_id});
   }
@@ -205,5 +217,8 @@ export class UserDataService {
   }
   getFlow(){
     return this.http.get('http://localhost:3000/getFlow');
+  }
+  getFlowDetails(Workflow){
+    return this.http.post('http://localhost:3000/getFlowDetails',{Workflow});
   }
 }

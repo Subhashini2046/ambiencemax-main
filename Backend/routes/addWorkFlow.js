@@ -13,10 +13,32 @@ let express = require("express"),
 // else{
 //   res.send(JSON.stringify({data,result}));}
 // })})
+router.get("/getFlowDetails",(req,res)=>{
+  sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as id, linkrumpadminaccess.linkrumprolefk as role,
+  COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as role from linkrumpadminaccess 
+  left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
+  left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
+  left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
+  left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
+  inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
+  where linkRUMPAdminAccessPK in (15,11,9,51,66,19,37,5,3) order by linkrumprolefk;`
+  con.query(sql,(err,result) => {
+    if(err){
+      console.log(err);
+    }else{
+      res.send(result);
+    }
+  })
+})
 
   router.get("/getFlow",(req,res)=>{
-    sql = `select distinct linkrumprequestflow.linkrumprequestflowpk,linkrumprequestflow.w_flow from linkrumprequestflow
-    inner join linkrumprequestinitiators on work_id=linkrumprequestflowpk;`
+    sql = `select COALESCE(locname,buiname,cluname,citname) as name,linkrumprequestflow.linkrumprequestflowpk as w_id,
+    linkrumprequestflow.w_flow as w_flow from linkrumprequestinitiators 
+    left join datalocation on(datalocation.locLocationPK=linkrumprequestinitiators.b_id)
+    left join databuilding on(databuilding.buiBuildingPK=linkrumprequestinitiators.b_id)
+    left join dataclub on(dataclub.cluclubpk=linkrumprequestinitiators.b_id)
+    left join datacity on(datacity.citCityPK=linkrumprequestinitiators.b_id)
+    left join linkrumprequestflow on(linkrumprequestflow.linkrumprequestflowpk=linkrumprequestinitiators.work_id);`
     con.query(sql,(err,result) => {
       if(err){
         console.log(err);

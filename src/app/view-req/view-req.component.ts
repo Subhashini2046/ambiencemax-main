@@ -48,19 +48,41 @@ export class ViewReqComponent implements OnInit {
   pncurl = "";
   allocatedSpoc = "";
   role_id;
+  displayedColumns = ['selected', 'Vendor Name', 'spoc1', 'spoc2', 'spoc3'];
+  dataSource: any[] = [];
+  selectedElement: any[] = [];
   constructor(private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
+  filestage;
+  fileName=[];
+BoqfileName=[];
+selectedSpoc;
+RequestAllocatedVendor
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
       console.log('this.req_id ', this.req_id, this.resendToId);
     });
-    this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
-      console.log(response,"check_asRead");
-    });
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.accessID = JSON.parse(localStorage.getItem('admin_access_id'));
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    this.userDataService.getRequestFile(this.req_id).subscribe((response: any) => {
+      for(let i=0;i<response.length;i++){
+        if(response[i].RUMPRequestFilesStage==1){
+          this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+          console.log(this.fileName);
+        }
+        if(response[i].RUMPRequestFilesStage==2){
+          this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+        }
+      }
+    });
+    this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+      this.dataSource = response;
+      this.selectedElement = response;
+      this.selectedSpoc = this.dataSource.length;
+      console.log(response);
+    });
     this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
       this.budget_type = response[0]["BudgetType"];
       this.me_type = response[0]["METype"];
@@ -79,17 +101,32 @@ export class ViewReqComponent implements OnInit {
       this.allocatedDays = response[0]["AllocatedDays"];
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
-      this.pncurl = response[0]["PNCUrl"];
-      if(this.pncurl!=null){
-      this.filename = this.pncurl.replace(/^.*[\\\/]/, '');}
+      this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
+      //this.pncurl = response[0]["PNCUrl"];
+      
+      this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');
       console.log("this.pncurl", this.filename);
+      if(this.req_status.toString().trim()!='Pending'){
+        this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
+          console.log(response,"check_asRead");
+        });}
     });
   }
   returnBlob(res): Blob {
     console.log('file downloaded');
     return new Blob([res], { type: 'pdf' });
   }
-  download() {
+  download(downloadfile) {
+    this.userDataService. getFiles(downloadfile).subscribe((res) => {
+      if (res) {
+        const url = window.URL.createObjectURL(this.returnBlob(res));
+        FileSaver.saveAs(res, downloadfile);
+        // window.open(url);
+      }
+    });
+    return false;
+  }
+  downloadFile() {
     this.userDataService.downloadFile(this.filename).subscribe((res) => {
       if (res) {
         const url = window.URL.createObjectURL(this.returnBlob(res));
@@ -97,7 +134,9 @@ export class ViewReqComponent implements OnInit {
         // window.open(url);
       }
     });
+    return false;
   }
+
   onCompelete() {
     this.userDataService.addCompleteRequest(this.req_id,this.accessID, this.user_name).subscribe((ResData) => {
       console.log(ResData);

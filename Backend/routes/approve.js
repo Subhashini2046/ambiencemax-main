@@ -150,7 +150,7 @@ router.post("/addVendors", (req, res) => {
     } else {
       let initiatorId = result[0].initiatorId;
       console.log(result);
-      sql = `update datarumprequest set RUMPRequestTaggedVendor1 = ${venderTagged_1}, RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1 where RUMPRequestPK = '${req.body.req_id}';`
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1 where RUMPRequestPK = '${req.body.req_id}';`
 
       con.query(sql, function (err, result) {
         if (err) {

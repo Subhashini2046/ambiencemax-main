@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-
+import * as FileSaver from 'file-saver';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
@@ -22,7 +22,7 @@ export class RequestFormComponent implements OnInit {
   public role_id;
   req_id = 0;
   is_pnc = 0;
-  remainingText = 25;
+  remainingText = 100;
   remaining_description = 5000;
   description = "";
   subject = "";
@@ -54,7 +54,7 @@ export class RequestFormComponent implements OnInit {
   date = new FormControl(new Date());
   user_name;
   admin_access_id;
-
+  reqPnc;
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
   }
@@ -109,6 +109,10 @@ export class RequestFormComponent implements OnInit {
     }
   }
   public selectedSpoc;
+  filestage;
+   fileName=[];
+ BoqfileName=[];
+
   ngAfterContentInit() {
     if (this.req_id > 0) {
       this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
@@ -124,6 +128,18 @@ export class RequestFormComponent implements OnInit {
       });
     }
     if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
+      this.UserDataService.getRequestFile(this.req_id).subscribe((response: any) => {
+        for(let i=0;i<response.length;i++){
+          if(response[i].RUMPRequestFilesStage==1){
+            this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+            console.log(this.fileName);
+          }
+          if(response[i].RUMPRequestFilesStage==2){
+            this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+          }
+        }
+      });
+      
 
       this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
         this.requestDetails = response;
@@ -148,6 +164,9 @@ export class RequestFormComponent implements OnInit {
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
         this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
         this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
+        this.reqPnc = response[0]["PNCUrl"]
+        if(this.reqPnc!=null){
+          this.reqPnc=this.reqPnc.replace(/^.*[\\\/]/, '')};
         // for(let i=0;i<this.selectedElement.length;i++){
         //   if(this.RequestAllocatedVendor==this.selectedElement[i]["rumpvenVendorPK"]){
 
@@ -161,10 +180,12 @@ export class RequestFormComponent implements OnInit {
   }
 
   valueChange(value) {
-    this.remainingText = 25 - value.length;
+    if(value!=null){
+    this.remainingText = 100 - value.length;}
   }
   valueChangeDiscription(value) {
-    this.remaining_description = 5000 - value.length;
+    if(value!=null){
+    this.remaining_description = 5000 - value.length;}
   }
   // onMultipleSubmit() {
 
@@ -203,6 +224,7 @@ export class RequestFormComponent implements OnInit {
     console.log("mmmm", this.fileList);
     this.attachment.nativeElement.value = '';
   }
+
 
 
   removeSelectedFile(index) {
@@ -253,7 +275,7 @@ export class RequestFormComponent implements OnInit {
   onSumbitForUpdate(){
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
-    this.UserDataService.updateRequest(this.currReq,this.admin_access_id,this.req_id, JSON.parse(localStorage.getItem('user_name'))).subscribe((res)=>{
+    this.UserDataService.updateRequest(this.is_pnc,this.currReq,this.admin_access_id,this.req_id, JSON.parse(localStorage.getItem('user_name'))).subscribe((res)=>{
       this.openSnackBar('Request Updated Successfully !');
       this.router.navigateByUrl('/AmbienceMax/open');
     });
@@ -300,7 +322,7 @@ export class RequestFormComponent implements OnInit {
   }
   onResend() {
   // this.UserDataService.updateRequest(this.currReq,this.req_id,this.filepath); 
-    this.route.navigate(['/AmbienceMax/dialogg/', this.req_id]);
+    this.route.navigate(['/AmbienceMax/dialogg/', this.req_id,this.is_pnc]);
   }
   onCompelete() {
     this.UserDataService.addCompleteRequest(this.req_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
@@ -313,5 +335,32 @@ export class RequestFormComponent implements OnInit {
       duration: 3500,
       panelClass: ['simple-snack-bar']
     });
+
+    
+  }
+
+  returnBlob(res): Blob {
+    console.log('file downloaded');
+    return new Blob([res], { type: 'pdf' });
+  }
+  download(downloadfile) {
+    this.UserDataService. getFiles(downloadfile).subscribe((res) => {
+      if (res) {
+        const url = window.URL.createObjectURL(this.returnBlob(res));
+        FileSaver.saveAs(res, downloadfile);
+        // window.open(url);
+      }
+    });
+    return false;
+  }
+  downloadFile(downloadfile) {
+    this.UserDataService.downloadFile(downloadfile).subscribe((res) => {
+      if (res) {
+        const url = window.URL.createObjectURL(this.returnBlob(res));
+        FileSaver.saveAs(res, downloadfile);
+        // window.open(url);
+      }
+    });
+    return false;
   }
 }

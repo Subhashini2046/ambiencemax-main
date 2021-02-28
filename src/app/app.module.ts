@@ -47,7 +47,7 @@ import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.compo
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
-    {path: 'dialogg/:id', component: AddDialogComponent,},
+    {path: 'dialogg/:id/:pnc', component: AddDialogComponent,},
     {path: 'viewcomm/:id/:reqId' , component: ViewcommComponent},
     {path: 'reqform/:id',component:RequestFormComponent},
     {path: 'status/:id' , component: ViewStatusComponent},

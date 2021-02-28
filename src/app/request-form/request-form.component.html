@@ -12,9 +12,9 @@
         <div class="form-group col-md-6">
           <label>ME Type</label>
           <select id="inputme" class="form-control" [(ngModel)]="currReq.me_type" name="METype"
-          [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
-            <option selected>Select the ME Type</option>
-            <option>Civil</option>
+          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
+            <option value="" selected>Select the ME Type</option>
+            <option >Civil</option>
             <option>Electrical</option>
           </select>
         </div>
@@ -22,7 +22,7 @@
         <div class="form-group col-md-6">
           <label>S/WON</label>
           <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon"
-          [disabled]="(this.role_id != 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
+          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
             required />
         </div>
 
@@ -33,8 +33,8 @@
         <div class="form-group col-md-6">
           <label>Budget Type</label>
           <select id="inputbudget" class="form-control" [(ngModel)]="currReq.budget_type" name="budgetType"
-            [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
-            <option selected>Select the Budget Type</option>
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
+            <option value="" selected>Select the Budget Type</option>
             <option>Capex</option>
             <option>Opex</option>
           </select>
@@ -43,7 +43,7 @@
         <div class="form-group col-md-6">
           <label>Available Budget(INR)</label>
           <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" [(ngModel)]="currReq.available_budget"
-            name="availableBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
+            name="availableBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
       </div>
@@ -52,14 +52,14 @@
 
         <div class="form-group col-md-6">
           <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number"  min="1" [(ngModel)]="currReq.consumed_budget"
-            name="consumedBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
+          <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0" [(ngModel)]="currReq.consumed_budget"
+            name="consumedBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
         <div class="form-group col-md-6">
           <label>Balance Budget(INR)</label>
-          <input type="number" class="form-control" id="balancebudget" min="0" [(ngModel)]="currReq.balance_budget"
-            name="balanceBudget" [disabled]="((this.role_id != 0 && this.is_pnc==0))" required />
+          <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0" [(ngModel)]="currReq.balance_budget"
+            name="balanceBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
       </div>
@@ -69,8 +69,8 @@
         <div class="form-group col-md-6">
           <label for="inputdes">Request Type</label>
           <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
-          [disabled]="((this.role_id != 0 && this.is_pnc==0))" required>
-            <option selected>Select the Request Type</option>
+          [disabled]="(this.req_id)" required>
+            <option value="" selected>Select the Request Type</option>
             <option>Upgrade</option>
             <option>Repair</option>
             <option>Maintenance</option>
@@ -80,17 +80,28 @@
       <div class="form-group">
         <label>Request Subject</label>
         <textarea placeholder="" id="subject" class="form-control"
-        [disabled]="((this.role_id != 0 && this.is_pnc==0))" [(ngModel)]="subject" name="ReqSubject"
-          (ngModelChange)="valueChange(subject)" maxlength="25" name="RequestSubject" required></textarea>
+        [disabled]="!(this.role_id == 0 && this.is_pnc==0)" [(ngModel)]="subject" name="ReqSubject"
+          (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
         {{remainingText}} Characters left.
       </div>
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder="" [disabled]="((this.role_id != 0 && this.is_pnc==0))"
+        <textarea id="description" placeholder="" [disabled]="!(this.role_id == 0 && this.is_pnc==0)"
           [(ngModel)]="description" (ngModelChange)="valueChangeDiscription(description)" class="form-control"
           name="Requestdes" maxlength="5000" required></textarea>
         {{remaining_description}} Characters left.
+      </div>
+
+      <div class="form-group"  *ngIf="(this.req_id)">
+        <label>Request Document</label>
+        <br>
+        <div *ngFor="let f1 of fileName,let i=index">
+        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
+          Download Document
+        </button>
+        <label> {{fileName[i]}}</label>
+      </div>
       </div>
       <div class="form-group" *ngIf="(!this.req_id)">
         <form>
@@ -187,6 +198,16 @@
             required />
         </div>
       </div>
+      <div class="form-group"  *ngIf="(this.boqDescription1!=null && this.boqDescription1!='')">
+        <label>Request Document</label>
+        <br>
+        <div *ngFor="let f1 of BoqfileName,let i=index">
+        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i])">
+          Download Document
+        </button>
+        <label> {{BoqfileName[i]}}</label>
+        </div>
+      </div>
       <div class="form-group" *ngIf="(this.role_id==3 || this.role_id==4)">
         <form>
           <label for="file">Upload File Here:</label><br>
@@ -211,6 +232,9 @@
             <button type="submit" mat-raised-button class="col-bg-button" (click)="BOQform.valid ? onBOQSubmit() : null"
               [disabled]="!BOQform.valid">
               Submit
+            </button>
+            <button type="submit" mat-raised-button class="col-bg-button" (click)="onResend()">
+              Resend
             </button>
          
         </div>
@@ -243,7 +267,8 @@
               <th mat-header-cell *matHeaderCellDef>
               </th>
               <td mat-cell *matCellDef="let element">
-                <mat-radio-button [value]="element">
+                <mat-radio-button [value]="element"
+                [checked]="RequestAllocatedVendor==element.rumpvenVendorPK">
                 </mat-radio-button>
               </td>
             </ng-container>
@@ -292,7 +317,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Choose a date</mat-label>
           <input matInput [matDatepicker]="picker1" placeholder="Angular forms"
-            [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
+            [disabled]="!(this.role_id==0 && this.is_pnc==1)"
             [(ngModel)]="allocationStartDate" name="allocationStartDate">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
@@ -305,6 +330,12 @@
           [(ngModel)]="actualCost" name="consumedBudget" required />
       </div>
 
+      <div class="form-group">
+        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile(reqPnc)">
+          Download Document
+        </button>
+        <label> {{reqPnc}}</label>
+        </div>
 
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed')">
         <form>
