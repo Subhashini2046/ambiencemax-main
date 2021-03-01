@@ -48,7 +48,7 @@ const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
     {path: 'dialogg/:id/:pnc', component: AddDialogComponent,},
-    {path: 'viewcomm/:id/:reqId' , component: ViewcommComponent},
+    {path: 'viewcomm/:id/:reqId/:pnc' , component: ViewcommComponent},
     {path: 'reqform/:id',component:RequestFormComponent},
     {path: 'status/:id' , component: ViewStatusComponent},
     {path: 'view/:id' , component: ViewReqComponent},

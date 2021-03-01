@@ -43,10 +43,12 @@ export class ViewcommComponent implements OnInit {
     this.route.navigate(['/reqform', req_id]);
     console.log(req_id);
   }
+  is_pnc;
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['reqId'];
       this.resendToId=+params['id'];
+      this.is_pnc=+params['pnc']
       console.log('this.req_id ', this.req_id,this.resendToId);
     });
     this.user_name=JSON.parse(localStorage.getItem('user_name'));
@@ -67,7 +69,7 @@ export class ViewcommComponent implements OnInit {
   }
   onSubmit() {
     console.log("ggggg",this.comment);
-    this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.accessID,this.user_name).subscribe((ResData) => {
+    this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.accessID,this.user_name,this.is_pnc).subscribe((ResData) => {
       console.log("Successfully inserted!!");});
 ;
     this.openSnackBar("Request is Successfully Resend")

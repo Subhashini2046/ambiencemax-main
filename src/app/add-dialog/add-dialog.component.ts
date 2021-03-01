@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-
-
-import { ReqSchema } from '../Services/ReqSchema';
 @Component({
   selector: 'app-add-dialog',
   templateUrl: './add-dialog.component.html',
@@ -26,25 +21,30 @@ export class AddDialogComponent implements OnInit {
 
     });
   }
+  role_id;
+  space;
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
-      this.is_pnc=+params['pnc'];
-      console.log(this.is_pnc,"pnc");
+      this.is_pnc = +params['pnc'];
     });
-    this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
-    this.userDataService.getRoles(this.req_id,this.accessId).subscribe((data) => {
+   this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
+   this.role_id= JSON.parse(localStorage.getItem('role_id'));
+   this.space= JSON.parse(localStorage.getItem('space'));
+    this.userDataService.getRoles(this.req_id,this.role_id,this.space).subscribe((data) => {
       this.users = data;
-
-      if(this.is_pnc==1){
-        
-        this.users.push("Initiator(PNC)");
-      }
+      console.log(data);
+      if (this.role_id>=6) {
+        this.users.push({ accessId: 12, roleId: 0, pickRUMPRoleDescription: "Initiator(PNC)", pnc: 1 });
+      } 
       console.log(this.users);
-    })
+    });
   }
   navigateTo() {
-    this.router.navigate(['AmbienceMax/viewcomm', this.accessId, this.req_id]);
+    if (this.accessId["pnc"] == 1) { this.is_pnc = 1 }
+    else
+      this.is_pnc = 0;
+  this.router.navigate(['AmbienceMax/viewcomm', this.accessId["accessId"], this.req_id, this.is_pnc]);
   }
   onCancel() {
     this.router.navigate(['AmbienceMax/open']);

@@ -55,6 +55,8 @@ export class RequestFormComponent implements OnInit {
   user_name;
   admin_access_id;
   reqPnc;
+  pncvendorSelection='';
+  reqComment;
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
   }
@@ -164,6 +166,8 @@ export class RequestFormComponent implements OnInit {
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
         this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
         this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
+        this.reqComment=this.requestDetails[0]["requestComments"];
+        console.log("//",this.reqComment);
         this.reqPnc = response[0]["PNCUrl"]
         if(this.reqPnc!=null){
           this.reqPnc=this.reqPnc.replace(/^.*[\\\/]/, '')};
@@ -295,8 +299,14 @@ export class RequestFormComponent implements OnInit {
     });
 
     this.openSnackBar('Request Submitted Successfully !');
-    this.UserDataService.addBOQDDetails(this.req_id, this.role_id, this.boqDescription, this.boqEstimatedCost, this.boqEstimatedTime, this.filepath);
+    this.UserDataService.addBOQDDetails(this.req_id, this.role_id, this.boqDescription, this.boqEstimatedCost, this.boqEstimatedTime, this.filepath,this.admin_access_id, this.user_name);
     this.router.navigateByUrl('/AmbienceMax/open');
+  }
+  onPncChange(){
+    if(this.actualCost==null || this.allocatedDays==null || this.allocationStartDate==null || this.pncvendorSelection==''){
+      return true
+    }
+    return false
   }
   onPncSumbit() {
     let allocationStartDate = this.allocationStartDate;
@@ -311,8 +321,8 @@ export class RequestFormComponent implements OnInit {
         this.filepnc[i] = res.files[i]['filename'];
       }
     });
-    let VendorPk = this.selectedElement["rumpvenVendorPK"];
-    this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc);
+    let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
+    this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc,this.admin_access_id, this.user_name);
     this.route.navigate(['/AmbienceMax/open']);
   }
 

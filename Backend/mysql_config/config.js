@@ -190,23 +190,53 @@ app.get('/RequestFle', (req, res) => {
 
 app.post("/users", (req, res) => {
     let req_id = req.body.req_id;
-    let accessId=req.body.accessId;
-    console.log(req_id);
-    mysqlConnection2.query(`select distinct linkRUMPAdminAccessPK as accessId,
-    pickRUMPRoleDescription as role from linkrumpadminaccess inner join datarumprequestaction 
-    on(datarumprequestaction.RUMPRequestRole=linkrumpadminaccess.linkRUMPAdminAccessPK) 
-    inner join pickrumprole on(linkrumpadminaccess.linkRUMPRoleFK = pickrumprole.pickRUMPRolePK) 
-    where RUMPRequestFK = ${req_id} and RUMPRequestRole!=${accessId};`, (err, rows, fields) => {
-      if (!err) {
-          console.log("..........//");
-            console.log(rows);
-            res.send(rows);
-
-        }
-        else {
-            console.log(err);
-        }
+    let role_id=req.body.role_id;
+    let space=req.body.space;
+    sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
+    on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
+    where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
+    con.query(sql,function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+          if(result.length>0){
+            sql1 = `select linkRUMPAdminAccessPK as accessId,
+            linkRUMPRoleFK as roleId,pickRUMPRoleDescription from datarumprequestaction 
+            inner join linkrumpadminaccess 
+            on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
+            inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
+            where rumprequestfk=${req_id} and RUMPRequestActionTiming <(select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
+            on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
+            where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) 
+            group by linkRUMPRoleFK,linkRUMPSpace;`
+            con.query(sql1,function(err,result){
+              if(err){
+                console.log(err);
+              }else{
+                  console.log(result);
+                  res.send(result);
+              }
+            })
+          }
+          else{
+            sql2 = `select linkRUMPAdminAccessPK as accessId,
+            linkRUMPRoleFK as roleId,pickRUMPRoleDescription from datarumprequestaction 
+            inner join linkrumpadminaccess 
+            on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
+            inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
+            where rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
+            con.query(sql2,function(err,result){
+              if(err){
+                console.log(err);
+              }else{
+                  console.log(result);
+                  res.send(result);
+              }
+            })
+          }
+      }
     })
+    
 });
 
 app.get("/addLink",(req,res)=>{

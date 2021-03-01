@@ -90,15 +90,18 @@
           name="Requestdes" maxlength="5000" required></textarea>
 
       </div>
-      
+      <div class="form-group" *ngIf="this.reqComment!=null">
+        <label for="reqdes">Last Provided Comment:</label>
+      <p class="form-control">{{this.reqComment}} </p>
+      </div>
       <div class="form-group" >
         <label>Request Document</label>
         <br>
-        <div *ngFor="let f1 of fileName">
-        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName)">
+        <div *ngFor="let f1 of fileName,let i=index">
+        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
           Download Document
         </button>
-        <label> {{fileName}}</label>
+        <label> {{fileName[i]}}</label>
       </div>
       </div>
       <div class="text-center" *ngIf="(this.role_id==0 && this.req_status=='Closed')">
@@ -143,13 +146,13 @@
             name="boqEstimatedTime" required />
         </div>
         <div class="form-group" >
-          <label>Request Document</label>
+          <label>BOQ Document</label>
           <br>
-          <div *ngFor="let f1 of BoqfileName">
-          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName)">
+          <div *ngFor="let f1 of BoqfileName,let i=index">
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i])">
             Download Document
           </button>
-          <label> {{BoqfileName}}</label>
+          <label> {{BoqfileName[i]}}</label>
           </div>
         </div>
       </div>

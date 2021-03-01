@@ -95,9 +95,9 @@ export class UserDataService {
   }
 
  //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
-  addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath) {
+  addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,accessID,role_name) {
     //console.log(filepath1)
-    this.http.post<any>('http://localhost:3000/addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk }).subscribe((data) => {
+    this.http.post<any>('http://localhost:3000/addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name }).subscribe((data) => {
       this.addPncfile(req_id, filepath);
     });
   }
@@ -116,8 +116,8 @@ export class UserDataService {
     return this.http.post<any>('http://localhost:3000/approveRequest', { reqComment, req_id, userId, accessID, role_name, meType });
   }
   //.................(add Request)................//
-  resendRequest(reqComment, req_id, resendToId, accessID, role_name) {
-    return this.http.post<any>('http://localhost:3000/resendRequest', { reqComment, req_id, resendToId, accessID, role_name });
+  resendRequest(reqComment, req_id, resendToId, accessID, role_name,pnc) {
+    return this.http.post<any>('http://localhost:3000/resendRequest', { reqComment, req_id, resendToId, accessID, role_name,pnc });
   }
 
   getViewRequestStatus(req_id) {
@@ -164,8 +164,8 @@ export class UserDataService {
   }
 
   //.................addBOQDDetails (addRequests)................//
-  addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath) {
-    this.http.post('http://localhost:3000/BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime }).subscribe((data: ReqSchema) => {
+  addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath,accessID,role_name) {
+    this.http.post('http://localhost:3000/BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime,accessID,role_name }).subscribe((data: ReqSchema) => {
       this.addBOQfile(reqId, filepath);
     });
   }
@@ -185,8 +185,8 @@ export class UserDataService {
   getUserRoles(req_id) {
     return this.http.get(this.usersURL + `/`)
   }
-  getRoles(req_id, accessId) {
-    return this.http.post('http://localhost:5600/users', { req_id, accessId });
+  getRoles(req_id,role_id,space) {
+    return this.http.post('http://localhost:5600/users', { req_id,role_id,space});
     //return this.http.get(this.usersURL + `/${req_id},accessId`);
   }
   downloadFile(x: string): Observable<any> {
@@ -217,6 +217,7 @@ getRequestFile(req_id){
   }
   getFlow(){
     return this.http.get('http://localhost:3000/getFlow');
+    
   }
   getFlowDetails(Workflow){
     return this.http.post('http://localhost:3000/getFlowDetails',{Workflow});

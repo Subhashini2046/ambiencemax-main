@@ -13,7 +13,22 @@ let express = require("express"),
 // else{
 //   res.send(JSON.stringify({data,result}));}
 // })})
-router.get("/getFlowDetails",(req,res)=>{
+router.post("/getFlowDetails",(req,res)=>{
+  let w_flow=req.body.Workflow.data;
+  let wflowdata=[];
+  for(let i=0;i<w_flow.length;i++){
+    if(w_flow[i].includes('c')){w_flow[i].replace('')
+    wflowdata.push(w_flow[i]);}
+    // if(w_flow[i].includes('or')){w_flow[i].replace(',')}
+    // if(w_flow[i].includes('e')){w_flow[i].replace('')}
+    // w_flow[i] = w_flow[i].replace("c","");
+    // w_flow[i] = w_flow[i].replace('e','');
+    // w_flow[i] = w_flow[i].substring(0,w_flow[i].indexOf('or')+'or'.length);
+    // w_flow[i] = w_flow[i].replace('or','');
+    //wflowdata.push(w_flow[i]);
+
+  }
+  console.log(wflowdata);
   sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as id, linkrumpadminaccess.linkrumprolefk as role,
   COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as role from linkrumpadminaccess 
   left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)

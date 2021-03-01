@@ -98,9 +98,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   logout() {
+
     localStorage.clear();
     // this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
     this.UsrDataService.main = '';
+    this.router.navigateByUrl('');
+    return false;
   }
   navigateToDashboard(role,space,id){
     console.log(id,"id");

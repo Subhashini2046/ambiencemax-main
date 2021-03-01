@@ -11,7 +11,7 @@
           <mat-label>Select User</mat-label>
           <mat-select formControlName="request_actionnnn" [(ngModel)]="accessId" name="food" required>
             <mat-option *ngFor="let type of users" [value]="type.accessId">
-              {{type.role}}
+              {{type.pickRUMPRoleDescription}}
             </mat-option>
           </mat-select>
         </mat-form-field>

@@ -47,10 +47,11 @@ export class AdminPanelComponent implements OnInit {
     // });
     // console.log(this.workflowDetails);
   }
-  openDialog(): void {
+  openDialog(w_flow): void {
     let dialogRef = this.dialog.open(WorkflowDialogComponent, {width: '250px',
-    data: { name: "hello"}
+    data: { data: w_flow}
     });
+
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');

@@ -57,7 +57,9 @@ export class ViewReqComponent implements OnInit {
   fileName=[];
 BoqfileName=[];
 selectedSpoc;
-RequestAllocatedVendor
+RequestAllocatedVendor;
+reqComment;
+
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
@@ -102,10 +104,10 @@ RequestAllocatedVendor
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
       this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
-      //this.pncurl = response[0]["PNCUrl"];
-      
-      this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');
-      console.log("this.pncurl", this.filename);
+      this.reqComment=response[0]["requestComments"];
+      this.pncurl = response[0]["PNCUrl"];
+      if(this.pncurl!=null){
+       this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');}
       if(this.req_status.toString().trim()!='Pending'){
         this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
           console.log(response,"check_asRead");

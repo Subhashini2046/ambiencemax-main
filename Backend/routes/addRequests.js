@@ -303,7 +303,18 @@ router.post("/BOQRequests", (req, res) => {
           console.log(err);
         } else {
           console.log(result);
-          res.send(JSON.stringify({ result: "passed" }));
+          //res.send(JSON.stringify({ result: "passed" }));
+          const now = new Date();
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.reqId},${req.body.accessID},'Submitted','${actionTime}','','${req.body.role_name}',1);`
+          con.query(sql, function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(result);
+            }
+          })
         }
       });
     }
@@ -311,12 +322,14 @@ router.post("/BOQRequests", (req, res) => {
 });
 
 router.post("/requestDetail", (req, res) => {
-  sql = `select RUMPRequestPNCUrl as PNCUrl, RUMPRequestAllocatedVendor as RequestAllocatedVendor,RUMPInitiatorId as initiatorId,RumprequestLevel as requestLevel,ispnc,RUMPRequestBOQDescription as BOQDescription,RUMPRequestBOQEstimatedCost as BOQEstimatedCost,
+  sql = `select datarumprequestaction.RUMPRequestComments as requestComments ,RUMPRequestPNCUrl as PNCUrl, RUMPRequestAllocatedVendor as RequestAllocatedVendor,RUMPInitiatorId as initiatorId,RumprequestLevel as requestLevel,ispnc,RUMPRequestBOQDescription as BOQDescription,RUMPRequestBOQEstimatedCost as BOQEstimatedCost,
   RUMPRequestBOQEstimatedTime as BOQEstimatedTime,RUMPRequestVendorAllocatedDays as AllocatedDays,
   RUMPRequestVendorAllocationStartDate as AllocationStartDate,RUMPRequestActualCost as ActualCost,RUMPRequestStatus as RequestStatus,RUMPRequestNumber as RequestNumber, RUMPRequestPK,if(RUMPRequestMEType=0,"Civil","Electrical") as METype,RUMPRequestSWON as RequestSWON,RUMPRequestAvailableBudget as RequestAvailableBudget,
   RUMPRequestConsumedBudget as RequestConsumedBudget,RUMPRequestBalanceBudget as RequestBalanceBudget,
   RUMPRequestType as RequestType,RUMPRequestSubject as RequestSubject, RUMPRequestDescription as RequestDescription,
-  if(RUMPRequestBudgetType=0,"Capex","Opex") as BudgetType from datarumprequest where RUMPRequestPK=${req.body.req_id};`
+  if(RUMPRequestBudgetType=0,"Capex","Opex") as BudgetType from datarumprequest left join datarumprequestaction
+  on (datarumprequestaction.RUMPRequestFK=datarumprequest.RUMPRequestPK ) where RUMPRequestPK=${req.body.req_id} 
+  order by datarumprequestaction.RUMPRequestActionTiming desc limit 1;`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
@@ -351,7 +364,7 @@ router.post("/resendRequest", (req, res) => {
     } else {
       let role = result[0].role;
       let request_action = "Resend to " + role;
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=0,RumprequestLevel=${req.body.resendToId} 
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId} 
   where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {
         if (err) {
@@ -407,7 +420,7 @@ router.post("/addPnc", (req, res) => {
       }
       else {
         allocationStartDate = req.body.allocationStartDate.toString().substr(0, 10);
-        sql = `update datarumprequest set RUMPRequestAllocatedVendor=${VendorPk},
+        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestAllocatedVendor=${VendorPk},
   RUMPRequestVendorAllocatedDays=${allocatedDays},
   RUMPRequestVendorAllocationStartDate='${allocationStartDate}',RumprequestLevel=${nextValue},
   RUMPRequestActualCost=${req.body.actualCost} where rumprequestpk=${req.body.req_id};`
@@ -417,7 +430,18 @@ router.post("/addPnc", (req, res) => {
           console.log(err);
         } else {
           console.log(result);
-          res.send(result);
+          // res.send(result);
+          const now = new Date();
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Initiated Phase 2','${actionTime}','','${req.body.role_name}',1);`
+          con.query(sql, function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(result);
+            }
+          })
         }
       })
     }
