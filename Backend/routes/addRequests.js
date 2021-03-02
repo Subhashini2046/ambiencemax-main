@@ -306,7 +306,7 @@ router.post("/BOQRequests", (req, res) => {
           //res.send(JSON.stringify({ result: "passed" }));
           const now = new Date();
           let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.reqId},${req.body.accessID},'Submitted','${actionTime}','','${req.body.role_name}',1);`
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.reqId},${req.body.accessID},'Submitted','${actionTime}','BOQ Submitted','${req.body.role_name}',1);`
           con.query(sql, function (err, result) {
             if (err) {
               console.log(err);

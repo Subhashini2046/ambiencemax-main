@@ -161,6 +161,7 @@ export class RequestFormComponent implements OnInit {
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];
+        console.log(this.actualCost);
         this.is_pnc = this.requestDetails[0]["ispnc"];
         this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
@@ -303,10 +304,17 @@ export class RequestFormComponent implements OnInit {
     this.router.navigateByUrl('/AmbienceMax/open');
   }
   onPncChange(){
-    if(this.actualCost==null || this.allocatedDays==null || this.allocationStartDate==null || this.pncvendorSelection==''){
-      return true
+    if(this.selectedElement.length>0){
+      if(this.actualCost==null || this.allocatedDays==null || this.allocationStartDate==null || this.pncvendorSelection==''){
+        return true
+      }
     }
-    return false
+    else{
+      if(this.actualCost==null){
+        return true
+      }
+    }
+      return false
   }
   onPncSumbit() {
     let allocationStartDate = this.allocationStartDate;

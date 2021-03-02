@@ -9,6 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class AddDialogComponent implements OnInit {
   accessId;
+  selectedUser;
   allocateForm: FormGroup;
   req_id;
   users: any = [];
@@ -40,11 +41,18 @@ export class AddDialogComponent implements OnInit {
       console.log(this.users);
     });
   }
+  onDisabled(){
+    if(this.selectedUser==null){
+      return true;
+    }
+    return false;
+  }
   navigateTo() {
-    if (this.accessId["pnc"] == 1) { this.is_pnc = 1 }
+    if (this.selectedUser["pnc"] == 1) { this.is_pnc = 1 }
     else
       this.is_pnc = 0;
-  this.router.navigate(['AmbienceMax/viewcomm', this.accessId["accessId"], this.req_id, this.is_pnc]);
+    console.log(this.selectedUser["accessId"],this.selectedUser["pnc"],this.is_pnc,"//");
+ this.router.navigate(['AmbienceMax/viewcomm', this.selectedUser["accessId"], this.req_id, this.is_pnc]);
   }
   onCancel() {
     this.router.navigate(['AmbienceMax/open']);

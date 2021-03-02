@@ -163,7 +163,7 @@
 <!-- BOQ End -->
 
 <!-- PNC Form -->
-<div class="row my-3" *ngIf="allocationStartDate!=null || this.allocatedDays!=null || this.pncurl!=null">
+<div class="row my-3" *ngIf="(this.actualCost!=null)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
@@ -244,7 +244,7 @@
       <div class="form-group" *ngIf="this.pncurl!=null">
         <label>PNC Document</label>
         <br>
-        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile(filename)">
+        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile()">
           Download Document
         </button>
         <label> {{filename}}</label>

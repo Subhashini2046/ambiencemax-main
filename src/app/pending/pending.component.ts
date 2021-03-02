@@ -31,7 +31,7 @@ export class PendingComponent implements OnInit, OnDestroy {
     });
 
   }
-  view(req_id, pnc) {
+  view(req_id) {
     this.route.navigate(['/AmbienceMax/view', req_id]);
   }
   status(reqId) {
