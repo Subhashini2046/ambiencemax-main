@@ -47,15 +47,16 @@ export class AdminPanelComponent implements OnInit {
     // });
     // console.log(this.workflowDetails);
   }
-  openDialog(w_flow): void {
+  openDialog( w_id): void {
+    
     let dialogRef = this.dialog.open(WorkflowDialogComponent, {width: '250px',
-    data: { data: w_flow}
+    data: { data: w_id}
     });
 
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-    //  this.animal = result;
+       // w_id.clear();
     });
   }
   ngOnInit() {

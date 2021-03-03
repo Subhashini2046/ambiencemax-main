@@ -55,7 +55,7 @@
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
           <button mat-button class="stylepopupbuttonconfirm"
-          (click)='openDialog(element.w_flow)'>
+          (click)='openDialog(element. w_id)'>
           View Details
         </button>
         </p>
@@ -86,7 +86,7 @@
                 <div class="col-lg-9">
                   <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>Choose Approvers</mat-label>
-                    <mat-select [formControl]="Approvers" multiple [(ngModel)] = "approverArray" [value] = "approverArray">
+                    <mat-select [formControl]="Approvers" [(ngModel)] = "approverArray" [value] = "approverArray">
                       <mat-option *ngFor="let topping of AppList" [value]="topping">{{topping}}</mat-option>
                     </mat-select>
                   </mat-form-field>
