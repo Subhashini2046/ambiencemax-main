@@ -113,6 +113,10 @@
   .example-card{
     margin-top: 5px;
   }
+  .request-Tab{
+    font-size: 18px;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+  }
   mat-card-title{
     /* background: linear-gradient(to right, #000046, #1cb5e0); */
     width: 100% !important;

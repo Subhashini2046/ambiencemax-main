@@ -44,6 +44,7 @@ import { CompleteComponent } from './complete/complete.component';
 import {MatBadgeModule} from '@angular/material/badge';
 import  { MatDialogModule } from '@angular/material/dialog'; 
 import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.component';
+import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-dialog.component';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
@@ -96,8 +97,9 @@ const appRoutes = [
     ApproveRequestComponent,
     CompleteComponent,
     WorkflowDialogComponent,
+    AddWorkflowDialogComponent,
   ],
-  entryComponents: [WorkflowDialogComponent],
+  entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

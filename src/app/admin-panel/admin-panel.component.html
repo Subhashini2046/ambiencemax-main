@@ -17,8 +17,11 @@
       <mat-card-title> Existing assigned workflows</mat-card-title>
     </mat-card>
     <br>
+    <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
+    </mat-form-field>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
     <!-- Position Column -->
     <ng-container matColumnDef="ID" >
       <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
@@ -29,13 +32,11 @@
       </td>
 
     </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="Flow" class="text-center">
-      <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow</th>
+    <ng-container matColumnDef="Hierarchy" class="text-center">
+      <th class="text-center" mat-header-cell *matHeaderCellDef>Hierarchy</th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
-          {{element.w_flow}}
+          {{element.hierarchy}}
         </p>
         </td>
     </ng-container>
@@ -47,15 +48,23 @@
         </p>
         </td>
     </ng-container>
+    <!-- Name Column -->
+    <!-- <ng-container matColumnDef="Flow" class="text-center">
+      <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="text-center">
+          {{element.w_flow}}
+        </p>
+        </td>
+    </ng-container> -->
 
     <!-- Weight Column -->
     <ng-container matColumnDef="details" class="text-center">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
+      <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
           <button mat-button class="stylepopupbuttonconfirm"
-          (click)='openDialog(element. w_id)'>
+          (click)='openDialog(element. w_id,element.w_flow)'>
           View Details
         </button>
         </p>
@@ -82,7 +91,11 @@
         </h5>
         <!-- <div class="row"> -->
             <form #form = "ngForm" (submit)="form.reset()">
-              <div class="row">
+              <button mat-button class="text-center stylepopupbuttonconfirm"
+              (click)='openWorkflowDialog()'>
+              Add Workflow
+            </button>
+              <!-- <div class="row">
                 <div class="col-lg-9">
                   <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>Choose Approvers</mat-label>
@@ -99,7 +112,7 @@
                     Submit
                   </button>
                 </div>
-              </div>
+              </div> -->
             </form>
           <!-- </div> -->
       </mat-card>
@@ -148,16 +161,31 @@
         </mat-card>
         <br>
         <form action="" #hform = "ngForm">
+          <div class="text-center">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>Select Hierarchy</mat-label>
+              <mat-select [formControl]="Approvers" (ngModelChange)="onChanged($event)">
+                <mat-option *ngFor="let topping of AppList" [value]="topping">{{topping}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
           <div class="row">
             <div class="form-group col" >
-              <label for="H_id"> Building Id</label>
-              <input type="number" name="h_id" id="H_id" min="13" [(ngModel)] ="b_id"  class="form-control" required>
+              <label for="H_id"> Choose Hierarchy</label>
+              <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Choose Hierarchy Name</mat-label>
+                <mat-select [formControl]="Approvers" [(ngModel)] = "b_id">
+                  <mat-option *ngFor="let topping of fetechHierarchy[0]" [value]="topping.id">{{topping.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
             <div class="form-group col">
               <label for="w_id"> Workflow Id</label>
               <input type="number" name="w_id" id="w_id" min="1" [(ngModel)] = "work_id" class="form-control" required>
             </div>
           </div>
+          <p class="error"
+          *ngIf="this.onAddlink==1">* Location and Workflow id is Already Exist!!!</p>
           <div class="row">
             <div class="col"></div>
             <div class="col">

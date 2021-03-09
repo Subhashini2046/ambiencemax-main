@@ -51,7 +51,7 @@ router.post("/viewStatuss",(req,res)=>{
       console.log(err);
     }else{
       reqLog=result;
-  sql = `Select RUMPRequestStatus,RumprequestLevel,RUMPInitiatorId,w_flow,RUMPRequestMEType from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK = ${reqId};`
+  sql = `Select ispnc,RUMPRequestStatus,RumprequestLevel,RUMPInitiatorId,w_flow,RUMPRequestMEType from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK = ${reqId};`
   con.query(sql,function(err,result){
     if(err){
       console.log(err);
@@ -62,7 +62,7 @@ router.post("/viewStatuss",(req,res)=>{
       reqStatus=result[0].RUMPRequestStatus;
       console.log("dd",requestLevel);
       intiator_id = result[0].RUMPInitiatorId;
-
+      ispnc=result[0].ispnc;
       console.log("............");
       console.log("wflow",w_flow);
 
@@ -138,7 +138,8 @@ router.post("/viewStatuss",(req,res)=>{
               requestLevel:requestLevel,
               intiator_id:intiator_id,
               reqStatus:reqStatus,
-              reqLog:reqLog
+              reqLog:reqLog,
+              ispnc:ispnc
           })
          );
       })

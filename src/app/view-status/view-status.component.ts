@@ -35,6 +35,7 @@ export class ViewStatusComponent implements OnInit {
   req_level;
   reqStatus;
   initiator;
+  is_pnc;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(private actrouter: ActivatedRoute, public UsrDataService: UserDataService, private _location: Location) {
@@ -56,6 +57,7 @@ export class ViewStatusComponent implements OnInit {
       this.req_level = res.requestLevel;
       this.initiator = res.intiator_id;
       this.reqStatus = res.reqStatus;
+      this.is_pnc=res.ispnc;
       let j = 0;
       for (let i = 0; i < res.role.length; i++) {
         if ((res.role[i][0] == null)) {
@@ -70,30 +72,35 @@ export class ViewStatusComponent implements OnInit {
         if ((this.req_level.toString().trim() == this.w_flow[i]) &&
           (this.reqStatus.toString().trim() === 'Pending')) {
 
-          for (j; j < i; j++) {
-            this.view_id = this.w_flow[j];
-            this.view_name = this.role[j];
-            this.view_status = "Approved";
-            if (this.role[j] == null) { this.view_status = null }
-            this.viewStatus = {
-              id: this.view_id,
-              name: this.view_name,
-              status: this.view_status
-            };
-            this.viewStatus1.push(this.viewStatus);
-          }
-          for (j; j < 8; j++) {
-            this.view_id = this.w_flow[j];
-            this.view_name = this.role[j];
-            this.view_status = "Pending";
-            if (this.role[j] == null) { this.view_status = null }
-            this.viewStatus = {
-              id: this.view_id,
-              name: this.view_name,
-              status: this.view_status
-            };
-            this.viewStatus1.push(this.viewStatus);
-          }
+            if(!(this.initiator==this.req_level && this.is_pnc==0)){
+
+              for (j; j < i; j++) {
+                this.view_id = this.w_flow[j];
+                this.view_name = this.role[j];
+                this.view_status = "Approved";
+                if (this.role[j] == null) { this.view_status = null }
+                this.viewStatus = {
+                  id: this.view_id,
+                  name: this.view_name,
+                  status: this.view_status
+                };
+                this.viewStatus1.push(this.viewStatus);
+              }
+            }
+              for (j; j < this.w_flow.length; j++) {
+                this.view_id = this.w_flow[j];
+                this.view_name = this.role[j];
+                this.view_status = "Pending";
+                if (this.role[j] == null) { this.view_status = null }
+                this.viewStatus = {
+                  id: this.view_id,
+                  name: this.view_name,
+                  status: this.view_status
+                };
+                this.viewStatus1.push(this.viewStatus);
+              }
+            
+
         }
         if ((this.req_level == this.initiator) &&
           (this.reqStatus.toString().trim() === 'Closed')) {

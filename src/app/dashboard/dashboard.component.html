@@ -40,25 +40,24 @@
         <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="request-form" mat-list-item>Raise
           Request </a>
         <a class="btn"  (click)="snav.toggle()" routerLink="pending" mat-list-item>
-          <span matBadge={{this.UnreadStatuspending}} matBadgeColor="warn" matBadgeOverlap="false"> Pending Requests</span>
+          <span> Pending Requests</span>
         </a>
 
         <a class="btn"  (click)="snav.toggle()" routerLink="open" mat-list-item>
-          <span matBadge={{this.UnreadStatusopen}} matBadgeOverlap="false" matBadgeColor="warn"> Open Requests</span>
+          <span> Open Requests</span>
         </a>
 
         <a class="btn" (click)="snav.toggle()" routerLink="close" mat-list-item>
-          <span matBadge={{this.UnreadStatusclosed}} matBadgeColor="warn" matBadgeOverlap="false"> Closed Requests</span>
+          <span>Closed Requests</span>
         </a>
 
         <a class="btn" (click)="snav.toggle()" routerLink="complete" mat-list-item>
-          <span matBadge={{this.UnreadStatuscompleted}} matBadgeColor="warn" matBadgeOverlap="false">Completed Requests</span>
+          <span>Completed Requests</span>
 
         </a>
 
         <a class="btn" (click)="snav.toggle()" routerLink="allRequest" mat-list-item>
-          <span matBadge={{this.UnreadStatusAll}} matBadgeColor="warn" matBadgeOverlap="false">All
-            Request</span>
+          <span>All Request</span>
           </a>
 
         <!-- <a class="btn" *ngFor="let chip of Buttons" (click)="Request(chip.func); snav.toggle(); main = chip.func;

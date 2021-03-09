@@ -57,6 +57,7 @@ export class RequestFormComponent implements OnInit {
   reqPnc;
   pncvendorSelection='';
   reqComment;
+  reqType='';
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
   }
@@ -267,25 +268,37 @@ export class RequestFormComponent implements OnInit {
     for (let img of this.fileList) {
       formData.append('files', img);
     }
+    let obj={...this.currReq};
     this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
+      console.log(this.filepath,"this.filepath");
+      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath);
     });
-
-    console.log(this.filepath,"this.filepath");
     //this.openSnackBar('Request Submitted Successfully !');
-    this.UserDataService.addRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath);
+   
   }
   onSumbitForUpdate(){
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
-    this.UserDataService.updateRequest(this.is_pnc,this.currReq,this.admin_access_id,this.req_id, JSON.parse(localStorage.getItem('user_name'))).subscribe((res)=>{
-      this.openSnackBar('Request Updated Successfully !');
-      this.router.navigateByUrl('/AmbienceMax/open');
+    const formData = new FormData();
+    for (let img of this.fileList) {
+      formData.append('files', img);
+    }
+    let obj={...this.currReq};
+    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+      for (let i = 0; i < res.files.length; i++) {
+        this.filepath[i] = res.files[i]['filename'];
+      }
+      this.UserDataService.updateRequest(this.is_pnc,obj,this.admin_access_id,this.req_id, JSON.parse(localStorage.getItem('user_name')),this.filepath);
     });
+
   }
   onBOQSubmit() {
+    let boqDis=this.boqDescription;
+    let boqCost=this.boqEstimatedCost;
+    let boqTime=this.boqEstimatedTime;
     const formData = new FormData();
     let id = '' + this.req_id;
     formData.append('id', id);
@@ -296,12 +309,11 @@ export class RequestFormComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-
+      this.UserDataService.addBOQDDetails(this.req_id, this.role_id,boqDis,boqCost,boqTime, this.filepath,this.admin_access_id, this.user_name);
+   //   this.router.navigateByUrl('/AmbienceMax/open');
+      this.openSnackBar('Request Submitted Successfully !');
     });
 
-    this.openSnackBar('Request Submitted Successfully !');
-    this.UserDataService.addBOQDDetails(this.req_id, this.role_id, this.boqDescription, this.boqEstimatedCost, this.boqEstimatedTime, this.filepath,this.admin_access_id, this.user_name);
-    this.router.navigateByUrl('/AmbienceMax/open');
   }
   onPncChange(){
     if(this.selectedElement.length>0){
@@ -324,14 +336,13 @@ export class RequestFormComponent implements OnInit {
     for (let img of this.fileList1) {
       formData.append('files', img);
     }
+    let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
     this.http.post<any>('http://localhost:5600/pncFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
       }
+      this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc,this.admin_access_id, this.user_name);
     });
-    let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
-    this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc,this.admin_access_id, this.user_name);
-    this.route.navigate(['/AmbienceMax/open']);
   }
 
   onApprove() {

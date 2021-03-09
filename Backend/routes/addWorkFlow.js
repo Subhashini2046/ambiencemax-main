@@ -71,13 +71,48 @@ router.post("/getFlowDetails", (req, res) => {
 })
 
 router.get("/getFlow", (req, res) => {
-  sql = `select COALESCE(locname,buiname,cluname,citname) as name,linkrumprequestflow.linkrumprequestflowpk as w_id,
-    linkrumprequestflow.w_flow as w_flow from linkrumprequestinitiators 
-    left join datalocation on(datalocation.locLocationPK=linkrumprequestinitiators.b_id)
-    left join databuilding on(databuilding.buiBuildingPK=linkrumprequestinitiators.b_id)
-    left join dataclub on(dataclub.cluclubpk=linkrumprequestinitiators.b_id)
-    left join datacity on(datacity.citCityPK=linkrumprequestinitiators.b_id)
-    left join linkrumprequestflow on(linkrumprequestflow.linkrumprequestflowpk=linkrumprequestinitiators.work_id);`
+  sql = `select COALESCE(locname,buiname,cluname,citname) as name,
+  COALESCE( replace(locLocationPK,locLocationPK,'Location'),replace(buiBuildingPK,buiBuildingPK,'Building'),
+  replace(cluClubPK,cluClubPK,'Cluster'),replace(citCityPK,citCityPK,'City') )
+  as hierarchy,linkrumprequestflow.linkrumprequestflowpk as w_id,
+      linkrumprequestflow.w_flow as w_flow from linkrumprequestinitiators 
+      left join datalocation on(datalocation.locLocationPK=linkrumprequestinitiators.b_id)
+      left join databuilding on(databuilding.buiBuildingPK=linkrumprequestinitiators.b_id)
+      left join dataclub on(dataclub.cluclubpk=linkrumprequestinitiators.b_id)
+      left join datacity on(datacity.citCityPK=linkrumprequestinitiators.b_id)
+      left join linkrumprequestflow on(linkrumprequestflow.linkrumprequestflowpk=linkrumprequestinitiators.work_id);`
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+router.post("/getHierarchy", (req, res) => {
+  let name = req.body.name;
+  if (name.includes('Location')) {
+    sql = `select locLocationPK as id,locName as name from datalocation;`
+  }
+  else if (name.includes('Building')) {
+    sql = `select buiBuildingPK as id,buiName as name from databuilding;`
+  }
+  else if (name.includes('Cluster')) {
+    sql = `select cluClubPK as id,cluName as name from dataclub;`
+  }
+  else if (name.includes('City')) {
+    sql = `select citCityPK as id,citName as name from datacity;`
+  }
+  else if (name.includes('State')) {
+    sql = `select staStatePK as id,staName as name from datastate;`
+  }
+  else if (name.includes('Country')) {
+    sql = `select couCountryPK as id,couName as name from datacountry;`
+  }
+  else if (name.includes('Geography')) {
+    sql = `select geoGeographyPK as id,geoName as name from datageography;`
+  }
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -86,42 +121,97 @@ router.get("/getFlow", (req, res) => {
     }
   })
 })
-// router.post("/setFlow",(req,res)=>{
-//   wflow = req.body.wflow;
-//   console.log(wflow);
-//   sql = `insert into workflow (w_flow) values ('${wflow}')`
-//   con.query(sql,(err,result)=>{
-//     if(err){
-//       console.log(err);
-//     }else{
-//       console.log(result);
-//     }
-//   })
-// })
-// router.post("/addHierarchy",(req,res)=> {
-//   h_id = req.body.h_id;
-//   h_name = req.body.h_name;
-//   h_level = req.body.h_level;
-//   console.log('h_id:'+h_id);
-//   sql = `insert into hierarchy (h_id,h_name,h_level) values ('${h_id}','${h_name}','${h_level}')`
-//   con.query(sql,(err,result)=>{
-//     if(err){
-//       console.log(err);
-//     }else{
-//       console.log(result);
-//     }
-//   })
-// })
+
+
+router.post("/getUsersWorkflow", (req, res) => {
+  let role = req.body.role;
+sql='select distinct dataadmin.admName as name,linkrumpadminaccess.linkRUMPAdminFK as userId from linkrumpadminaccess inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK) where linkRUMPRoleFK=?;'
+  con.query(sql,role, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  })
+})
+
+router.post("/getUserLocation", (req, res) => {
+  let roleId = req.body.roleId;
+  let userId=req.body.userId;
+  if (roleId==1) {
+    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+  }
+  else if (roleId==2 || roleId==3 || roleId==4 || roleId==5) {
+    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,dataclub.cluName as locName from linkrumpadminaccess inner join dataclub on(dataclub.cluClubPK=linkrumpadminaccess.linkRUMPSpace)
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+  }
+  else if (roleId==6 || roleId==7 || roleId==9) {
+    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datacity.citName as locName from linkrumpadminaccess inner join datacity on(datacity.citCityPK=linkrumpadminaccess.linkRUMPSpace)
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+  }
+  con.query(sql,[userId,roleId], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  })
+});
+
+
+
+router.get("/getUserRole",(req,res)=> {
+  sql = `select * from pickrumprole;`
+  con.query(sql,(err,result)=>{
+    if(err){
+      console.log(err);
+    }else{
+      res.send(result);
+    }
+  });
+});
+
+router.post("/addWorkflow",(req,res)=> {
+  let w_flow=req.body.w_flow;
+  let w_flowStr='';
+w_flowStr=w_flow.toString();
+  console.log(w_flowStr);
+  sql = `insert into linkrumprequestflow (w_flow) values(?);`
+  con.query(sql,w_flowStr,(err,result)=>{
+    if(err){
+      console.log(err);
+    }else{
+      res.send(JSON.stringify({result:'Inserted'}));
+    }
+  });
+});
+
 router.post("/addLink", (req, res) => {
   work_id = req.body.work_id;
   b_id = req.body.b_id;
-  sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},${b_id})`;
-  con.query(sql, (err, result) => {
+
+  sql = `select * from linkrumprequestinitiators where (b_id='${b_id}' and work_id=${work_id})`;
+  con.query(sql,(err, result) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(result);
+      console.log(result,"mmmm");
+      if(result.length>0){
+        res.end(JSON.stringify({result:1}));
+      }
+      else{
+      sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},'${b_id}')`;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      })}
     }
   })
 })
+
+
 module.exports = router;

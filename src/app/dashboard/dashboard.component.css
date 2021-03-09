@@ -102,3 +102,6 @@ mat-card{
   color: white;
   padding-left: 5px;
 }
+mat-sidenav,mat-nav-list{
+  background-color: #647DBD;
+}

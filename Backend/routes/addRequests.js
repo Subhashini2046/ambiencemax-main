@@ -70,6 +70,7 @@ router.post("/ViewRequestDetail", (req, res) => {
 router.post("/newReq", (req, response) => {
   space = req.body.space;
   let spaceCollection = splitHierarchy(space);
+console.log("ggg",req.body.request.req_type);
 
   function splitHierarchy(space) {
     let spaceCollection = [];
@@ -137,11 +138,11 @@ router.post("/newReq", (req, response) => {
 
               let requestNumber = "";
               if (req.body.request.req_type == "Repair") {
-                requestNumber = locShortName + "/" + startEndDate + "/" + "Form1" + "/";
+                requestNumber = locShortName + "/" + startEndDate + "/" + "NewForm1" + "/";
               } else if (req.body.request.req_type == "Upgrade") {
-                requestNumber = locShortName + "/" + startEndDate + "/" + "Form2" + "/";
+                requestNumber = locShortName + "/" + startEndDate + "/" + "NewForm2" + "/";
               } else if (req.body.request.req_type == "Maintenance") {
-                requestNumber = locShortName + "/" + startEndDate + "/" + "Form3" + "/";
+                requestNumber = locShortName + "/" + startEndDate + "/" + "NewForm3" + "/";
               }
 
               sql = `select max(cast(REPLACE(rumprequestnumber, '${requestNumber}', '')+1 as decimal(10,0))) as nextval
@@ -187,6 +188,7 @@ router.post("/newReq", (req, response) => {
                     if (err) {
                       console.log(err);
                     } else {
+
                       console.log(res);
                       console.log(res.insertId, "req_id");
                       response.send(JSON.stringify({
@@ -363,7 +365,7 @@ router.post("/resendRequest", (req, res) => {
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
       let role = result[0].role;
-      let request_action = "Resend to " + role;
+      let request_action = "Resent to " + role;
       sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId} 
   where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {

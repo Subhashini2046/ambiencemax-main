@@ -8,6 +8,10 @@ div.cnt{
   margin-top: 5px;
   background-color:  rgba(106, 135, 223, 0.644);
 }
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
 mat-card-title{
   /* background: linear-gradient(to right, #000046, #1cb5e0); */
   width: 100% !important;

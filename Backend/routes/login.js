@@ -5,7 +5,7 @@ let express = require("express"),
 
 router.post("/login", (req, res) => {
   console.log("Login Route");
-  var sql = `select admAdminPK,admName from dataadmin where admAdminPK = '${req.body.userId}' and admpwd = '${req.body.password}'`;
+  var sql = `select admAdminPK,admName from dataadmin where admAdminPK = '${req.body.userId}'`;
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);

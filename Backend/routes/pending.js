@@ -44,8 +44,8 @@ let express = require("express"),
           metype=0;
         }
         con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-        RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=? and rumprequestflowfk in(?) and t2.linkRUMPSpace != ? or t2.linkrumprolefk != ? order by RUMPRequestdate desc`,
-          [metype,...narr,req.body.space,req.body.role], (err, result) => {
+        RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Pending' and (t2.linkRUMPSpace != ? or t2.linkrumprolefk != ?) order by RUMPRequestdate desc`,
+          [metype,[...narr],req.body.space,req.body.role], (err, result) => {
             if (err) throw err;
             res.end(JSON.stringify(result))
           }

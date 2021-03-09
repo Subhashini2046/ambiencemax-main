@@ -43,3 +43,9 @@
   mat-card{
     background-color: rgba(71, 99, 255, 0.301);
   }
+
+table{
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}

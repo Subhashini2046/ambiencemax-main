@@ -1,0 +1,70 @@
+<mat-dialog-content>
+    <form class="px-3 py-3 my-4"[formGroup]="checkoutForm" (ngSubmit)="onSubmit()"
+    
+    action="#">
+        <h3 class="text-center">
+         Add Workflow
+        </h3>
+        <hr>
+        <div formArrayName="items"
+        *ngFor="let item of checkoutForm.controls['items'].controls; let i = index">
+      <div class="form-row" [formGroupName]="i">
+      
+        <div class="form-group col-md-3">
+          <label>Role1</label>
+          <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>Select Role</mat-label>
+            <mat-select formControlName="role" (ngModelChange)="onChanged($event)">
+              <mat-option *ngFor="let topping of userRole" [value]="topping.pickRUMPRolePK">{{topping.pickRUMPRoleDescription}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-md-3"  *ngIf=" roleId!=0">
+            <label>User</label>
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Select User</mat-label>
+                <mat-select formControlName="user" (ngModelChange)="onUsers($event)">
+                  <mat-option *ngFor="let topping of users" [value]="topping.userId">{{topping.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+          </div>
+          <div class="form-group col-md-3" *ngIf=" roleId!=0">
+            <label>Location</label>
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Select Location</mat-label>
+                <mat-select formControlName="accessId">
+                  <mat-option *ngFor="let topping of userLocation" [value]="topping.accessId">{{topping.locName}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                  <button type="button" mat-raised-button class="col-bg-button" (click)="addNext()"
+                   >
+                   Add more Users
+                  </button>
+                </div>
+                  <div class="form-group col-md-6">
+                  <button type="button" mat-raised-button class="col-bg-button" (click)="addNext()">
+                    Add more roles
+                  </button>
+               </div>
+              </div>
+          </div>
+     
+    </div>
+    </div>
+      <div class="text-center">
+     
+        <button type="submit" mat-raised-button
+        class="col-bg-accent" (click)="onSubmit()"
+        >
+        Add Workflow
+
+      </button>
+      </div>
+    </form>
+  </mat-dialog-content>
+    
+

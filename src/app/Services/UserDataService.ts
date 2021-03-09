@@ -11,6 +11,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class UserDataService {
   changedetectInRole = new BehaviorSubject(null);
   usersURL = "http://localhost:5600/api/users";
+  URL="http://localhost:3000/";
   httpOptions = {
 
     headers: new HttpHeaders({
@@ -39,6 +40,24 @@ export class UserDataService {
     console.log(userId);
     this.http.post<{ result: string, space: string, user_id: string, role_id: number, admin_access_id: number, user_name: string }>
       ('http://localhost:3000/login', { userId, password })
+      .subscribe((ResData) => {
+        console.log(ResData)
+        if (ResData.role_id !== undefined) {
+          console.log(this.userId);
+          localStorage.setItem('role_id', JSON.stringify(ResData.role_id));
+          localStorage.setItem('userId', JSON.stringify(ResData.user_id));
+          localStorage.setItem('space', JSON.stringify(ResData.space));
+          localStorage.setItem('admin_access_id', JSON.stringify(ResData.admin_access_id));
+          localStorage.setItem('user_name', JSON.stringify(ResData.user_name));
+          this.router.navigateByUrl('AmbienceMax/dashboard');
+        }
+      });
+  }
+
+  authenticateThroughEquipmax(userId: number) {
+    console.log(userId);
+    this.http.post<{ result: string, space: string, user_id: string, role_id: number, admin_access_id: number, user_name: string }>
+      ('http://localhost:3000/login', { userId})
       .subscribe((ResData) => {
         console.log(ResData)
         if (ResData.role_id !== undefined) {
@@ -94,11 +113,15 @@ export class UserDataService {
     return this.http.post<any>('http://localhost:3000/requestDetail', { req_id });
   }
 
+  navigateToOpenRequest(){
+    this.router.navigate(['/AmbienceMax/open']);
+  }
  //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
   addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,accessID,role_name) {
     //console.log(filepath1)
     this.http.post<any>('http://localhost:3000/addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name }).subscribe((data) => {
       this.addPncfile(req_id, filepath);
+      this.navigateToOpenRequest();
     });
   }
   addPncfile(reqId, filepath) {
@@ -130,13 +153,17 @@ export class UserDataService {
     return this.http.post('http://localhost:3000/viewRequestData', { reqId });
   }
   addRequest(newReq: ReqSchema, space, user_name, filepath) {
+    console.log(newReq.req_type,"type");
     this.http.post('http://localhost:3000/newReq', { request: newReq, space }).subscribe((data: ReqSchema) => {
       this.addToLog(JSON.parse(JSON.stringify(data)).id, user_name, filepath);
       this.router.navigateByUrl('/AmbienceMax/dashboard');
     });
   }
-  updateRequest(is_pnc,request: ReqSchema,accessID, req_id,role_name){
-   return this.http.post('http://localhost:3000/updateRequests', {is_pnc, request:request,accessID, req_id,role_name});
+  updateRequest(is_pnc,request: ReqSchema,accessID, req_id,role_name,filepath){
+   this.http.post('http://localhost:3000/updateRequests', {is_pnc, request:request,accessID, req_id,role_name}).subscribe((res=>{
+    this.addToLog(req_id, role_name, filepath);
+    this.navigateToOpenRequest();
+   }));
     
   }
   addUpdateRequest(RequestData, reqId: number) {
@@ -167,6 +194,7 @@ export class UserDataService {
   addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath,accessID,role_name) {
     this.http.post('http://localhost:3000/BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime,accessID,role_name }).subscribe((data: ReqSchema) => {
       this.addBOQfile(reqId, filepath);
+      this.navigateToOpenRequest();
     });
   }
   addBOQfile(reqId, filepath) {
@@ -209,17 +237,28 @@ getRequestFile(req_id){
   check_asRead(req_id){
     return this.http.post('http://localhost:3000/check_asRead',{req_id});
   }
-  setWorkflow(){
-
+ getHierarchy(name){
+  return this.http.post('http://localhost:3000/getHierarchy',{name});
+  }
+  getUsersWorkflow(role){
+    return this.http.post('http://localhost:3000/getUsersWorkflow',{role});
   }
   addLink(work_id,b_id){
     return this.http.post('http://localhost:3000/addLink',{work_id,b_id});
   }
   getFlow(){
     return this.http.get('http://localhost:3000/getFlow');
-    
   }
   getFlowDetails(Workflow){
     return this.http.post('http://localhost:3000/getFlowDetails',{Workflow});
+  }
+  getUserLocation(userId,roleId){
+    return this.http.post('http://localhost:3000/getUserLocation',{userId,roleId});
+  }
+  getUserRole(){
+    return this.http.get('http://localhost:3000/getUserRole');
+  }
+  addWorkflow(w_flow){
+    return this.http.post(this.URL+'addWorkflow',{w_flow});
   }
 }

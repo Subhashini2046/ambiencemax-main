@@ -126,7 +126,7 @@ let express = require("express"),
           con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
           RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus
            from datarumprequest where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Completed' order by RUMPRequestDate desc`,
-            [metype,...narr], (err, result) => {
+            [metype,narr], (err, result) => {
               if (err) throw err;
               res.end(JSON.stringify(result))
             }

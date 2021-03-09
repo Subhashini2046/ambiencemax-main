@@ -8,5 +8,10 @@ mat-card-title{
     background-color:  rgba(106, 135, 223, 0.589);
   }
   .make-gold{
-    background-color:  rgba(255, 99, 71, 0.233);
+    background-color: #F0F0F0;
   }
+table{
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
