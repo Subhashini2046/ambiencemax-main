@@ -59,7 +59,7 @@ BoqfileName=[];
 selectedSpoc;
 RequestAllocatedVendor;
 reqComment;
-
+pncSupportingDoc=[];
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
@@ -76,6 +76,9 @@ reqComment;
         }
         if(response[i].RUMPRequestFilesStage==2){
           this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+        }
+        if(response[i].RUMPRequestFilesStage==3){
+          this.pncSupportingDoc.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
         }
       }
     });

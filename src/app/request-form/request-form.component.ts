@@ -1,4 +1,3 @@
-import { vendor } from './../approve-request/approve-request.component';
 import { Component, ViewChild, OnInit, SystemJsNgModuleLoader } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
@@ -29,6 +28,7 @@ export class RequestFormComponent implements OnInit {
   AllFileName: any[] = [];
   areCredentialsInvalid = false;
   public filepath = [];
+  public pncfilesName='';
   public fieldValue = [];
   requestDetails: any[] = [];
   // for BOQ form
@@ -115,7 +115,7 @@ export class RequestFormComponent implements OnInit {
   filestage;
    fileName=[];
  BoqfileName=[];
-
+pncSupportingDoc=[];
   ngAfterContentInit() {
     if (this.req_id > 0) {
       this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
@@ -135,10 +135,12 @@ export class RequestFormComponent implements OnInit {
         for(let i=0;i<response.length;i++){
           if(response[i].RUMPRequestFilesStage==1){
             this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-            console.log(this.fileName);
           }
           if(response[i].RUMPRequestFilesStage==2){
             this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
+          }
+          if(response[i].RUMPRequestFilesStage==3){
+            this.pncSupportingDoc.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
           }
         }
       });
@@ -169,18 +171,10 @@ export class RequestFormComponent implements OnInit {
         this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
         this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
         this.reqComment=this.requestDetails[0]["requestComments"];
-        console.log("//",this.reqComment);
         this.reqPnc = response[0]["PNCUrl"]
+        console.log(this.reqPnc);
         if(this.reqPnc!=null){
           this.reqPnc=this.reqPnc.replace(/^.*[\\\/]/, '')};
-        // for(let i=0;i<this.selectedElement.length;i++){
-        //   if(this.RequestAllocatedVendor==this.selectedElement[i]["rumpvenVendorPK"]){
-
-        //   }
-        // }
-        console.log((this.role_id == 0 && this.currReq.req_status == 'Closed'));
-        console.log(this.RequestAllocatedVendor, "hh");
-        console.log((this.currReq.req_status != 'Closed'));
       });
     }
   }
@@ -239,6 +233,7 @@ export class RequestFormComponent implements OnInit {
   }
   fileList1: File[] = [];
   listOfFiles1: any[] = [];
+
   onPncFileChanged(event: any) {
     var filesize = 0;
     for (var i = 0; i <= event.target.files.length - 1; i++) {
@@ -259,6 +254,21 @@ export class RequestFormComponent implements OnInit {
   removePncSelectedFile(index) {
     this.listOfFiles1.splice(index, 1);
     this.fileList1.splice(index, 1);
+  }
+pncfile=[];
+pncfileName=[];
+onPncFile(event){
+    if(event.target.files.length<1){
+      return false;
+    }
+    else{
+      this.pncfile[0]=event.target.files[0];
+      this.pncfileName[0]=event.target.files[0].name;
+    }
+  }
+  removeselectedpncFile(index) {
+    this.pncfileName.splice(index, 1);
+    this.pncfile.splice(index, 1);
   }
   onSubmit() {
     this.currReq.req_subject = this.subject;
@@ -316,33 +326,49 @@ export class RequestFormComponent implements OnInit {
 
   }
   onPncChange(){
+    if( this.reqPnc==null){
     if(this.selectedElement.length>0){
-      if(this.actualCost==null || this.allocatedDays==null || this.allocationStartDate==null || this.pncvendorSelection==''){
+      if(this.actualCost==null || this.allocatedDays==null || this.allocationStartDate==null || this.pncvendorSelection=='' || this.pncfilesName==null){
         return true
       }
     }
     else{
-      if(this.actualCost==null){
+      if(this.actualCost==null || this.pncfilesName==null){
         return true
       }
-    }
+    }}
       return false
   }
   onPncSumbit() {
     let allocationStartDate = this.allocationStartDate;
+    let cost=this.actualCost;
+    let allocatedDay=this.allocatedDays;
+    // pnc supporting doc
     const formData = new FormData();
     let id = '' + this.req_id;
     formData.append('id', id);
     for (let img of this.fileList1) {
       formData.append('files', img);
     }
+    // pnc doc
+    const formData1 = new FormData();
+    formData1.append('id',id);
+    formData1.append('files', this.pncfile[0]);
     let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
-    this.http.post<any>('http://localhost:5600/pncFiles', formData).subscribe((res) => {
+    this.http.post<any>('http://localhost:5600/BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
       }
-      this.UserDataService.addPncByInitiator(this.allocatedDays, allocationStartDate, this.actualCost, this.req_id, VendorPk, this.filepnc,this.admin_access_id, this.user_name);
-    });
+
+     
+      this.http.post<any>('http://localhost:5600/pncFiles', formData1).subscribe((res) => {
+        if(res.length>0){
+        console.log(res.files[0]['filename'],"hh")
+      this.pncfilesName=res.files[0]['filename'];}
+      this.UserDataService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc,this.pncfilesName,this.admin_access_id, this.user_name);   
+     });     
+    console.log(this.pncfilesName);
+  });
   }
 
   onApprove() {

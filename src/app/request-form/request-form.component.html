@@ -282,26 +282,26 @@
             </ng-container>
 
             <ng-container matColumnDef="Vendor Name">
-              <th mat-header-cell *matHeaderCellDef> Vendor Name</th>
-              <td mat-cell *matCellDef="let element"> {{element.venName}} </td>
+              <th class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name</th>
+              <td class="text-center"  mat-cell *matCellDef="let element"> {{element.venName}} </td>
             </ng-container>
 
             <!-- Position Column -->
             <ng-container matColumnDef="spoc1">
-              <th mat-header-cell *matHeaderCellDef> SPOC1</th>
-              <td mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
+              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
             </ng-container>
 
             <!-- Name Column -->
             <ng-container matColumnDef="spoc2">
-              <th mat-header-cell *matHeaderCellDef> SPOC2 </th>
-              <td mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
+              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="spoc3">
-              <th mat-header-cell *matHeaderCellDef> SPOC3 </th>
-              <td mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
+              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -344,18 +344,45 @@
         </button>
         <label> {{reqPnc}}</label>
         </div>
+        <label for="file">Supporting Documents:</label><br>
+        <div *ngFor="let f1 of pncSupportingDoc,let i=index">
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i])">
+            Download Document
+          </button>
+          <label> {{pncSupportingDoc[i]}}</label>
+          </div>
 
-      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed')">
+      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && reqPnc==null)">
+        <!-- PNC Doc -->
         <form>
-          <label for="file">Upload File Here:</label><br>
+          <!-- <label for="file">Upload File Here:</label><br> -->
+          <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
+          <button mat-raised-button (click)="filesInput.click()">Add</button>
+          <input style="display: none"  #attachments  type="file" (change)="onPncFile($event)" #filesInput required>
+          <div *ngFor="let selected of pncfileName;let index = index">
+            <label>
+              <h6>{{selected}}</h6>
+            </label>
+            <button mat-icon-button mat-icon-button color="warn" (click)="removeselectedpncFile(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <br>
+        </form>
+      </div>
+      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1)">
+        <hr>
+        <!-- PNC Supproting Doc -->
+        <form>
+          <!-- <label for="file">Upload File Here:</label><br> -->
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="fileInput.click()">Add</button>
-          <input style="display: none" #attachments type="file" (change)="onPncFileChanged($event)" #fileInput>
+          <input style="display: none"  #attachments  type="file" (change)="onPncFileChanged($event)" #fileInput>
           <div *ngFor="let selected of listOfFiles1;let index = index">
             <label>
               <h6>{{selected}}</h6>
             </label>
-            <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
+            <button mat-icon-button mat-icon-button color="warn" (click)="removePncSelectedFile(index)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>

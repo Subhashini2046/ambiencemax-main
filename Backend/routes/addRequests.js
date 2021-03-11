@@ -52,6 +52,29 @@ router.post("/fileBoqUpload", (req, res) => {
     }
   })
 })
+
+router.post("/pncSupportingDoc", (req, res) => {
+  reqId = req.body.req_id;
+  filepath = req.body.filepath;
+  const fileAddress = 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\' + filepath;
+
+  sql1 = `insert into datarumprequestfiles (RUMPRequestFilesPath,RUMPRequestFK,RUMPRequestFilesStage) 
+  values (?,'${reqId}',3)`
+  con.query(sql1, fileAddress, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      console.log(result);
+      res.send(
+        JSON.stringify({
+          result: "passed",
+          id: res.insertId
+        })
+      );
+    }
+  })
+})
 router.post("/ViewRequestDetail", (req, res) => {
   reqId = req.body.req_id;
   filepath = req.body.filepath;
@@ -188,7 +211,6 @@ console.log("ggg",req.body.request.req_type);
                     if (err) {
                       console.log(err);
                     } else {
-
                       console.log(res);
                       console.log(res.insertId, "req_id");
                       response.send(JSON.stringify({

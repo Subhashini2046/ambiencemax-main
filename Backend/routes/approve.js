@@ -41,6 +41,42 @@ router.post("/getSpocs", (req, res) => {
     }
   })
 })
+
+router.post("/getVendor", (req, res) => {
+  reqId = req.body.req_id;
+  con.query(`select COALESCE(RUMPRequestTaggedVendor1) as vendorId from datarumprequest where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor1 is not null
+  union  
+  select COALESCE(RUMPRequestTaggedVendor2) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor2 is not null
+  union  
+  select COALESCE(RUMPRequestTaggedVendor3) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor3 is not null
+  union
+  select COALESCE(RUMPRequestTaggedVendor4) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor4 is not null
+  union
+  select COALESCE(RUMPRequestTaggedVendor5) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor5 is not null
+  union
+  select COALESCE(RUMPRequestTaggedVendor6) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor6 is not null
+  union
+  select COALESCE(RUMPRequestTaggedVendor7) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor7 is not null;`,
+     (err, result) => {
+      if (err) throw err;
+      if (result.length > 0) {
+        console.log(result,"//");
+        let vendorsId=result;
+        let vendorId=result[0].vendorId;
+        console.log(vendorId);
+        con.query(`select pickrumpvendorcategories.* from 
+        linkrumpvendorcategorymap inner join pickrumpvendorcategories 
+        on(pickrumpvendorcategories.pickRumpVendorCategoriesPK=linkrumpvendorcategorymap.linkRumpVendorCategoryFK) 
+        where linkrumpvendorcategorymap.linkRumpVendorFK=${vendorId};`,
+          [vendorId], (err, result) => {
+            if (err) throw err;
+            res.end(JSON.stringify({result:result,
+              vendorsId:vendorsId}))
+          })
+      }
+      // res.end(JSON.stringify(result))
+    });
+});
 // select list of vendorcategories //
 router.get("/vendorcategories", (req, res) => {
   role = req.body.userRole;
@@ -103,6 +139,7 @@ router.post("/vendorDetail", (req, res) => {
     }
   })
 })
+
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
   req_id = req.body.req_id;
@@ -219,6 +256,19 @@ router.post("/addVendors", (req, res) => {
 
 });
 
+
+router.post("/getComment", (req, res) => {
+  reqId = req.body.req_id;
+  sql = `select RUMPRequestComments from datarumprequestaction where RUMPRequestFK=${reqId} order by RUMPRequestActionTiming desc limit 1;`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.send(JSON.stringify(result));
+    }
+  })
+})
 router.post("/approveRequest", (req, res) => {
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow,datarumprequest.RumprequestLevel as requestLevel,
   datarumprequest.RUMPInitiatorId as initiatorId from linkrumprequestflow inner join datarumprequest 

@@ -9,7 +9,6 @@ export interface vendor {
   vendorName: string;
   taggedCount: number;
   alloccatedCount: number;
-
 }
 @Component({
   selector: 'app-approve-request',
@@ -17,7 +16,6 @@ export interface vendor {
   styleUrls: ['./approve-request.component.css']
 })
 export class ApproveRequestComponent implements OnInit {
-  // public vendorCategory:vendorcategories;
   public vendorCategory: any[] = [];
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userDataService: UserDataService) { }
   vendCategoryId: number;
@@ -36,6 +34,7 @@ export class ApproveRequestComponent implements OnInit {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
     });
+
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.user_id = JSON.parse(localStorage.getItem('userId'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
@@ -46,34 +45,50 @@ export class ApproveRequestComponent implements OnInit {
 
     });
   }
+  vendorID = []
   ngAfterContentInit() {
-    // console.log(this.selectedValue);
-    console.log(this.selection.selected);
+    console.log(this.role_id)
+    this.userDataService.getHomComment(this.req_id).subscribe((res) => {
+      this.requestComment = res[0].RUMPRequestComments;
+    });
+if(this.role_id==5){
+    this.userDataService.getVendor(this.req_id).subscribe((res) => {
+      for (let i = 0; i < res.vendorsId.length; i++) {
+        this.vendorID.push(res.vendorsId[i].vendorId);
+      }
+      this.vendCategoryId = res.result[0].pickRumpVendorCategoriesPK;
+      if (this.vendCategoryId != null) {
+           console.log("//");
+        this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
+          this.dataSource.data = res;
+          this.dataSource.data.forEach(data=>{
+            this.vendorID.forEach(id=>{
+              if(id==data['vendorId']){
+                this.selection.toggle(data);
+              }
+            })
+          })
+        });
+      }
+    });}
   }
   onChanged(event: any) {
     console.log(event, this.vendCategoryId);
     this.selection.clear();
     this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
-      console.log("ddd", res);
       this.dataSource.data = res;
     });
   }
 
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.selection.selected.length = 3;
-    this.dataSource.data.forEach(row => this.selection.select(row));
-    //console.log("mg",this.selection.selected.keys);
-  }
-  call() {
-    console.log(this.selection.selected);
-  }
+  // OnChecked(row, selectedRow) {
+  //   if (row.vendorId == this.vendorID[0] || row.vendorId == this.vendorID[1] || row.vendorId == this.vendorID[2] ||
+  //     row.vendorId == this.vendorID[3] || row.vendorId == this.vendorID[4] || row.vendorId == this.vendorID[5] || row.vendorId == this.vendorID[6]) {
+  //     if (selectedRow == false) {
+  //       this.selection.select(row);
+  //     }
+  //     return row.vendorId
+  //   };
+  // }
 
   onSubmit() {
 
@@ -91,6 +106,6 @@ export class ApproveRequestComponent implements OnInit {
         console.log("Successfully Inserted");
       });
 
-    this.route.navigate(['/AmbienceMax/open']);
+      this.route.navigate(['/AmbienceMax/open']);
   }
 }

@@ -249,6 +249,17 @@
         </button>
         <label> {{filename}}</label>
       </div>
+      <hr>
+      <div class="form-group">
+        <label>PNC Supporting Documents</label>
+        <div *ngFor="let f1 of pncSupportingDoc,let i=index">
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i])">
+            Download Document
+          </button>
+          <label> {{pncSupportingDoc[i]}}</label>
+          </div>
+      </div>
+
     </form>
   </div>
   <div class="col-md-3"></div>
