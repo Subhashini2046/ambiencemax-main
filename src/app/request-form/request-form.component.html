@@ -340,14 +340,13 @@
 
       <div class="form-group" *ngIf="reqPnc!=null">
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile(reqPnc)">
-          Download Document
+          Download PNC Document
         </button>
         <label> {{reqPnc}}</label>
         </div>
-        <label for="file">Supporting Documents:</label><br>
         <div *ngFor="let f1 of pncSupportingDoc,let i=index">
           <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i])">
-            Download Document
+            Download Supporting Document
           </button>
           <label> {{pncSupportingDoc[i]}}</label>
           </div>
@@ -375,6 +374,7 @@
         <!-- PNC Supproting Doc -->
         <form>
           <!-- <label for="file">Upload File Here:</label><br> -->
+          <label for="fileUpload">Supporting Document: &nbsp;&nbsp;</label><br>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="fileInput.click()">Add</button>
           <input style="display: none"  #attachments  type="file" (change)="onPncFileChanged($event)" #fileInput>

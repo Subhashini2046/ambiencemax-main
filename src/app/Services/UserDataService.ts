@@ -126,12 +126,18 @@ export class UserDataService {
  //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
   addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,pncfile,accessID,role_name) {
     console.log(pncfile);
-    // if(pncfile==null){
-    //   console.log(pncfile); 
-    // }
+    if(pncfile!=null){
+      console.log(pncfile); 
+    }
     this.http.post<any>(this.URL+'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name}).subscribe((data) => {
-     if(pncfile==null){
+     if(pncfile!=null){
       this.addPncfile(req_id, pncfile);}
+      this.addPncSupportingDoc(req_id, filepath);
+      this.navigateToOpenRequest();
+    });
+  }
+  addPncByInitiator1(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,accessID,role_name) {
+    this.http.post<any>(this.URL+'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name}).subscribe((data) => {
       this.addPncSupportingDoc(req_id, filepath);
       this.navigateToOpenRequest();
     });
