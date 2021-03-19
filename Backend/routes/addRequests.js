@@ -91,7 +91,7 @@ router.post("/ViewRequestDetail", (req, res) => {
 })
 
 router.post("/newReq", (req, response) => {
-  space = req.body.space;
+ let space = req.body.space;
   let spaceCollection = splitHierarchy(space);
 console.log("ggg",req.body.request.req_type);
 
@@ -200,22 +200,31 @@ console.log("ggg",req.body.request.req_type);
 
                   sql_nested = `insert into datarumprequest (RUMPRequestType,RUMPRequestNumber,RUMPRequestUnreadStatus,RUMPRequestCancelStatus,RUMPRequestMEType,RUMPRequestSWON,
                             RUMPRequestSWONType,RUMPRequestBudgetType,RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,
-                            RUMPRequestBalanceBudget,RUMPRequestSubject,RUMPRequestDescription,RUMPRequestDate,RUMPRequestFlowFK,RUMPRequestStatus,RUMPRequestStage,RUMPInitiatorId,RumprequestLevel,ispnc) 
+                            RUMPRequestBalanceBudget,RUMPRequestSubject,RUMPRequestDescription,RUMPRequestDate,RUMPRequestFlowFK,RUMPRequestStatus,RUMPRequestStage,RUMPInitiatorId,RumprequestLevel,ispnc,RUMPRequestApprovalLevel) 
                             values ('${req.body.request.req_type}','${requestNumber}',1,0,'${me_type}','${req.body.request.req_swon}',
                             'NA',${budget_type},
                             ${req.body.request.available_budget},${req.body.request.consumed_budget},
                             ${req.body.request.balance_budget},'${req.body.request.req_subject}',
-                            '${req.body.request.req_description}','${req_date}',${w_id},'${req.body.request.req_status}',0,${req.body.request.req_initiator_id},${req_level},0)`
+                            '${req.body.request.req_description}','${req_date}',${w_id},'${req.body.request.req_status}',0,${req.body.request.req_initiator_id},${req_level},0,${req.body.accessID})`
 
                   con.query(sql_nested, (err, res) => {
                     if (err) {
                       console.log(err);
                     } else {
-                      console.log(res);
-                      console.log(res.insertId, "req_id");
-                      response.send(JSON.stringify({
-                        id: res.insertId,
-                      }))
+
+                      sql=`select RUMPRequestNumber from datarumprequest where RUMPRequestPK=${res.insertId};`
+                      con.query(sql,(err,result)=>{
+                        if(err){
+                          console.log(err);
+                        }else{
+                          console.log(result[0].RUMPRequestNumber)
+                          reqNumber=result[0].RUMPRequestNumber
+                          response.send(JSON.stringify({
+                            id: res.insertId,
+                            reqNumber:reqNumber
+                          }))
+                        }
+                      })
                     }
                   })
                 }
@@ -231,6 +240,7 @@ console.log("ggg",req.body.request.req_type);
 
 
 router.post("/updateRequests", (req, res) => {
+
   pnc=req.body.is_pnc;
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
@@ -293,13 +303,15 @@ router.post("/updateRequests", (req, res) => {
 // Add BOQ Details //
 router.post("/BOQRequests", (req, res) => {
   let myrole = req.body.role;
-  var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
+  let accessID=req.body.accessID;
+  var sql = `select datarumprequest.RUMPRequestApprovalLevel as approvalLevel ,linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.reqId};`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
+      let approvalLevel=result[0].approvalLevel;
       let wflowdata = result[0].wflow.split(',');
       let nextValue = 0;
       if (myrole == 3) {
@@ -318,10 +330,21 @@ router.post("/BOQRequests", (req, res) => {
           nextValue = wflowdata[index];
         })
       }
-      //console.log("workFlow data--",nextValue);
+      sql = `select distinct RUMPRequestRole from datarumprequestaction 
+      where RUMPRequestRole=? and RUMPRequestFK=?;`
+  con.query(sql,[accessID,req.body.reqId], function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      if(result.length>0){
+
       sql1 = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestBOQDescription='${req.body.boqDescription}',
           RUMPRequestBOQEstimatedCost='${req.body.boqEstimatedCost}',RUMPRequestBOQEstimatedTime='${req.body.boqEstimatedTime}',
-          RumprequestLevel=${nextValue} where RUMPRequestPK=${req.body.reqId};`
+          RumprequestLevel=${nextValue},RUMPRequestApprovalLevel=${approvalLevel} where RUMPRequestPK=${req.body.reqId};`
+      }
+      else{sql1 = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestBOQDescription='${req.body.boqDescription}',
+      RUMPRequestBOQEstimatedCost='${req.body.boqEstimatedCost}',RUMPRequestBOQEstimatedTime='${req.body.boqEstimatedTime}',
+      RumprequestLevel=${nextValue},RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK=${req.body.reqId};`}
       con.query(sql1, (err, result) => {
         if (err) {
           console.log(err);
@@ -339,6 +362,8 @@ router.post("/BOQRequests", (req, res) => {
               res.send(result);
             }
           })
+        }
+      })
         }
       });
     }
@@ -379,6 +404,12 @@ router.post("/getfiles", (req, res) => {
 
 
 router.post("/resendRequest", (req, res) => {
+  sql=`select RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK=${req.body.req_id};`
+  con.query(sql,function(err,result){
+    if(err){console.log(err);}
+    else{
+     let ApprovalLevel=result[0].RUMPRequestApprovalLevel; 
+     console.log("ap",ApprovalLevel)
   var sql = `select pickrumprole.pickRUMPRoleDescription as role from pickrumprole inner join linkrumpadminaccess 
   on pickRUMPRolePK=linkRUMPRoleFK where linkRUMPAdminAccessPK=${req.body.resendToId};`
   con.query(sql, function (err, result) {
@@ -388,7 +419,7 @@ router.post("/resendRequest", (req, res) => {
     } else {
       let role = result[0].role;
       let request_action = "Resent to " + role;
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId} 
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${ApprovalLevel}
   where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {
         if (err) {
@@ -407,6 +438,8 @@ router.post("/resendRequest", (req, res) => {
               res.send(result);
             }
           })
+        }
+      })
         }
       })
     }

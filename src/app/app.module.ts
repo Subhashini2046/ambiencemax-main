@@ -13,7 +13,6 @@ import {MatFormFieldModule, MatSelectModule, MatTableModule, MatChipsModule ,
   MatMenuModule, MatCardModule, MatButtonModule, MatSidenavModule, MatToolbarModule, MatIconModule,
   MatListModule, MatSnackBarModule, MatPaginatorModule} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SubmittedComponent } from './submitted/submitted.component';
 import { UserDataService } from './Services/UserDataService';
 import { ViewReqComponent } from './view-req/view-req.component';
 import { ViewStatusComponent } from './view-status/view-status.component';
@@ -30,7 +29,6 @@ import { CloseComponent } from './close/close.component';
 import { PendingComponent } from './pending/pending.component';
 import { AllRequestComponent } from './all-request/all-request.component';
 import {FileUploadModule} from 'ng2-file-upload';
-import { UpdateRequestFormComponent } from './update-request-form/update-request-form.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { LayoutModule } from '@angular/cdk/layout';
 import { NavigationHomeComponent } from './navigation-home/navigation-home.component';
@@ -45,6 +43,7 @@ import {MatBadgeModule} from '@angular/material/badge';
 import  { MatDialogModule } from '@angular/material/dialog'; 
 import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.component';
 import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-dialog.component';
+import { ExportRequestPdfComponent } from './export-request-pdf/export-request-pdf.component';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
@@ -58,15 +57,14 @@ const appRoutes = [
     {path: 'request-form/:id/:pnc' , component: RequestFormComponent},
     {path: 'close' , component: CloseComponent },
     {path: 'open' , component: OpenComponent},
-    {path: 'update/:id' , component:  UpdateRequestFormComponent},
     {path: 'pending' , component: PendingComponent},
     {path: 'allRequest' , component: AllRequestComponent},
     {path: 'admin' , component: AdminPanelComponent},
     {path: 'approveRequest/:id' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
+    {path: 'pdf/:id' , component: ExportRequestPdfComponent},
   ]
 },
-  {path: 'submitted' , component: SubmittedComponent},
   {path: '' , component: HomeComponent},
   {path: 'admin' , component: AdminPanelComponent},
 
@@ -79,7 +77,6 @@ const appRoutes = [
     DashboardComponent,
     HomeComponent,
     RequestFormComponent,
-    SubmittedComponent,
     ViewReqComponent,
     ViewStatusComponent,
     DoughnutChartComponent,
@@ -92,12 +89,12 @@ const appRoutes = [
     CloseComponent,
     PendingComponent,
     AllRequestComponent,
-    UpdateRequestFormComponent,
     NavigationHomeComponent,
     ApproveRequestComponent,
     CompleteComponent,
     WorkflowDialogComponent,
     AddWorkflowDialogComponent,
+    ExportRequestPdfComponent,
   ],
   entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent],
   imports: [

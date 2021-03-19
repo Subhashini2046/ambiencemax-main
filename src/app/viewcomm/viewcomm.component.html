@@ -10,8 +10,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="inputdes">Request Type</label>
-          <select class="form-control" id="request"[(ngModel)]="req_type" name="RequestType" 
-           disabled required>
+          <select class="form-control" id="request" [(ngModel)]="req_type" name="RequestType" disabled required>
             <option selected>Select the Request Type</option>
             <option>Upgrade</option>
             <option>Repair</option>
@@ -20,8 +19,7 @@
         </div>
         <div class="form-group col-md-6">
           <label>Request Number</label>
-          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number"
-            name="req_number" readonly
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number" name="req_number" readonly
             required />
         </div>
       </div>
@@ -29,8 +27,7 @@
 
         <div class="form-group col-md-6">
           <label>ME Type</label>
-          <select id="inputme" class="form-control" [(ngModel)]="me_type" 
-          name="METype" disabled required>
+          <select id="inputme" class="form-control" [(ngModel)]="me_type" name="METype" disabled required>
             <option selected>Select the ME Type</option>
             <option>Civil</option>
             <option>Electrical</option>
@@ -39,9 +36,8 @@
 
         <div class="form-group col-md-6">
           <label>S/WON</label>
-          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" 
-          readonly name="RequestSwon"
-           placeholder="" required />
+          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" readonly name="RequestSwon"
+            placeholder="" required />
         </div>
 
       </div>
@@ -50,8 +46,7 @@
 
         <div class="form-group col-md-6">
           <label>Budget Type</label>
-          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type"
-            name="budgetType" disabled required>
+          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type" name="budgetType" disabled required>
             <option selected>Select the Budget Type</option>
             <option>Capex</option>
             <option>Opex</option>
@@ -60,9 +55,8 @@
 
         <div class="form-group col-md-6">
           <label>Available Budget(INR)</label>
-          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget"
-            name="availableBudget" readonly
-            required />
+          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget" name="availableBudget"
+            readonly required />
         </div>
 
       </div>
@@ -71,46 +65,38 @@
 
         <div class="form-group col-md-6">
           <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget"
-            name="consumedBudget" readonly
-            required />
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget" name="consumedBudget"
+            readonly required />
         </div>
 
         <div class="form-group col-md-6">
           <label>Balance Budget(INR)</label>
-          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget"
-            name="balanceBudget" readonly
-            required />
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget" name="balanceBudget"
+            readonly required />
         </div>
 
       </div>
 
       <div class="form-group">
         <label>Request Subject</label>
-        <textarea placeholder="" id="subject" class="form-control" 
-        readonly [(ngModel)]="req_subject" name="ReqSubject"
-         name="RequestSubject" required></textarea>
-      
+        <textarea placeholder="" id="subject" class="form-control" readonly [(ngModel)]="req_subject" name="ReqSubject"
+          name="RequestSubject" required></textarea>
+
       </div>
 
       <div class="form-group">
         <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder="" 
-        readonly [(ngModel)]="req_description"
-         class="form-control" name="Requestdes" maxlength="5000"
-          required></textarea>
-       
+        <textarea id="description" placeholder="" readonly [(ngModel)]="req_description" class="form-control"
+          name="Requestdes" maxlength="5000" required></textarea>
+
       </div>
       <div class="form-group" *ngIf="this.req_status!='Closed'">
         <label for="reqdes">Add Comment</label>
-        <textarea id="comment" placeholder="" 
-         [(ngModel)]="comment"
-         class="form-control" name="comment"
-          ></textarea>
-       
+        <textarea id="comment" placeholder="" [(ngModel)]="comment" class="form-control" name="comment"></textarea>
+
       </div>
-  
-      <div class="text-center"  *ngIf="this.req_status!='Closed'">
+
+      <div class="text-center" *ngIf="this.req_status!='Closed'">
         <button mat-raised-button class="col-bg-button" (click)="form.valid ? onSubmit() : null"
           [disabled]="!form.valid">
           Resend for change

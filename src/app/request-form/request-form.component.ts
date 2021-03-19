@@ -1,13 +1,8 @@
-import { Component, ViewChild, OnInit, SystemJsNgModuleLoader } from '@angular/core';
+import { Component, ViewChild, OnInit} from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
-import { format } from 'url';
 import { ReqSchema } from '../Services/ReqSchema';
-import { FormsModule } from "@angular/forms";
-import { FileUploader, FileSelectDirective } from 'ng2-file-upload';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as FileSaver from 'file-saver';
@@ -83,17 +78,13 @@ export class RequestFormComponent implements OnInit {
     req_description: ''
   };
   ngOnInit() {
-    console.log('this.req_id ', this.req_id);
     this.userId = JSON.parse(localStorage.getItem('userId'));
-    console.log('user_id', this.userId);
     this.currReq.req_initiator_id = this.userId;
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    console.log('this.role_id', this.role_id);
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
-      console.log('this.req_id ', this.req_id);
     });
     this.actrouter.params.subscribe(params => {
       this.is_pnc = +params['pnc'];
@@ -103,9 +94,9 @@ export class RequestFormComponent implements OnInit {
       else
         this.is_pnc = 0
     });
-    //console.log((this.role_id != 0 && this.is_pnc!=0),this.role_id != 0,this.is_pnc!=0);
     console.log('is_pnc', this.is_pnc, (this.role_id != 0 && this.is_pnc != 0));
     if (this.role_id == 3 || this.role_id == 4) {
+
       return this.UserDataService.getRequestDetails(this.req_id).subscribe((response: any) => {
         console.log(response)
       });
@@ -119,7 +110,6 @@ export class RequestFormComponent implements OnInit {
   ngAfterContentInit() {
     if (this.req_id > 0) {
       this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
-        console.log(response, "check_asRead");
       });
     }
     if (this.is_pnc == 1) {
@@ -127,10 +117,11 @@ export class RequestFormComponent implements OnInit {
         this.dataSource = response;
         this.selectedElement = response;
         this.selectedSpoc = this.dataSource.length;
-        console.log(response);
       });
     }
     if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
+
+      //request files
       this.UserDataService.getRequestFile(this.req_id).subscribe((response: any) => {
         for (let i = 0; i < response.length; i++) {
           if (response[i].RUMPRequestFilesStage == 1) {
@@ -145,7 +136,7 @@ export class RequestFormComponent implements OnInit {
         }
       });
 
-
+      //request details
       this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
         this.requestDetails = response;
         this.currReq.budget_type = this.requestDetails[0]["BudgetType"];
@@ -164,7 +155,6 @@ export class RequestFormComponent implements OnInit {
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];
-        console.log(this.actualCost);
         this.is_pnc = this.requestDetails[0]["ispnc"];
         this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
@@ -172,7 +162,6 @@ export class RequestFormComponent implements OnInit {
         this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
         this.reqComment = this.requestDetails[0]["requestComments"];
         this.reqPnc = response[0]["PNCUrl"]
-        console.log(this.reqPnc);
         if (this.reqPnc != null) {
           this.reqPnc = this.reqPnc.replace(/^.*[\\\/]/, '')
         };
@@ -180,11 +169,14 @@ export class RequestFormComponent implements OnInit {
     }
   }
 
+  // calculate how many characters is left to type(subject)
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
     }
   }
+
+  // calculate how many characters is left to type(subject)
   valueChangeDiscription(value) {
     if (value != null) {
       this.remaining_description = 5000 - value.length;
@@ -210,6 +202,7 @@ export class RequestFormComponent implements OnInit {
   fileList: File[] = [];
   listOfFiles: any[] = [];
 
+  //it will store the file selected by users when reuqest is raised
   onFileChanged(event: any) {
     var filesize = 0;
     for (var i = 0; i <= event.target.files.length - 1; i++) {
@@ -229,7 +222,7 @@ export class RequestFormComponent implements OnInit {
   }
 
 
-
+  // when user click on delete then it will remove that file from the list
   removeSelectedFile(index) {
     this.listOfFiles.splice(index, 1);
     this.fileList.splice(index, 1);
@@ -237,6 +230,7 @@ export class RequestFormComponent implements OnInit {
   fileList1: File[] = [];
   listOfFiles1: any[] = [];
 
+  //add PNC Supporting document on list
   onPncFileChanged(event: any) {
     var filesize = 0;
     for (var i = 0; i <= event.target.files.length - 1; i++) {
@@ -254,12 +248,16 @@ export class RequestFormComponent implements OnInit {
     console.log("mmmm", this.fileList1);
     this.attachment.nativeElement.value = '';
   }
+
+  // when user click on delete then it will remove that PNC Supporting document from the list
   removePncSelectedFile(index) {
     this.listOfFiles1.splice(index, 1);
     this.fileList1.splice(index, 1);
   }
   pncfile = [];
   pncfileName = [];
+
+  //add PNC document on list
   onPncFile(event) {
     if (event.target.files.length < 1) {
       return false;
@@ -273,6 +271,8 @@ export class RequestFormComponent implements OnInit {
     this.pncfileName.splice(index, 1);
     this.pncfile.splice(index, 1);
   }
+
+  // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
@@ -287,11 +287,13 @@ export class RequestFormComponent implements OnInit {
         this.filepath[i] = res.files[i]['filename'];
       }
       console.log(this.filepath, "this.filepath");
-      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath);
+      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath,this.admin_access_id);
     });
     //this.openSnackBar('Request Submitted Successfully !');
 
   }
+
+  // update the reuqest data
   onSumbitForUpdate() {
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
@@ -308,6 +310,8 @@ export class RequestFormComponent implements OnInit {
     });
 
   }
+
+  //store the BQO details in database.
   onBOQSubmit() {
     let boqDis = this.boqDescription;
     let boqCost = this.boqEstimatedCost;
@@ -328,6 +332,8 @@ export class RequestFormComponent implements OnInit {
     });
 
   }
+
+  // disable the submit button 
   onPncChange() {
     if (this.reqPnc == null) {
       if (this.selectedElement.length > 0) {
@@ -343,6 +349,8 @@ export class RequestFormComponent implements OnInit {
     }
     return false
   }
+
+  //store the Pnc details in database.
   onPncSumbit() {
     let allocationStartDate = this.allocationStartDate;
     let cost = this.actualCost;
@@ -363,8 +371,6 @@ export class RequestFormComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
       }
-
-
       this.http.post<any>('http://localhost:5600/pncFiles', formData1).subscribe((res) => {
         console.log(this.pncfile.length);
         if (this.pncfile.length > 0) {
@@ -379,20 +385,17 @@ export class RequestFormComponent implements OnInit {
     });
   }
 
+  // for approving the reuqest
   onApprove() {
     this.UserDataService.meType = this.currReq.me_type;
     this.route.navigate(['/AmbienceMax/approveRequest', this.req_id]);
   }
+
+  // for resend reuqest
   onResend() {
-    // this.UserDataService.updateRequest(this.currReq,this.req_id,this.filepath); 
     this.route.navigate(['/AmbienceMax/dialogg/', this.req_id, this.is_pnc]);
   }
-  onCompelete() {
-    this.UserDataService.addCompleteRequest(this.req_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
-      console.log(ResData);
-    })
-    this.route.navigateByUrl('/AmbienceMax/complete');
-  }
+
   openSnackBar(message: string) {
     this._snackBar.open(message, '', {
       duration: 3500,
@@ -406,6 +409,8 @@ export class RequestFormComponent implements OnInit {
     console.log('file downloaded');
     return new Blob([res], { type: 'pdf' });
   }
+
+  // download request,BOQ and PNC supporting file
   download(downloadfile) {
     this.UserDataService.getFiles(downloadfile).subscribe((res) => {
       if (res) {
@@ -416,6 +421,8 @@ export class RequestFormComponent implements OnInit {
     });
     return false;
   }
+
+  // download PNC file
   downloadFile(downloadfile) {
     this.UserDataService.downloadFile(downloadfile).subscribe((res) => {
       if (res) {

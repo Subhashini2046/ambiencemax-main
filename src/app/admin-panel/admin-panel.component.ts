@@ -40,12 +40,13 @@ export class AdminPanelComponent implements OnInit {
   constructor(private http: HttpClient,private userDataService:UserDataService,public dialog: MatDialog) {
   }
   WorkflowData=[]
+
+  // it will open the dialog that will show workflow details(user name, role,location).
   openDialog( w_id,w_flow): void {
     this.WorkflowData=w_flow.split(',');
     let dialogRef = this.dialog.open(WorkflowDialogComponent, {width: '550px',
     data: { data: w_id,w_flow:this.WorkflowData}
     });
-
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
@@ -53,6 +54,7 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+  //it will open the dialog for creating the new worlflow.
   openWorkflowDialog(): void {
     let dialogRef = this.dialog.open(AddWorkflowDialogComponent, {width: '1200px'
     });
@@ -70,10 +72,13 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+// to serach a location etc.
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  // add w_flow id and b_id in linkrumprequestinitiators
   onAddLink() {
     console.log(this.b_id,this.work_id);
     this.userDataService.addLink(this.work_id,this.b_id).subscribe((data)=>{
@@ -85,6 +90,8 @@ export class AdminPanelComponent implements OnInit {
     return false;
 
   }
+
+// once the location is selected,it will display all locName in dropdown similarly for others also.
   onChanged(event: any) {
     if (event.includes('Location')) {
     this.userDataService.getHierarchy(event).subscribe((res) => {
@@ -135,13 +142,5 @@ export class AdminPanelComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-  onAddHierarchy() {
-    this.http.post('http://localhost:3000/addHierarchy', {h_id: this.h_id, h_level: this.h_level , h_name: this.h_name}).subscribe(() => {
-      console.log('Sent!!!');
-    });
-  }
 
-  onAddWork() {
- 
-  }
 }

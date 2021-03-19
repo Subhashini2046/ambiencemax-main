@@ -25,12 +25,13 @@ export class DoughnutChartComponent implements OnInit ,OnDestroy{
     this.countSubsription=  this.userDataService.changedetectInRole.subscribe(data=>{
       this.role = JSON.parse(localStorage.getItem('role_id'));
       this.space = JSON.parse(localStorage.getItem('space'));
+
+      // get Request Count for pending,open,close,Complete
       this.userDataService.getRequestCount(this.role, this.space).subscribe((response: any) => {
       let Pending = response.req_stats.Pending;
       let Open = response.req_stats.Open;
       let Closed = response.req_stats.Closed;
       let Completed=response.req_stats.Completed;
-      console.log('Sub called!...');
       this.doughnutChartLabels;
       this.doughnutChartData = [
         [Pending, Closed, Open,Completed]

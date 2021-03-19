@@ -1,17 +1,13 @@
-
-
-import { map } from 'rxjs/operators';
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ReqSchema } from './ReqSchema';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
-import { environment} from 'src/environments/environment';
 @Injectable()
 export class UserDataService {
   changedetectInRole = new BehaviorSubject(null);
-  usersURL = "http://localhost:5600/api/users";
+ // usersURL = "http://localhost:5600/api/users";
   URL="http://localhost:3000/";
   httpOptions = {
 
@@ -73,48 +69,60 @@ export class UserDataService {
       });
   }
 
+//.................Request Count for pending,open,close,Complete................//
   getRequestCount(role, space) {
     return this.http.post(this.URL+'dashboard', { role, space });
   }
-  // getBar(user_id: string) {
-  //   return this.http.post('http://localhost:3000/dashboard', { user_id }).pipe(map(ResData => ResData));
-  // }
+  
   getPendingRequest(role, space, access_id) {
     return this.http.post(this.URL+'pendingReq', { role, space, access_id });
   }
+
   getClosedRequest(role, space, access_id) {
     return this.http.post(this.URL+'closedReq', { role, space, access_id });
   }
+
   getAllRequest(role, space, access_id) {
     return this.http.post(this.URL+'allReq', { role, space, access_id });
   }
+
   getOpenRequest(role, space, access_id) {
     return this.http.post(this.URL+'openReq', { role, space, access_id });
   }
+
   getCompleteRequest(role, space, access_id) {
     return this.http.post(this.URL+'complete_reqs', { role, space, access_id });
   }
+  
+  //.................Mark request status as Complete................//
   addCompleteRequest(req_id, accessID, role_name) {
     return this.http.post<any>(this.URL+'addCompeteRequest', { req_id, accessID, role_name });
   }
+
   //.................get vendor Details................//
   getVendorDetails(vendCategoryId) {
     return this.http.post<any>(this.URL+'vendorDetail', { vendCategoryId });
   }
 
-  //.................approve................//
   getSpocDetails(req_id) {
     return this.http.post<any>(this.URL+'getSpocs', { req_id });
   }
+
+  //.................get vendorId from dataRumprequest table for HOM ................//
   getVendor(req_id){
     return this.http.post<any>(this.URL+'getVendor', { req_id });
   }
+
+  //.................add vendorId once the HOM allocate the Vendor................//
   addVendors(vendorList, req_id, reqComment, accessID, role_name) {
     return this.http.post<any>(this.URL+'addVendors', { vendorList, req_id, reqComment, accessID, role_name });
   }
+
+  //.................get Request Comment................//
   getHomComment(req_id){
     return this.http.post<any>(this.URL+'getComment', { req_id });
   }
+
   //.................(add Request)................//
   getRequestDetail(req_id) {
     return this.http.post<any>(this.URL+'requestDetail', { req_id });
@@ -142,6 +150,7 @@ export class UserDataService {
       this.navigateToOpenRequest();
     });
   }
+
   addPncSupportingDoc(reqId, filepath) {
     for (let i = 0; i < filepath.length; i++) {
       filepath[i] = filepath[i];
@@ -150,6 +159,7 @@ export class UserDataService {
         });
     }
   }
+
   addPncfile(reqId, filepath) {
     console.log(filepath,"ll");
     this.http.post(this.URL+'pncfileUpload', { req_id: reqId, filepath: filepath })
@@ -176,19 +186,25 @@ export class UserDataService {
   getViewRequestStatus(req_id) {
     return this.http.post<any>(this.URL+'viewStatuss', { req_id });
   }
+
   getViewRequestLog(reqId: number) {
     return this.http.post(this.URL+'viewRequestLog', { reqId });
   }
+
   getViewRequestData(reqId: number) {
     return this.http.post(this.URL+'viewRequestData', { reqId });
   }
-  addRequest(newReq: ReqSchema, space, user_name, filepath) {
+  
+  //.................Add new Request(Raise Request)(add Request)................//
+  addRequest(newReq: ReqSchema, space, user_name, filepath,accessID) {
     console.log(newReq.req_type,"type");
-    this.http.post(this.URL+'newReq', { request: newReq, space }).subscribe((data: ReqSchema) => {
+    this.http.post(this.URL+'newReq', { request: newReq, space,accessID}).subscribe((data:any) => {
       this.addToLog(JSON.parse(JSON.stringify(data)).id, user_name, filepath);
+      alert(data.reqNumber);
       this.router.navigateByUrl('/AmbienceMax/dashboard');
     });
   }
+
   updateRequest(is_pnc,request: ReqSchema,accessID, req_id,role_name,filepath){
    this.http.post(this.URL+'updateRequests', {is_pnc, request:request,accessID, req_id,role_name}).subscribe((res=>{
     this.addToLog(req_id, role_name, filepath);
@@ -207,7 +223,7 @@ export class UserDataService {
         .subscribe((ResData) => {
         });
     }
-    this.http.post('http://localhost:5600/addLogNewReq', { req_id: newReqId, user_name: user_name })
+    this.http.post('http://localhost:5600/addLogNewReq', { req_id: newReqId, user_name: user_name})
       .subscribe((ResData) => {
       });
   }
@@ -236,15 +252,16 @@ export class UserDataService {
     }
   }
 
+  //.................get users for Switch role................//
   getUsers(id) {
     return this.http.get(this.URL+`roles?userid=${id}`);
   }
 
-  getUserRoles(req_id) {
-    return this.http.get(this.usersURL + `/`)
-  }
-  getRoles(req_id,role_id,space) {
-    return this.http.post('http://localhost:5600/users', { req_id,role_id,space});
+  // getUserRoles(req_id) {
+  //   return this.http.get(this.usersURL + `/`)
+  // }
+  getRoles(req_id,role_id,space,accessId) {
+    return this.http.post('http://localhost:5600/users1', { req_id,role_id,space,accessId});
     //return this.http.get(this.usersURL + `/${req_id},accessId`);
   }
   downloadFile(x: string): Observable<any> {
@@ -257,37 +274,54 @@ export class UserDataService {
 getRequestFile(req_id){
   return this.http.post(this.URL+'getfiles', { req_id});
 }
-  getFiles(x: string): Observable<any> {
+getFiles(x: string): Observable<any> {
     const param = new HttpParams().set('filename', x);
     const options = {
       params: param
     };
     return this.http.get('http://localhost:5600/RequestFle', { ...options, responseType: 'blob' });
   }
+
+//............mark request as read once any action is performed on request..............// 
   check_asRead(req_id){
     return this.http.post(this.URL+'check_asRead',{req_id});
   }
+
+//.................get locationId,builindId [admin]................// 
  getHierarchy(name){
   return this.http.post(this.URL+'getHierarchy',{name});
   }
+
+  //.................get user name from dataadmin for linkToHierarchy [admin]................// 
   getUsersWorkflow(role){
     return this.http.post(this.URL+'getUsersWorkflow',{role});
   }
+  //.................add w_flow id and b_id in linkrumprequestinitiators [admin]................// 
   addLink(work_id,b_id){
     return this.http.post(this.URL+'addLink',{work_id,b_id});
   }
+
+  //.................get existing workflow [admin]................//
   getFlow(){
     return this.http.get(this.URL+'getFlow');
   }
+
+  //.................get workflow details for existing workflow [admin]................//
   getFlowDetails(Workflow){
     return this.http.post(this.URL+'getFlowDetails',{Workflow});
   }
+
+  //.................get location like speez etc. [admin]................//
   getUserLocation(userId,roleId){
     return this.http.post(this.URL+'getUserLocation',{userId,roleId});
   }
+
+   //.................get all role from pickrumprole [admin]................//
   getUserRole(){
     return this.http.get(this.URL+'getUserRole');
   }
+
+  //.................add workflow once workflow generated by admin [admin]................//
   addWorkflow(w_flow){
     return this.http.post(this.URL+'addWorkflow',{w_flow});
   }

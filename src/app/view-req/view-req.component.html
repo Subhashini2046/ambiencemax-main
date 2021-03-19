@@ -8,7 +8,7 @@
       </h5>
       <hr>
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group col-md-6">
           <label for="inputdes">Request Type</label>
           <select class="form-control" id="request" [(ngModel)]="req_type" name="RequestType" disabled required>
             <option selected>Select the Request Type</option>
@@ -90,7 +90,7 @@
           name="Requestdes" maxlength="5000" required></textarea>
 
       </div>
-      <div class="form-group" *ngIf="this.reqComment!=null">
+      <div class="form-group" *ngIf="reqComment!=null">
         <label for="reqdes">Last Provided Comment:</label>
       <p class="form-control">{{this.reqComment}} </p>
       </div>
@@ -107,6 +107,12 @@
       <div class="text-center" *ngIf="(this.role_id==0 && this.req_status=='Closed')">
         <button mat-raised-button class="col-bg-button" (click)=onCompelete()>
           Compelete
+        </button>
+      </div>
+      <div class="text-center" *ngIf="req_status=='Completed'">
+        <button mat-raised-button class="col-bg-button"  (click)=ExportPDF()>
+          
+          Download PDF
         </button>
       </div>
     </form>
@@ -259,9 +265,285 @@
           <label> {{pncSupportingDoc[i]}}</label>
           </div>
       </div>
-
     </form>
   </div>
   <div class="col-md-3"></div>
 </div>
 <!-- PNC end -->
+
+<!-- Export into PDF -->
+
+<div class="row my-3" style="display: none;">
+  <div class="col-md-3"></div>
+  <div id="divId1" class="col-md-12" #divId1>
+    <form ngNativeValidate class="px-3 py-3 my-6" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
+      action="#">
+     <br>
+      <h4 class="text-center">
+        Request Details
+      </h4>
+      <hr>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputdes">Request Type</label>
+          <select class="form-control" id="request" [(ngModel)]="req_type" name="RequestType" disabled required>
+            <option selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Request Number</label>
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="req_number" name="req_number" readonly
+            required />
+        </div>
+      </div>
+      <div class="form-row">
+
+        <div class="form-group col-md-4">
+          <label>ME Type</label>
+          <select id="inputme" class="form-control" [(ngModel)]="me_type" name="METype" disabled required>
+            <option selected>Select the ME Type</option>
+            <option>Civil</option>
+            <option>Electrical</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>S/WON</label>
+          <input class="form-control" id="swon" type="text" [(ngModel)]="req_swon" readonly name="RequestSwon"
+            placeholder="" required />
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Budget Type</label>
+          <select id="inputbudget" class="form-control" [(ngModel)]="budget_type" name="budgetType" disabled required>
+            <option selected>Select the Budget Type</option>
+            <option>Capex</option>
+            <option>Opex</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+
+
+        <div class="form-group col-md-4">
+          <label>Available Budget(INR)</label>
+          <input class="form-control" id="available" type="number" [(ngModel)]="available_budget" name="availableBudget"
+            readonly required />
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Consumed Budget(INR)</label>
+          <input class="form-control" id="consumed" type="number" [(ngModel)]="consumed_budget" name="consumedBudget"
+            readonly required />
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Balance Budget(INR)</label>
+          <input class="form-control" id="balancebudget" type="number" [(ngModel)]="balance_budget" name="balanceBudget"
+            readonly required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Request Subject</label>
+        <textarea placeholder="" id="subject" class="form-control" readonly [(ngModel)]="req_subject" name="ReqSubject"
+          name="RequestSubject" required></textarea>
+
+      </div>
+
+      <div class="form-group">
+        <label for="reqdes">Request Description</label>
+        <textarea id="description" placeholder="" rows="4" readonly [(ngModel)]="req_description" class="form-control"
+          name="Requestdes" maxlength="5000" required></textarea>
+
+      </div>
+      <div class="form-group" *ngIf="reqComment!=null">
+        <label for="reqdes">Last Provided Comment:</label>
+      <p class="form-control">{{this.reqComment}} </p>
+      </div>
+        <div class="col-md-12" style="border-radius: 10px;" *ngIf="(boqDescription!=null && boqDescription!='')">
+          <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
+            style="border-radius: 10px;" action="#">
+            <h5 class="text-center">
+              BOQ Details
+            </h5>
+            <hr>
+            <div class="form-group">
+              <label>BOQ Description</label>
+              <textarea id="subject" rows="4" class="form-control" [(ngModel)]="boqDescription" readonly name="boqDescription"
+                required></textarea>
+            </div>
+            <div class="form-row">
+      
+              <div class="form-group col-md-6">
+                <label>BOQ Estimated Cost</label>
+                <input class="form-control" id="consumed" [(ngModel)]="boqEstimatedCost" readonly type="number"
+                  name="boqEstimatedCost" required />
+              </div>
+      
+              <div class="form-group col-md-6">
+                <label>BOQ Estimated Time</label>
+                <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime" readonly type="text"
+                  name="boqEstimatedTime" required />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div  class="col-md-12" style="border-radius: 10px;"  *ngIf="(this.actualCost!=null)">
+          <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
+            style="border-radius: 10px;" action="#">
+            <h5 class="text-center">
+              PNC Details
+            </h5>
+            <hr>
+            <div class="col-md-12" *ngIf="this.dataSource3.length>0">
+      
+    
+                <mat-card class="example-card1">
+                  <div class="text-center">
+                  <label >Allocated Vendor</label></div>
+                    <table class="table" mat-table [dataSource]="this.dataSource3">
+                    
+                      <!-- REQUEST NO COULMN -->
+                      <ng-container matColumnDef="Vendor Name">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name </th>
+                        <td class="text-center" mat-cell *matCellDef="let element"> {{element.venName}} </td>
+                      </ng-container>
+                    
+                      <!-- REQUEST TITLE Column -->
+                      <ng-container matColumnDef="spoc1" >
+                        <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1 </th>
+                        <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
+                      </ng-container>
+                    
+                      <ng-container matColumnDef="spoc2">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
+                        <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
+                      </ng-container>
+                      <!-- Type Column -->
+                      <ng-container matColumnDef="spoc3">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
+                        <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
+                      </ng-container>
+                      
+                      <tr mat-header-row *matHeaderRowDef="displayedColumn3"></tr>
+                      <tr mat-row *matRowDef="let row; columns: displayedColumn3;"></tr>
+                    </table>
+                    </mat-card>
+            </div>
+            <br>
+            <div class="form-row">
+            <div class="form-group col-md-6" *ngIf="allocationStartDate!=null">
+              <label>Allocation Start Date</label>
+              <br>
+              <mat-form-field appearance="fill">
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker1" placeholder="Angular forms" disabled
+                  [(ngModel)]="allocationStartDate" name="allocationStartDate">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="form-group col-md-6" *ngIf="this.allocatedDays!=null">
+      
+              <label>Allocated Days</label>
+              <input class="form-control" id="allocatedDays" type="number" readonly [(ngModel)]="allocatedDays"
+                name="allocatedDays" required />
+            </div>
+        </div>
+            <div class="form-group" *ngIf="this.actualCost!=null">
+              <label>Actual Cost</label>
+              <input class="form-control" id="consumed" type="number" readonly [(ngModel)]="actualCost" name="consumedBudget"
+                required />
+            </div>
+      
+          </form>
+        </div>
+      </form>
+     
+  </div>
+
+
+    <div id="divId2"  class="col-md-12" style="border-radius: 10px;color:black">
+          
+          
+      <div class="text-center container">
+        <br>
+        <mat-card class="example-card1">
+          <mat-card-title>Approval Status</mat-card-title>
+        </mat-card>
+        <mat-card class="example-card1">
+        <table class="table" mat-table [dataSource]="this.dataSource1">
+
+          <ng-container matColumnDef="id">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Role Id </th>
+            <td class="text-center" mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+    
+    
+          <ng-container matColumnDef="name">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Designation </th>
+            <td class="text-center" mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+    
+    
+          <ng-container matColumnDef="status">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
+            <td class="text-center" mat-cell *matCellDef="let element"> {{element.status}} </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
+        </table>
+      </mat-card>
+      </div>
+   
+</div>
+
+
+
+    <div id="divId3"  class="col-md-12" style="border-radius: 10px;color:black">
+          
+          
+      <div class="text-center container">
+        <br>
+        <mat-card class="example-card1">
+          <mat-card-title>Request Log</mat-card-title>
+        </mat-card>
+        <mat-card class="example-card1">
+        <table class="table" mat-table [dataSource]="this.dataSource2">
+
+          <ng-container matColumnDef="aaction_taken_by">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
+            <td mat-cell *matCellDef="let element"> {{element.RequestRoleName}} </td>
+          </ng-container>
+
+
+          <ng-container matColumnDef="req_action">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Request Action </th>
+            <td mat-cell *matCellDef="let element"> {{element.RequestAction}} </td>
+          </ng-container>
+
+
+          <ng-container matColumnDef="req_date">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
+            <td mat-cell *matCellDef="let element"> {{element.RequestActionDate | date: 'yyyy-MM-dd'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="req_time">
+            <th class="text-center" mat-header-cell *matHeaderCellDef> Request Time </th>
+            <td mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+        </table>
+      </mat-card>
+      </div>
+   
+</div>
+</div>
+<!--  -->

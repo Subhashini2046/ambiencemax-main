@@ -31,21 +31,20 @@ ngOnInit() {
     if(this.dataSource.data.length<1){
       this.message="No data is available";
     }
-
   });
-
 }
 
+ // navigate to view reuqest data
   view(req_id) {
     this.route.navigate(['/AmbienceMax/view', req_id]);
   }
+
+  // to check reuqest log and request status
   status(reqId) {
     this.route.navigate(['/AmbienceMax/status', reqId]);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
-  ngOnDestroy() {
   }
 }

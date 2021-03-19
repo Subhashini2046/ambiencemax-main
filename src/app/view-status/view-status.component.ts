@@ -1,11 +1,8 @@
-//import { views1 } from './../Services/UserDataService';
-import { Name } from './../../../../../SecondApp/src/app/home';
+
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { DatePipe } from '@angular/common';
 import { Location } from '@angular/common';
-import { MatTableDataSource, MatPaginator, MatSort, throwMatDialogContentAlreadyAttachedError } from '@angular/material';
-import { getTreeNoValidDataSourceError } from '@angular/cdk/tree';
+import { MatTableDataSource, MatSort} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -51,6 +48,8 @@ export class ViewStatusComponent implements OnInit {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
     });
+
+    //get reuqest log and request status
     this.UsrDataService.getViewRequestStatus(this.req_id).subscribe((res => {
       this.dataSource.data = res.reqLog;
       this.w_flow = res.w_flow;
@@ -129,11 +128,18 @@ export class ViewStatusComponent implements OnInit {
             status: this.view_status
           };
           this.viewStatus1.push(this.viewStatus);
+          console.log( this.viewStatus1);
         }
       }
-      if (this.viewStatus1[4]["name"] == null) {
-        this.viewStatus1.splice(4, 1);
+      console.log( this.viewStatus1);
+      for(let i=0;i<this.viewStatus1.length;i++){
+        if (this.viewStatus1[i]["name"] == null) {
+          this.viewStatus1.splice(i, 1);
+        }
       }
+      // if (this.viewStatus1[4]["name"] == null) {
+      //   this.viewStatus1.splice(4, 1);
+      // }
       this.dataSource1.data = this.viewStatus1;
     }));
   }

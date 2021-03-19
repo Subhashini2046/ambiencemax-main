@@ -7,7 +7,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
   templateUrl: './close.component.html',
   styleUrls: ['./close.component.css'],
 })
-export class CloseComponent implements OnInit, OnDestroy {
+export class CloseComponent implements OnInit{
   displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
     'RequestDate', 'status', 'view','progress'];
 
@@ -30,16 +30,18 @@ export class CloseComponent implements OnInit, OnDestroy {
     });
 
   }
+
+ // navigate to view reuqest data
   view(req_id) {
     this.route.navigate(['/AmbienceMax/view', req_id]);
   }
+
+  // to check reuqest log and request status
   status(reqId) {
     this.route.navigate(['/AmbienceMax/status', reqId]);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
-  ngOnDestroy() {
   }
 }

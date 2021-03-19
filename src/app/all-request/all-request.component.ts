@@ -18,6 +18,8 @@ export class AllRequestComponent implements OnInit {
   constructor(private route: Router, public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef) { }
   ngOnInit() {
     console.log("AllRequest Component");
+
+    // fetech all request
     return this.UserDataService.getAllRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
       console.log(response);
       this.dataSource.data = response
@@ -30,11 +32,14 @@ export class AllRequestComponent implements OnInit {
   }
   ngOnDestroy() {
   }
+
+  // to check reuqest log and request status
   status(reqId) {
     this.route.navigate(['/AmbienceMax/status', reqId]);
   }
+
+  // navigate to view reuqest data
   view(req_id, pnc,reqStatus) {
-    console.log(reqStatus,reqStatus.toString().trim() === 'Pending');
     if(reqStatus.toString().trim() === 'Pending'){
       this.route.navigate(['AmbienceMax/view', req_id]);
     }

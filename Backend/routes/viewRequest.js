@@ -51,6 +51,7 @@ router.post("/viewStatuss",(req,res)=>{
       console.log(err);
     }else{
       reqLog=result;
+      
   sql = `Select ispnc,RUMPRequestStatus,RumprequestLevel,RUMPInitiatorId,w_flow,RUMPRequestMEType from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK = ${reqId};`
   con.query(sql,function(err,result){
     if(err){

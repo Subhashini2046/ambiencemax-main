@@ -11,7 +11,8 @@ export class LoginFormComponent implements OnInit {
   password = '';
   constructor(private UserDataService: UserDataService) {}
   onLogin() {
-    console.log(this.userId);
+    
+    //User Authentication
     this.UserDataService.authenticateUser1(this.userId, this.password);
   
   }

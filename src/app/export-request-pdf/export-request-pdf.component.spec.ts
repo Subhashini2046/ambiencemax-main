@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UpdateRequestFormComponent } from './update-request-form.component';
+import { ExportRequestPdfComponent } from './export-request-pdf.component';
 
-describe('UpdateRequestFormComponent', () => {
-  let component: UpdateRequestFormComponent;
-  let fixture: ComponentFixture<UpdateRequestFormComponent>;
+describe('ExportRequestPdfComponent', () => {
+  let component: ExportRequestPdfComponent;
+  let fixture: ComponentFixture<ExportRequestPdfComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UpdateRequestFormComponent ]
+      declarations: [ ExportRequestPdfComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UpdateRequestFormComponent);
+    fixture = TestBed.createComponent(ExportRequestPdfComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,8 +1,6 @@
-import { ReqSchema } from './../Services/ReqSchema';
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router,ActivatedRoute} from '@angular/router';
 
 @Component({
@@ -34,15 +32,7 @@ export class ViewcommComponent implements OnInit {
   constructor(private actrouter: ActivatedRoute,public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   currReqApprovers = [];
-  submitFeedback() {
 
-  }
-  goToUpgrade() {
-  }
-  goToRequestAction(req_id) {
-    this.route.navigate(['/reqform', req_id]);
-    console.log(req_id);
-  }
   is_pnc;
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
@@ -68,10 +58,10 @@ export class ViewcommComponent implements OnInit {
     });
   }
   onSubmit() {
-    console.log("ggggg",this.comment);
+   
+    //resend the request
     this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.accessID,this.user_name,this.is_pnc).subscribe((ResData) => {
       console.log("Successfully inserted!!");});
-;
     this.openSnackBar("Request is Successfully Resend")
     this.route.navigate(['/AmbienceMax/open']);
   }
@@ -81,7 +71,6 @@ export class ViewcommComponent implements OnInit {
       panelClass: ['simple-snack-bar']
 
     });
-    //this.router.navigateByUrl('main/open');
   }
 }
 

@@ -39,6 +39,8 @@ export class ApproveRequestComponent implements OnInit {
     this.user_id = JSON.parse(localStorage.getItem('userId'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
+
+    //get vendor Category
     this.http.get<any>('http://localhost:3000/vendorcategories').subscribe((res) => {
       this.vendorCategory = res;
       console.log("ddd", this.vendorCategory);
@@ -48,17 +50,22 @@ export class ApproveRequestComponent implements OnInit {
   vendorID = []
   ngAfterContentInit() {
     console.log(this.role_id)
+
+    //get request comment
     this.userDataService.getHomComment(this.req_id).subscribe((res) => {
       this.requestComment = res[0].RUMPRequestComments;
     });
+    
 if(this.role_id==5){
+
+    //get vendorId
     this.userDataService.getVendor(this.req_id).subscribe((res) => {
       for (let i = 0; i < res.vendorsId.length; i++) {
         this.vendorID.push(res.vendorsId[i].vendorId);
       }
       this.vendCategoryId = res.result[0].pickRumpVendorCategoriesPK;
       if (this.vendCategoryId != null) {
-           console.log("//");
+
         this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
           this.dataSource.data = res;
           this.dataSource.data.forEach(data=>{
@@ -72,6 +79,8 @@ if(this.role_id==5){
       }
     });}
   }
+
+  //get vendor details when click on vendor Category
   onChanged(event: any) {
     console.log(event, this.vendCategoryId);
     this.selection.clear();
@@ -80,18 +89,7 @@ if(this.role_id==5){
     });
   }
 
-  // OnChecked(row, selectedRow) {
-  //   if (row.vendorId == this.vendorID[0] || row.vendorId == this.vendorID[1] || row.vendorId == this.vendorID[2] ||
-  //     row.vendorId == this.vendorID[3] || row.vendorId == this.vendorID[4] || row.vendorId == this.vendorID[5] || row.vendorId == this.vendorID[6]) {
-  //     if (selectedRow == false) {
-  //       this.selection.select(row);
-  //     }
-  //     return row.vendorId
-  //   };
-  // }
-
   onSubmit() {
-
 
     if (this.role_id == 5) {
       for (let i = 0; i < this.selection.selected.length; i++) {

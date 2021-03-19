@@ -22,22 +22,24 @@ export class OpenComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient, public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef, private route: Router) { }
   ngOnInit() {
     console.log("Open Component");
+
+    //get all Open Request
     return this.UserDataService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
-      console.log(response);
       this.dataSource.data = response
     });
 
   }
+
+  // navigate to view reuqest data,approve or resend or reuqest update or BOQ form or PNC form
   view(req_id, pnc) {
     this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
   }
+
+  // to check reuqest log and request status
   status(reqId) {
     this.route.navigate(['/AmbienceMax/status', reqId]);
   }
 
-  update(req_id) {
-    this.route.navigate(['/AmbienceMax/update', req_id]);
-  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

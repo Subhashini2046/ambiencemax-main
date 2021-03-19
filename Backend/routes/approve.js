@@ -142,7 +142,7 @@ router.post("/vendorDetail", (req, res) => {
 
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
-  req_id = req.body.req_id;
+ let accessID= req.body.accessID;
   console.log('role....', vendorList, vendorList[0]);
   if (vendorList[0] != null) {
     venderTagged_1 = vendorList[0];
@@ -179,16 +179,35 @@ router.post("/addVendors", (req, res) => {
   } else
     venderTagged_7 = null;
 
-  sql = `select RUMPInitiatorId as initiatorId from datarumprequest where RUMPRequestPK = ${req.body.req_id};`
+  sql = `select RUMPInitiatorId as initiatorId,RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK = ${req.body.req_id};`
 
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
     } else {
+      let approvalLevel=result[0].RUMPRequestApprovalLevel;
       let initiatorId = result[0].initiatorId;
       console.log(result);
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1 where RUMPRequestPK = '${req.body.req_id}';`
-
+      sql=`select distinct RUMPRequestRole from datarumprequestaction 
+      where RUMPRequestRole=? and RUMPRequestFK=?;`
+      con.query(sql,[accessID,req.body.req_id],function(err,result){
+        if (err) {
+          console.log(err);
+        } else {
+      if(result.length>0){
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
+      RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
+      RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
+      RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
+      RUMPRequestApprovalLevel=${approvalLevel} where RUMPRequestPK = '${req.body.req_id}';`
+      }
+      else{
+        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
+        RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
+        RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
+        RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
+        RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK = '${req.body.req_id}';`
+      }
       con.query(sql, function (err, result) {
         if (err) {
           console.log(err);
@@ -208,6 +227,8 @@ router.post("/addVendors", (req, res) => {
               }));
             }
           })
+        }
+      })
         }
       })
     }
@@ -270,6 +291,7 @@ router.post("/getComment", (req, res) => {
   })
 })
 router.post("/approveRequest", (req, res) => {
+  let accessID=req.body.accessID;
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow,datarumprequest.RumprequestLevel as requestLevel,
   datarumprequest.RUMPInitiatorId as initiatorId from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
@@ -310,7 +332,7 @@ router.post("/approveRequest", (req, res) => {
         nextValue = initiatorId;
       }
       sql = `update datarumprequest set RUMPRequestStatus=if(RumprequestLevel=3,'Closed','Pending'),RUMPRequestUnreadStatus=1,
-             RumprequestLevel=${nextValue} where rumprequestpk=${req.body.req_id};`
+             RumprequestLevel=${nextValue},RUMPRequestApprovalLevel=${accessID} where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {
         if (err) {
           console.log(err);

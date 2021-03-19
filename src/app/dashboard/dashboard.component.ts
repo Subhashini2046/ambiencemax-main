@@ -1,4 +1,3 @@
-import { Role } from './../Services/RequestService';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MediaMatcher } from '@angular/cdk/layout';
@@ -25,7 +24,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
  public UnreadStatuscompleted;
   public UnreadStatusopen;
   menus=[];
-  private reqSub: Subscription;
   Buttons: Options[] = [
     { name: 'Pending Request', func: 'Pending' },
     { name: 'Open Request', func: 'open' },
@@ -74,6 +72,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     })
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.space= JSON.parse(localStorage.getItem('space')); 
+
+    //get Request Count for pending,open,close,Complete,unread status 
     this.UsrDataService.getRequestCount(this.role_id,this.space).subscribe((res)=>{
     this.UnreadStatuspending=res["UnreadStatuspending"];
     this.UnreadStatusAll=res["UnreadStatusAll"];
@@ -87,11 +87,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if(this.UnreadStatusopen==null){this.UnreadStatusopen=0;}
 });
   });
- // this.role_id = JSON.parse(localStorage.getItem('role_id'));
-      // this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
-      // console.log(data);
-      // this.menus=JSON.parse(JSON.stringify(data));
-
   }
   ngOnDestroy(): void {
     this.countSubsription.unsubscribe();
@@ -100,11 +95,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   logout() {
 
     localStorage.clear();
-    // this.UsrDataService.fetchedReqsUpdated.next(this.UsrDataService.fetchedReqs);
     this.UsrDataService.main = '';
     this.router.navigateByUrl('');
     return false;
   }
+
+  // change dashboard data when user is switched 
   navigateToDashboard(role,space,id){
     console.log(id,"id");
     localStorage.setItem('role_id', JSON.stringify(role));
@@ -113,6 +109,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/AmbienceMax/dashboard');
     this.UsrDataService.changedetectInRole.next({role:role,space:space,id:id})
   }
+
+  // for switch role
   getRoleName(name,roledesc){
     return roledesc+" | "+name
   }
