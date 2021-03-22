@@ -36,6 +36,25 @@ router.post("/viewRequestData", (req, res) => {
   })
 })
 
+
+router.post("/pdfTableData", (req, res) => {
+ let req_id = req.body.req_id;
+ console.log(req_id,"//")
+  sql1 = `select RUMPRequestRoleName user, RUMPRequestRole as role, RUMPRequestAction as action ,
+  RUMPRequestActionTiming as actionTiming,RUMPRequestComments as comment,
+  (select pickRUMPRoleDescription from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as role1  from datarumprequestaction
+  inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) 
+  where RUMPRequestFK=? group by RUMPRequestRole order by RUMPRequestActionTiming;`
+  con.query(sql1,req_id, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      res.send(result);
+    }
+  })
+})
+
 router.post("/viewStatuss",(req,res)=>{
   reqId = req.body.req_id;
   console.log(reqId);

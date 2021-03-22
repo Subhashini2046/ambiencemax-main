@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as FileSaver from 'file-saver';
+import { environment } from './../../environments/environment';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
@@ -282,7 +283,7 @@ export class RequestFormComponent implements OnInit {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL+'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
@@ -302,7 +303,7 @@ export class RequestFormComponent implements OnInit {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>('http://localhost:5600/multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL+'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
@@ -322,7 +323,7 @@ export class RequestFormComponent implements OnInit {
     for (let img of this.fileList) {
       formData.append('files', img);
     }
-    this.http.post<any>('http://localhost:5600/BoqFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL+'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
@@ -367,11 +368,11 @@ export class RequestFormComponent implements OnInit {
     formData1.append('id', id);
     formData1.append('files', this.pncfile[0]);
     let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
-    this.http.post<any>('http://localhost:5600/BoqFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL+'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
       }
-      this.http.post<any>('http://localhost:5600/pncFiles', formData1).subscribe((res) => {
+      this.http.post<any>(this.UserDataService.URL+'pncFiles', formData1).subscribe((res) => {
         console.log(this.pncfile.length);
         if (this.pncfile.length > 0) {
           console.log(res.files[0]['filename'], "hh")

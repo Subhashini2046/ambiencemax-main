@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ReqSchema } from './ReqSchema';
@@ -194,7 +195,9 @@ export class UserDataService {
   getViewRequestData(reqId: number) {
     return this.http.post(this.URL+'viewRequestData', { reqId });
   }
-  
+  getpdfTableData(req_id){
+    return this.http.post(this.URL+'pdfTableData', { req_id });
+  }
   //.................Add new Request(Raise Request)(add Request)................//
   addRequest(newReq: ReqSchema, space, user_name, filepath,accessID) {
     console.log(newReq.req_type,"type");
@@ -223,7 +226,7 @@ export class UserDataService {
         .subscribe((ResData) => {
         });
     }
-    this.http.post('http://localhost:5600/addLogNewReq', { req_id: newReqId, user_name: user_name})
+    this.http.post(this.URL+'addLogNewReq', { req_id: newReqId, user_name: user_name})
       .subscribe((ResData) => {
       });
   }
@@ -261,7 +264,7 @@ export class UserDataService {
   //   return this.http.get(this.usersURL + `/`)
   // }
   getRoles(req_id,role_id,space,accessId) {
-    return this.http.post('http://localhost:5600/users1', { req_id,role_id,space,accessId});
+    return this.http.post(this.URL+'users1', { req_id,role_id,space,accessId});
     //return this.http.get(this.usersURL + `/${req_id},accessId`);
   }
   downloadFile(x: string): Observable<any> {
@@ -269,7 +272,7 @@ export class UserDataService {
     const options = {
       params: param
     };
-    return this.http.get('http://localhost:5600/download', { ...options, responseType: 'blob' });
+    return this.http.get(this.URL+'download', { ...options, responseType: 'blob' });
   }
 getRequestFile(req_id){
   return this.http.post(this.URL+'getfiles', { req_id});
@@ -279,7 +282,7 @@ getFiles(x: string): Observable<any> {
     const options = {
       params: param
     };
-    return this.http.get('http://localhost:5600/RequestFle', { ...options, responseType: 'blob' });
+    return this.http.get(this.URL+'RequestFle', { ...options, responseType: 'blob' });
   }
 
 //............mark request as read once any action is performed on request..............// 

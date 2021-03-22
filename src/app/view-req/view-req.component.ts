@@ -1,26 +1,20 @@
-import { ExportRequestPdfComponent } from './../export-request-pdf/export-request-pdf.component';
-import { Subject } from 'rxjs';
-import { Component, OnInit, ViewChild,ElementRef } from '@angular/core';
+
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as FileSaver from 'file-saver';
-import { MatTableDataSource, MatSort} from '@angular/material';
-import jspdf from 'jspdf';
-//declare var jspdf: any;
-import html2canvas from 'html2canvas';
-// declare var require: any
-// const FileSaver = require('file-saver');
+import { MatTableDataSource, MatSort } from '@angular/material';
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
 @Component({
   selector: 'app-view-req',
   templateUrl: './view-req.component.html',
   styleUrls: ['./view-req.component.css']
 })
 export class ViewReqComponent implements OnInit {
-  @ViewChild('divId1', {static: false}) divId1: ElementRef;
-
-  // @ViewChild(ExportRequestPdfComponent,{ static: false }) ElementRef;
-  // private childComponentParent: ExportRequestPdfComponent;
+  @ViewChild('divId1', { static: false }) divId1: ElementRef;
 
   title = 'ambiencemax';
   comment = '';
@@ -63,32 +57,24 @@ export class ViewReqComponent implements OnInit {
   displayedColumns2: string[] = ['aaction_taken_by', 'req_action', 'req_date', 'req_time'];
   displayedColumns1: string[] = ['id', 'name', 'status'];
   dataSource1 = new MatTableDataSource();
-  dataSource2= new MatTableDataSource();
-  dataSource3:any[] = [];
+  dataSource2 = new MatTableDataSource();
+  dataSource3: any[] = [];
   dataSource: any[] = [];
   selectedElement: any[] = [];
   constructor(private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   filestage;
-  fileName=[];
-BoqfileName=[];
-selectedSpoc;
-RequestAllocatedVendor;
-reqComment;
-pncSupportingDoc=[];
+  fileName = [];
+  BoqfileName = [];
+  selectedSpoc;
+  RequestAllocatedVendor;
+  reqComment;
+  pncSupportingDoc = [];
 
 
-view_id = null;
-view_name = null;
-view_status = null;
-public viewStatus: views1;
-public viewStatus1: views1[] = [];
-w_flow: any[] = [];
-role: any[] = [];
-req_level;
-reqStatus;
-initiator;
-is_pnc;
+  pdfTableData: any[] = [];
+  view_Status: any[] = [];
+  spoc: any[] = [];
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
@@ -100,20 +86,20 @@ is_pnc;
 
     //get reuqest file
     this.userDataService.getRequestFile(this.req_id).subscribe((response: any) => {
-      for(let i=0;i<response.length;i++){
-        if(response[i].RUMPRequestFilesStage==1){
+      for (let i = 0; i < response.length; i++) {
+        if (response[i].RUMPRequestFilesStage == 1) {
           this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
           console.log(this.fileName);
         }
-        if(response[i].RUMPRequestFilesStage==2){
+        if (response[i].RUMPRequestFilesStage == 2) {
           this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
         }
-        if(response[i].RUMPRequestFilesStage==3){
+        if (response[i].RUMPRequestFilesStage == 3) {
           this.pncSupportingDoc.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
         }
       }
     });
-    
+
     this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
       this.dataSource = response;
       this.selectedElement = response;
@@ -139,119 +125,41 @@ is_pnc;
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
       this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
-      if(this.RequestAllocatedVendor!=null){
+      if (this.RequestAllocatedVendor != null) {
         this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-          for(let i=0;i<response.length;i++){
-            if(this.RequestAllocatedVendor==response[i]['rumpvenVendorPK']){
+          for (let i = 0; i < response.length; i++) {
+            if (this.RequestAllocatedVendor == response[i]['rumpvenVendorPK']) {
               this.dataSource3.push(response[i]);
             }
           }
         });
       }
-      this.reqComment=response[0]["requestComments"];
-      console.log( this.reqComment);
+      //console.log(this.req_number.substr(12,15),"n")
+      this.reqComment = response[0]["requestComments"];
+      console.log(this.reqComment);
       this.pncurl = response[0]["PNCUrl"];
-      if(this.pncurl!=null){
-       this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');}
-      if(this.req_status.toString().trim()!='Pending'){
+      if (this.pncurl != null) {
+        this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');
+      }
+      if (this.req_status.toString().trim() != 'Pending') {
         this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
-          console.log(response,"check_asRead");
-        });}
+          console.log(response, "check_asRead");
+        });
+      }
     });
-
-
-
-
-    this.userDataService.getViewRequestStatus(this.req_id).subscribe((res) => {
-      this.dataSource2.data = res.reqLog;
-      this.w_flow = res.w_flow;
-      this.req_level = res.requestLevel;
-      this.initiator = res.intiator_id;
-      this.reqStatus = res.reqStatus;
-      this.is_pnc=res.ispnc;
-      let j = 0;
-      for (let i = 0; i < res.role.length; i++) {
-        if ((res.role[i][0] == null)) {
-          this.role[i] = null;
+    if (this.RequestAllocatedVendor != null) {
+      this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+        for (let i = 0; i < response.length; i++) {
+          if (this.RequestAllocatedVendor == response[i]['rumpvenVendorPK']) {
+            this.spoc[0] = response[i]['venName'];
+            this.spoc[1] = response[i]['venSpoc1'];
+            this.spoc[2] = response[i]['venSpoc2'];
+            this.spoc[3] = response[i]['venSpoc3'];
+          }
         }
-        else {
-          this.role[i] = res.role[i][0]["pickRUMPRoleDescription"];
-        }
+      });
+    }
 
-      }
-      for (let i = 0; i < this.w_flow.length; i++) {
-        if ((this.req_level.toString().trim() == this.w_flow[i]) &&
-          (this.reqStatus.toString().trim() === 'Pending')) {
-
-            if(!(this.initiator==this.req_level && this.is_pnc==0)){
-
-              for (j; j < i; j++) {
-                this.view_id = this.w_flow[j];
-                this.view_name = this.role[j];
-                this.view_status = "Approved";
-                if (this.role[j] == null) { this.view_status = null }
-                this.viewStatus = {
-                  id: this.view_id,
-                  name: this.view_name,
-                  status: this.view_status
-                };
-                this.viewStatus1.push(this.viewStatus);
-              }
-            }
-              for (j; j < this.w_flow.length; j++) {
-                this.view_id = this.w_flow[j];
-                this.view_name = this.role[j];
-                this.view_status = "Pending";
-                if (this.role[j] == null) { this.view_status = null }
-                this.viewStatus = {
-                  id: this.view_id,
-                  name: this.view_name,
-                  status: this.view_status
-                };
-                this.viewStatus1.push(this.viewStatus);
-              }
-            
-
-        }
-        if ((this.req_level == this.initiator) &&
-          (this.reqStatus.toString().trim() === 'Closed')) {
-          this.view_id = this.w_flow[i];
-          this.view_name = this.role[i];
-          this.view_status = "Approved";
-          if (this.role[i] == null) { this.view_status = null }
-          this.viewStatus = {
-            id: this.view_id,
-            name: this.view_name,
-            status: this.view_status
-          };
-          this.viewStatus1.push(this.viewStatus);
-
-        }
-        if ((this.req_level == this.initiator) &&
-          (this.reqStatus.toString().trim() === 'Completed')) {
-
-          this.view_id = this.w_flow[i];
-          this.view_name = this.role[i];
-          this.view_status = "Approved";
-          if (this.role[i] == null) { this.view_status = null }
-          this.viewStatus = {
-            id: this.view_id,
-            name: this.view_name,
-            status: this.view_status
-          };
-          this.viewStatus1.push(this.viewStatus);
-          console.log( this.viewStatus1);
-        }
-      }
-      console.log( this.viewStatus1);
-      for(let i=0;i<this.viewStatus1.length;i++){
-        if (this.viewStatus1[i]["name"] == null) {
-          this.viewStatus1.splice(i, 1);
-        }
-      }
-      this.dataSource1.data = this.viewStatus1;
-
-    });
   }
   returnBlob(res): Blob {
     console.log('file downloaded');
@@ -260,12 +168,12 @@ is_pnc;
 
   // download request,BOQ and PNC supporting file
   download(downloadfile) {
-    this.userDataService. getFiles(downloadfile).subscribe((res) => {
-      if (res) { 
+    this.userDataService.getFiles(downloadfile).subscribe((res) => {
+      if (res) {
         const url = window.URL.createObjectURL(this.returnBlob(res));
         FileSaver.saveAs(res, downloadfile);
-      } 
-    }); 
+      }
+    });
     return false;
   }
 
@@ -282,93 +190,185 @@ is_pnc;
 
   // Mark request status as Complete
   onCompelete() {
-    this.userDataService.addCompleteRequest(this.req_id,this.accessID, this.user_name).subscribe((ResData) => {
+    this.userDataService.addCompleteRequest(this.req_id, this.accessID, this.user_name).subscribe((ResData) => {
       console.log(ResData);
     })
     this.route.navigateByUrl('/AmbienceMax/close');
   }
-  downloadPDF(){
+  downloadPDF() {
     this.route.navigate(['/AmbienceMax/pdf', this.req_id]);
   }
 
-  ExportPDF()  
-  {  
-   // this.childComponentParent.captureScreen();
-    let contentDataURL2;
-    let imgHeight2;
-    let contentDataURL3;
-    let imgHeight3;
-    var data = document.getElementById('divId1'); 
-   var data1 = document.getElementById('divId2');
-   var data2 = document.getElementById('divId3');
-  // html2canvas(data).then(canvas => {  
-  //     let imgWidth = 208;     
-  //     imgHeight2 = canvas.height * imgWidth / canvas.width;  
-  //     contentDataURL2 = canvas.toDataURL('image/png') 
-  //   });
-  //   html2canvas(data2).then(canvas => {  
-  //     let imgWidth = 208;     
-  //     imgHeight3 = canvas.height * imgWidth / canvas.width;  
-  //     contentDataURL3 = canvas.toDataURL('image/png') 
-  //   }); 
-    
-  //   html2canvas(data1).then(canvas => {   
-  //     let imgWidth = 208;   
-  //     let imgHeight = canvas.height * imgWidth / canvas.width;   
-  //     const contentDataURL = canvas.toDataURL('image/png')  
-  //     let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-  //     let position = 0; 
-  //     pdf.addImage(contentDataURL2, 'PNG', 0, position, imgWidth, imgHeight2)
-  //     pdf.addPage();
-  //     pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
-  //     pdf.addPage();
-  //     pdf.addImage(contentDataURL3, 'PNG', 0, position, imgWidth, imgHeight3)
-  //     pdf.save('MYPdf.pdf');   
-  //   }); 
-  const content = this.divId1.nativeElement;
-  console.log(content);
-  // html2canvas(content, <Html2Canvas.Html2CanvasOptions>{
-  //   onrendered: function(canvas: HTMLCanvasElement) {
-  //     var pdf = new jspdf('p','pt','a4');    
-  //     var img = canvas.toDataURL("image/png");
-  //     pdf.addImage(img, 'PNG', 10, 10, 580, 300);
-  //     pdf.save('web.pdf');
-  //   }
-  // });
+  // formate the date
+  dateFormate(date) {
+    let sDate = date.toString();
+    let newDate = sDate.slice(0, 10) + " " + sDate.slice(11, 21);
+    return newDate;
 
-    // html2canvas(content).then(canvas => {    
-    //   let imgWidth = 208;  
-    //   let imgHeight = canvas.height * imgWidth / canvas.width; 
-    //   console.log(data);  
-    //   console.log(canvas); 
-    //   const contentDataURL = canvas.toDataURL('image/png');  
-    //   let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF  
-    //   let position = 0; 
-    // pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
+  }
+  // responsible for inserting the extra space between the text 
+  space(name) {
+    let space = " Signature:________________ Date: 2020-05-29 10:06:31.0                                      "
+    let count = space.length - name.length;
 
-    //   pdf.save('MYPdf.pdf');    
-    // }); 
-    
-    let options : any = {
-      orientation: 'p',
-      unit: 'mm',
-      format: 'a4',
-      };
-      
-    let doc = new jspdf(options);
-    doc.setFontSize(10);
-    doc.setFont("sans-serif");
-    doc.html(content.innerHTML, {
-      callback: function (doc) {
-            doc.save("angular-demo.pdf");
-          },
-      margin:0, 
-      x: 0, 
-      y: 0, 
-    });
-  
-   return false;
-  }  
+    let NumberOfspace = " ";
+    for (let i = 0; i < count; i++) {
+      NumberOfspace += " ";
+    }
+    return NumberOfspace;
+  }
+ 
+
+  // download pdf of request form
+  ExportPDF() {
+    this.userDataService.getpdfTableData(this.req_id).subscribe((res: any) => {
+      this.pdfTableData = res;
+      const doc = new jsPDF('p', 'pt', 'a4');
+      autoTable(doc, { html: '#my-table' })
+      const columns1 = [[this.req_number.slice(12, 17)]];
+      const data2 = [];
+      const columns3 = [[""]];
+
+      data2.push(["Request No: " + this.req_number + "             " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)]);
+      data2.push(["SWON / WON : " + this.req_swon + "             " + "Budget: " + this.budget_type]);
+      data2.push(["Available(INR): " + this.available_budget + "             " + "Consumed(INR): " + this.consumed_budget + "             " + "Balance(INR): " + this.balance_budget]);
+      data2.push(["Subject: " + this.req_subject]);
+      data2.push(["Description: " + this.req_description]);
+
+      let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[0].user);
+      data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[0].user + adspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)])
+
+      let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[1].user);
+      data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[1].user + lspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[1].actionTiming)])
+
+      let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
+      data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
+      data2.push(columns3);
+      let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[3].user);
+
+      data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[3].user + espace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[3].actionTiming)])
+      data2.push(["Description: " + this.boqDescription])
+      data2.push(["Estimated cost for the work(INR): " + this.boqEstimatedCost])
+      data2.push(["Estimated time for the work: " + this.boqEstimatedTime])
+      data2.push([""]);
+
+      let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[4].user);
+
+      data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[4].user + hspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[4].actionTiming)])
+      data2.push([""]);
+
+      let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[0].user);
+
+      data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[0].user + ispace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)])
+
+      data2.push(["Actual Cost(INR): " + this.actualCost]);
+      data2.push([""]);
+
+      let bspace1 = this.space("From: Branch PMO" + "               " + "Name: " + this.pdfTableData[5].user);
+
+      data2.push(["From: Branch PMO" + "               " + "Name: " + this.pdfTableData[5].user + bspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[5].actionTiming)])
+      let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user);
+
+      data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user + aspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[6].actionTiming)])
+
+      let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user);
+
+      data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[7].user + cespace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[7].actionTiming)])
+
+      autoTable(doc, {
+        head: columns1,
+        theme: 'grid',
+        columnStyles: { 4: { cellPadding: 2 }, columns3: { fillColor: "black" } },
+        body: data2,
+        tableLineColor: 200,
+        styles: { fontSize: 12, textColor: 20, font: "times" },
+        didParseCell: function (data) {
+          if (data.row.index === 8) {
+            data.cell.styles.fillColor = [62, 172, 148];
+          }
+          if (data.row.index === 5) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 6) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 7) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 9) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 14) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 16) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 19) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 20) {
+            data.cell.styles.fontStyle = "bold"
+          }
+          if (data.row.index === 21) {
+            data.cell.styles.fontStyle = "bold"
+          }
+
+          if (data.row.index === 13) {
+            data.cell.styles.fillColor = [62, 172, 148];
+          }
+          if (data.row.index === 15) {
+            data.cell.styles.fillColor = [62, 172, 148];
+          }
+          if (data.row.index === 18) {
+            data.cell.styles.fillColor = [62, 172, 148];
+          }
+        },
+        didDrawPage: (dataArg) => {
+          doc.text('', dataArg.settings.margin.left, 10);
+        }
+
+      });
+
+      const columns = [['User', 'Role', 'Action', 'Action Timing', 'Comment']];
+      const data1 = [];
+      if (this.pdfTableData.length > 0) {
+        for (let i = 0; i < this.pdfTableData.length; i++) {
+
+          data1.push([this.pdfTableData[i].user, this.pdfTableData[i].role1, this.pdfTableData[i].action, this.dateFormate(this.pdfTableData[i].actionTiming), this.pdfTableData[i].comment])
+
+        }
+      }
+      doc.addPage();
+
+      autoTable(doc, {
+        head: columns,
+        columnStyles: { 4: { cellPadding: 2, cellWidth: 'auto' }, },
+        body: data1,
+        theme: 'grid',
+        startY: 80,//Where the table should start to be printed
+        tableLineColor: 200,
+        styles: { fontSize: 12, textColor: 20, font: "times" },
+        didDrawPage: (dataArg) => {
+          doc.text('Request Workflow', 230, 50)
+        }
+
+      });
+      doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
+    })
+
+
+    return false;
+  }
 
 }
 

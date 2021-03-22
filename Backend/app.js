@@ -11,6 +11,7 @@ const allReqRoute=require('./routes/allRequest');
 const viewRequest=require('./routes/viewRequest');
 const dashboardRoute=require('./routes/dashboard');
 const updateRquestRoute=require('./routes/updateRequest');
+const config1=require('./routes/config1');
 var cors = require('cors')
 const app = express();
 app.use(bodyParser.json());
@@ -284,4 +285,5 @@ app.use(addRequests);
 app.use(viewRequest);
 app.use(updateRquestRoute);
 app.use(addWorkFlow);
+app.use(config1);
 module.exports = app;

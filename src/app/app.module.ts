@@ -43,7 +43,6 @@ import {MatBadgeModule} from '@angular/material/badge';
 import  { MatDialogModule } from '@angular/material/dialog'; 
 import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.component';
 import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-dialog.component';
-import { ExportRequestPdfComponent } from './export-request-pdf/export-request-pdf.component';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,
   children: [
@@ -62,7 +61,6 @@ const appRoutes = [
     {path: 'admin' , component: AdminPanelComponent},
     {path: 'approveRequest/:id' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
-    {path: 'pdf/:id' , component: ExportRequestPdfComponent},
   ]
 },
   {path: '' , component: HomeComponent},
@@ -94,7 +92,6 @@ const appRoutes = [
     CompleteComponent,
     WorkflowDialogComponent,
     AddWorkflowDialogComponent,
-    ExportRequestPdfComponent,
   ],
   entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent],
   imports: [
