@@ -198,12 +198,13 @@ export class UserDataService {
   getpdfTableData(req_id){
     return this.http.post(this.URL+'pdfTableData', { req_id });
   }
+  
   //.................Add new Request(Raise Request)(add Request)................//
   addRequest(newReq: ReqSchema, space, user_name, filepath,accessID) {
     console.log(newReq.req_type,"type");
     this.http.post(this.URL+'newReq', { request: newReq, space,accessID}).subscribe((data:any) => {
       this.addToLog(JSON.parse(JSON.stringify(data)).id, user_name, filepath);
-      alert(data.reqNumber);
+      alert('Request created with Request Number: '+data.reqNumber);
       this.router.navigateByUrl('/AmbienceMax/dashboard');
     });
   }

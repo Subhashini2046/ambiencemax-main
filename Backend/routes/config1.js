@@ -167,15 +167,15 @@ let express = require("express"),
     let wflowdata1 = []
     let intiator_id = '';
     let accessId = req.body.accessId;
-    let routerrovalLevel = 0;
+    let ApprovalLevel = 0;
     let role_id = req.body.role_id;
     let space = req.body.space;
-    sql = `Select w_flow,RUMPRequestMEType,RUMPRequestrouterrovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK =?;`
+    sql = `Select w_flow,RUMPRequestMEType,RUMPRequestApprovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK =?;`
     con.query(sql, req_id, function (err, result) {
       if (err) {
         console.log(err);
       } else {
-        routerrovalLevel = result[0].RUMPRequestrouterrovalLevel;
+        ApprovalLevel = result[0].RUMPRequestApprovalLevel;
         intiator_id = result[0].RUMPInitiatorId;
         let me_type = result[0].RUMPRequestMEType;
         w_flow = result[0].w_flow.split(',');
@@ -210,8 +210,8 @@ let express = require("express"),
           }
   
         }
-        let routerrovalLevelIndex = wflowdata.indexOf(routerrovalLevel.toString())
-        for (let i = 0; i <= routerrovalLevelIndex; i++) {
+        let ApprovalLevelIndex = wflowdata.indexOf(ApprovalLevel.toString())
+        for (let i = 0; i <= ApprovalLevelIndex; i++) {
           wflowdata1.push(wflowdata[i]);
         }
         if (!wflowdata1.includes(intiator_id.toString())) {
