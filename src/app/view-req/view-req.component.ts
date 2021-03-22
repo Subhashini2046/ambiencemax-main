@@ -100,13 +100,13 @@ export class ViewReqComponent implements OnInit {
       }
     });
 
-    this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-      this.dataSource = response;
-      this.selectedElement = response;
-      this.selectedSpoc = this.dataSource.length;
-      console.log(response);
-    });
     this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+      this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+        this.dataSource = response;
+        this.selectedElement = response;
+        this.selectedSpoc = this.dataSource.length;
+        console.log(response);
+      });
       this.budget_type = response[0]["BudgetType"];
       this.me_type = response[0]["METype"];
       this.available_budget = response[0]["RequestAvailableBudget"];
@@ -125,15 +125,16 @@ export class ViewReqComponent implements OnInit {
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
       this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
-      if (this.RequestAllocatedVendor != null) {
-        this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-          for (let i = 0; i < response.length; i++) {
-            if (this.RequestAllocatedVendor == response[i]['rumpvenVendorPK']) {
-              this.dataSource3.push(response[i]);
-            }
-          }
-        });
-      }
+      console.log(this.RequestAllocatedVendor,"v");
+      // if (this.RequestAllocatedVendor != null) {
+      //   this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+      //     for (let i = 0; i < response.length; i++) {
+      //       if (this.RequestAllocatedVendor == response[i]['rumpvenVendorPK']) {
+      //         this.dataSource3.push(response[i]);
+      //       }
+      //     }
+      //   });
+      // }
       //console.log(this.req_number.substr(12,15),"n")
       this.reqComment = response[0]["requestComments"];
       console.log(this.reqComment);

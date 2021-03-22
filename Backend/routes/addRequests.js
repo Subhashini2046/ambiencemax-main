@@ -404,6 +404,7 @@ router.post("/getfiles", (req, res) => {
 
 
 router.post("/resendRequest", (req, res) => {
+  let accessID=req.body.accessID;
   sql=`select RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK=${req.body.req_id};`
   con.query(sql,function(err,result){
     if(err){console.log(err);}
@@ -419,7 +420,7 @@ router.post("/resendRequest", (req, res) => {
     } else {
       let role = result[0].role;
       let request_action = "Resent to " + role;
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${ApprovalLevel}
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${accessID}
   where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {
         if (err) {
