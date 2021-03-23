@@ -1,3 +1,4 @@
+import { findIndex } from 'rxjs/operators';
 
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
@@ -225,8 +226,10 @@ export class ViewReqComponent implements OnInit {
     this.userDataService.getpdfTableData(this.req_id).subscribe((res: any) => {
       this.pdfTableData = res;
       const doc = new jsPDF('p', 'pt', 'a4');
+      let reqNum=this.req_number.indexOf('Form');
+      console.log(reqNum,'reqNum');
       autoTable(doc, { html: '#my-table' })
-      const columns1 = [[this.req_number.slice(12, 17)]];
+      const columns1 = [[this.req_number.slice(reqNum, reqNum+5)]];
       const data2 = [];
       const columns3 = [[""]];
 
@@ -235,56 +238,67 @@ export class ViewReqComponent implements OnInit {
       data2.push(["Available(INR): " + this.available_budget + "             " + "Consumed(INR): " + this.consumed_budget + "             " + "Balance(INR): " + this.balance_budget]);
       data2.push(["Subject: " + this.req_subject]);
       data2.push(["Description: " + this.req_description]);
-
-      let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[0].user);
-      data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[0].user + adspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)])
-
-      let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[1].user);
-      data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[1].user + lspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[1].actionTiming)])
-
+for(let i=0;i<this.pdfTableData.length;i++){
+  if(this.pdfTableData[i].action=='Initiated Phase 1'){
+      let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user);
+      data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user + adspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+  }
+ else if(this.pdfTableData[i].roleId==1){
+      let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user);
+      data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user + lspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+ }
+ else if(this.pdfTableData[i].roleId==2){
       let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
       data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
         + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
-      data2.push(columns3);
-      let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[3].user);
+      data2.push(" ");
+ }
+ else if(this.pdfTableData[i].roleId==3 || this.pdfTableData[i].roleId==4){
+      let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[3].user + espace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[3].actionTiming)])
+      data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user + espace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
       data2.push(["Description: " + this.boqDescription])
       data2.push(["Estimated cost for the work(INR): " + this.boqEstimatedCost])
       data2.push(["Estimated time for the work: " + this.boqEstimatedTime])
       data2.push([""]);
+ }
+ else if(this.pdfTableData[i].roleId==5){
+      let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[4].user);
-
-      data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[4].user + hspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[4].actionTiming)])
+      data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user + hspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
       data2.push([""]);
+ }
+ else if(this.pdfTableData[i].action=='Initiated Phase 2'){
+      let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[0].user);
-
-      data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[0].user + ispace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)])
+      data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user + ispace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
 
       data2.push(["Actual Cost(INR): " + this.actualCost]);
       data2.push([""]);
+ }
+ else if(this.pdfTableData[i].roleId==6){
+      let bspace1 = this.space("From: Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      let bspace1 = this.space("From: Branch PMO" + "               " + "Name: " + this.pdfTableData[5].user);
+      data2.push(["From: Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+ }
+ else if(this.pdfTableData[i].roleId==7){
+        let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From: Branch PMO" + "               " + "Name: " + this.pdfTableData[5].user + bspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[5].actionTiming)])
-      let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user);
+      data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user + aspace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+ }
+ else if(this.pdfTableData[i].roleId==9){
+      let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user + aspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[6].actionTiming)])
-
-      let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[6].user);
-
-      data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[7].user + cespace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[7].actionTiming)])
-
+      data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[i].user + cespace1
+        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+}}
       autoTable(doc, {
         head: columns1,
         theme: 'grid',
@@ -343,11 +357,12 @@ export class ViewReqComponent implements OnInit {
       const columns = [['User', 'Role', 'Action', 'Action Timing', 'Comment']];
       const data1 = [];
       if (this.pdfTableData.length > 0) {
-        for (let i = 0; i < this.pdfTableData.length; i++) {
-
+        console.log(this.pdfTableData[7].user);
+        for (let i = 0; i <this.pdfTableData.length; i++) {
           data1.push([this.pdfTableData[i].user, this.pdfTableData[i].role1, this.pdfTableData[i].action, this.dateFormate(this.pdfTableData[i].actionTiming), this.pdfTableData[i].comment])
-
         }
+
+
       }
       doc.addPage();
 

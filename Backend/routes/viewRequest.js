@@ -39,19 +39,70 @@ router.post("/viewRequestData", (req, res) => {
 
 router.post("/pdfTableData", (req, res) => {
  let req_id = req.body.req_id;
- console.log(req_id,"//")
-  sql1 = `select RUMPRequestRoleName user, RUMPRequestRole as role, RUMPRequestAction as action ,
+ let tableData=[];
+ let tableData1=[];
+ let tableData2=[]
+  sql1 = `select  RUMPRequestRoleName user, RUMPRequestRole as role, RUMPRequestAction as action ,
   RUMPRequestActionTiming as actionTiming,RUMPRequestComments as comment,
-  (select pickRUMPRoleDescription from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as role1  from datarumprequestaction
-  inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) 
-  where RUMPRequestFK=? group by RUMPRequestRole order by RUMPRequestActionTiming;`
+  (select pickRUMPRoleDescription from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as role1,
+  (select pickRUMPRolePK from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as roleId from datarumprequestaction
+  inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) where RUMPRequestFK=?  and 
+(RUMPRequestAction='Initiated Phase 1' or RUMPRequestAction='Approved' or RUMPRequestAction='Submitted' or RUMPRequestAction='Approved (Closed)') group by RUMPRequestRole order by RUMPRequestActionTiming desc;`
   con.query(sql1,req_id, (err, result) => {
     if (err) {
       console.log(err);
     }
     else {
-      res.send(result);
+      result.forEach(element=>{
+        tableData.push(element);
+      })
+  
+      for(let i=tableData.length-1;i>=0;i-- ){
+        tableData1.push(tableData[i]);
+      }
+      let HeadOfMaintenanceIndex=0;
+      for(let i=0;i<tableData1.length-1;i++){
+        if(tableData1[i].role1.includes('Head of Maintenance'))
+        {HeadOfMaintenanceIndex=i}
+      }
+      sql=`select  RUMPRequestRoleName user, RUMPRequestRole as role, RUMPRequestAction as action ,
+      RUMPRequestActionTiming as actionTiming,RUMPRequestComments as comment,
+      (select pickRUMPRoleDescription from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as role1,
+      (select pickRUMPRolePK from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as roleId   from datarumprequestaction
+      inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) where RUMPRequestFK=?  and 
+    (RUMPRequestAction='Initiated Phase 2') order by RUMPRequestActionTiming desc limit 1;`
+    con.query(sql,req_id, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        for(let i=0;i<=HeadOfMaintenanceIndex;i++){
+          console.log(tableData2,'t2');
+        tableData2.push(tableData1[i])
+        } 
+        console.log(tableData2,'t1');
+        tableData2.push(result[0]);
+        for(let i=HeadOfMaintenanceIndex+1;i<tableData1.length;i++){
+          tableData2.push(tableData1[i]);
+        } 
+    sql=`select  RUMPRequestRoleName user, RUMPRequestRole as role, RUMPRequestAction as action ,
+    RUMPRequestActionTiming as actionTiming,RUMPRequestComments as comment,
+    (select pickRUMPRoleDescription from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as role1,
+    (select pickRUMPRolePK from pickrumprole where pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) as roleId   from datarumprequestaction
+    inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) where RUMPRequestFK=?  and 
+  RUMPRequestAction='Completed';`
+  con.query(sql,req_id, (err, result) => {
+    if (err) {
+      console.log(err);
     }
+    else {
+     tableData2.push(result[0]);
+    res.send(tableData2);
+    }
+  })
+}
+    })
+}
   })
 })
 

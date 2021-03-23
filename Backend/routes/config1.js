@@ -170,7 +170,7 @@ let express = require("express"),
     let ApprovalLevel = 0;
     let role_id = req.body.role_id;
     let space = req.body.space;
-    sql = `Select w_flow,RUMPRequestMEType,RUMPRequestApprovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK =?;`
+    sql = `Select w_flow,RUMPRequestMEType,RUMPRequestApprovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =?;`
     con.query(sql, req_id, function (err, result) {
       if (err) {
         console.log(err);

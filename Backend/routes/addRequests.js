@@ -404,13 +404,62 @@ router.post("/getfiles", (req, res) => {
 
 
 router.post("/resendRequest", (req, res) => {
+  let resendToId=req.body.resendToId;
   let accessID=req.body.accessID;
-  sql=`select RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK=${req.body.req_id};`
+  let w_flow = [];
+  let wflowdata = [];
+  let wflowdata1 = [];
+  let addIntoApprovalLevel=0;
+  sql=`Select w_flow,RUMPRequestMEType,RUMPInitiatorId,RUMPRequestApprovalLevel from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =${req.body.req_id};`
   con.query(sql,function(err,result){
     if(err){console.log(err);}
     else{
-     let ApprovalLevel=result[0].RUMPRequestApprovalLevel; 
-     console.log("ap",ApprovalLevel)
+      w_flow = result[0].w_flow.split(',');
+      let intiator_id = result[0].RUMPInitiatorId;
+        let me_type = result[0].RUMPRequestMEType;
+        let ApprovalLevel=result[0].RUMPRequestApprovalLevel; 
+        for (let i = 0; i < w_flow.length; i++) {
+  
+          if (typeof w_flow[i] === 'string' && (w_flow[i].includes('or') == false && w_flow[i].includes('i') == false)) {
+            wflowdata.push(w_flow[i]);
+          }
+  
+          else if (me_type == 0 && w_flow[i].includes('or')) {
+  
+            w_flow[i] = w_flow[i].replace("c", "");
+            w_flow[i] = w_flow[i].replace('e', '');
+            w_flow[i] = w_flow[i].substring(0, w_flow[i].indexOf('or') + 'or'.length);
+            w_flow[i] = w_flow[i].replace('or', '');
+            console.log(w_flow[i]);
+            wflowdata.push(w_flow[i]);
+  
+          }
+          else if (me_type == 1 && w_flow[i].includes('or')) {
+  
+            w_flow[i] = w_flow[i].replace("c", "");
+            w_flow[i] = w_flow[i].replace('e', '');
+            w_flow[i] = w_flow[i].substring(w_flow[i].indexOf('r') + 1);
+            w_flow[i] = w_flow[i].replace('or', '');
+            console.log(w_flow[i]);
+            wflowdata.push(w_flow[i]);
+  
+          }
+          else if (w_flow[i].includes('i')) {
+            wflowdata.push(intiator_id);
+          }
+
+        }
+      let accessIDIndex=wflowdata.indexOf(accessID.toString());
+      let ApprovalLevelIndex = wflowdata.indexOf(ApprovalLevel.toString())
+      console.log("ra",accessID,ApprovalLevel);
+      console.log(wflowdata,accessIDIndex,ApprovalLevelIndex)
+      if(accessIDIndex==intiator_id){
+        addIntoApprovalLevel=ApprovalLevel
+      }else{
+      if(accessIDIndex>=ApprovalLevelIndex){
+        addIntoApprovalLevel=accessID;
+      }
+      else{addIntoApprovalLevel=ApprovalLevel}}
   var sql = `select pickrumprole.pickRUMPRoleDescription as role from pickrumprole inner join linkrumpadminaccess 
   on pickRUMPRolePK=linkRUMPRoleFK where linkRUMPAdminAccessPK=${req.body.resendToId};`
   con.query(sql, function (err, result) {
@@ -420,7 +469,7 @@ router.post("/resendRequest", (req, res) => {
     } else {
       let role = result[0].role;
       let request_action = "Resent to " + role;
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${accessID}
+      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${addIntoApprovalLevel}
   where rumprequestpk=${req.body.req_id};`
       con.query(sql, function (err, result) {
         if (err) {
