@@ -199,7 +199,7 @@ router.post("/addVendors", (req, res) => {
       RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
       RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
       RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
-      RUMPRequestApprovalLevel=${approvalLevel} where RUMPRequestPK = '${req.body.req_id}';`
+      RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK = '${req.body.req_id}';`
       }
       else{
         sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
