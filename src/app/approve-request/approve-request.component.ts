@@ -52,9 +52,9 @@ export class ApproveRequestComponent implements OnInit {
     console.log(this.role_id)
 
     //get request comment
-    this.userDataService.getHomComment(this.req_id).subscribe((res) => {
-      this.requestComment = res[0].RUMPRequestComments;
-    });
+    // this.userDataService.getHomComment(this.req_id).subscribe((res) => {
+    //   this.requestComment = res[0].RUMPRequestComments;
+    // });
     
 if(this.role_id==5){
 

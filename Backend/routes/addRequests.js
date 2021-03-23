@@ -241,6 +241,7 @@ console.log("ggg",req.body.request.req_type);
 
 router.post("/updateRequests", (req, res) => {
 
+  let accessID=req.body.accessID;
   pnc=req.body.is_pnc;
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
@@ -276,7 +277,7 @@ router.post("/updateRequests", (req, res) => {
       sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestMEType='${me_type}',RUMPRequestSWON='${req.body.request.req_swon}',
       RUMPRequestBudgetType=${budget_type},RUMPRequestAvailableBudget=${req.body.request.available_budget},
       RUMPRequestConsumedBudget=${req.body.request.consumed_budget},RUMPRequestBalanceBudget=${req.body.request.balance_budget},RUMPRequestSubject='${req.body.request.req_subject}',
-      RUMPRequestDescription='${req.body.request.req_description}',RumprequestLevel=${nextValue} where rumprequestpk=${req.body.req_id};`
+      RUMPRequestDescription='${req.body.request.req_description}',RumprequestLevel=${nextValue},RUMPRequestApprovalLevel=${accessID} where rumprequestpk=${req.body.req_id};`
 
       con.query(sql, (err, ressult) => {
         if (err) {

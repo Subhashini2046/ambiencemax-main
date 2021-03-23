@@ -10,7 +10,7 @@
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>Select User</mat-label>
           <mat-select formControlName="request_actionnnn" [(ngModel)]="selectedUser" name="food" required>
-            <mat-option *ngFor="let type of users" [value]="type">
+            <mat-option *ngFor="let type of users1" [value]="type">
               {{type.pickRUMPRoleDescription}}
             </mat-option>
           </mat-select>

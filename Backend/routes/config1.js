@@ -161,6 +161,7 @@ let express = require("express"),
   });
   
   router.post("/users1", (req, res) => {
+    console.log("hhhhhhhhh")
     let req_id = req.body.req_id;
     let w_flow = [];
     let wflowdata = [];
@@ -238,7 +239,7 @@ let express = require("express"),
                   console.log(err);
                 } else {
   
-                  console.log(result);
+                  console.log(result,"iiiiiiii");
                   res.send(result);
                 }
               })
@@ -253,9 +254,10 @@ let express = require("express"),
                 if (err) {
                   console.log(err);
                 } else {
-  
-                  console.log(result);
-                  res.send(result);
+                  let res1=[]
+                  res1=result;
+                  console.log(res1,"iiiiijjjj");
+                  res.send(JSON.stringify(result));
                 }
               })
             }

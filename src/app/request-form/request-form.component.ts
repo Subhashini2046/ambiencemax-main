@@ -54,6 +54,7 @@ export class RequestFormComponent implements OnInit {
   pncvendorSelection = '';
   reqComment;
   reqType = '';
+  actualCost1;
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
 
   }
@@ -156,6 +157,7 @@ export class RequestFormComponent implements OnInit {
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];
+        this.actualCost1=this.actualCost;
         this.is_pnc = this.requestDetails[0]["ispnc"];
         this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
@@ -307,6 +309,7 @@ export class RequestFormComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
+
       this.UserDataService.updateRequest(this.is_pnc, obj, this.admin_access_id, this.req_id, JSON.parse(localStorage.getItem('user_name')), this.filepath);
     });
 

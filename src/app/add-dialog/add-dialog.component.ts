@@ -13,6 +13,7 @@ export class AddDialogComponent implements OnInit {
   allocateForm: FormGroup;
   req_id;
   users: any = [];
+  users1: any = [];
   is_pnc;
   initiatorId;
   constructor(private fb1: FormBuilder, private router: Router,
@@ -36,14 +37,26 @@ export class AddDialogComponent implements OnInit {
 
     // get user role like initiator,location head etc.
     this.userDataService.getRoles(this.req_id, this.role_id, this.space,this.accessId ).subscribe((data) => {
-      this.users = data;
+     this.users = data;
+      console.log(data);
       for(let i=0;i<this.users.length;i++){
         if(this.users[i]['pickRUMPRoleDescription'].includes('Initiator')){
-          this.initiatorId=this.users[i]['accessId']
+          this.initiatorId=this.users[i]['accessId'];
+          this.users[i]['pickRUMPRoleDescription']='Initiator(Request)';
         break;}
       }
+      if (this.role_id < 6) {
+        this.users1.push(this.users[0])
+     for(let i=1;i<this.users.length;i++){
+       this.users1.push(this.users[i])
+     }
+      }
       if (this.role_id >= 6) {
-        this.users.push({ accessId: this.initiatorId, roleId: 0, pickRUMPRoleDescription: "Initiator(PNC)", pnc: 1 });
+        this.users1.push(this.users[0])
+        this.users1.push({ accessId: this.initiatorId, roleId: 0, pickRUMPRoleDescription: "Initiator(PNC)", pnc: 1 });
+     for(let i=1;i<this.users.length;i++){
+       this.users1.push(this.users[i])
+     }
       }
     });
   }
