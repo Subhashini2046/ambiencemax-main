@@ -1,55 +1,91 @@
-<mat-toolbar class="col-bg-header">
+<!-- <mat-toolbar class="col-bg-header">
   <a class="navbar-brand">
     <div class="logo">
-      <!-- <img class="text-center" src="../assets/Logo.svg" width="100" height="30" alt="" class="d-align-block" /> -->
       <span class="apptype" style="margin-left: 16px; color: white;">AmbienceMax</span>
     </div>
 
   </a>
   <span class="example-spacer"></span>
   
-</mat-toolbar>
-  <div class="row my-3">
-    <div class="col-md-3"></div>
-    <div class="col-md-6" style="border-radius: 10px;">
-  <mat-card>
-    <mat-card class="ex1 text-center">
-      <mat-card-title> Existing assigned workflows</mat-card-title>
-    </mat-card>
-    <br>
-    <mat-form-field>
-      <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
-    </mat-form-field>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- Position Column -->
-    <ng-container matColumnDef="ID" >
-      <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
-      <td mat-cell *matCellDef="let element">
-        <p class="text-center">
-          {{element.w_id}}
-        </p>
-      </td>
+</mat-toolbar> -->
+<div class="row my-3">
+  <div class="col-md-3"></div>
+  <div class="col-md-6" style="border-radius: 10px;" >
+    <!-- Assign Admin Access Privilege -->
+    <div class="col-lg-14" *ngIf="userId==checkUserId">
 
-    </ng-container>
-    <ng-container matColumnDef="Hierarchy" class="text-center">
-      <th class="text-center" mat-header-cell *matHeaderCellDef>Hierarchy</th>
-      <td mat-cell *matCellDef="let element">
-        <p class="text-center">
-          {{element.hierarchy}}
-        </p>
-        </td>
-    </ng-container>
-    <ng-container matColumnDef="Location" class="text-center">
-      <th class="text-center" mat-header-cell *matHeaderCellDef>Location</th>
-      <td mat-cell *matCellDef="let element">
-        <p class="text-center">
-          {{element.name}}
-        </p>
-        </td>
-    </ng-container>
-    <!-- Name Column -->
-    <!-- <ng-container matColumnDef="Flow" class="text-center">
+      <mat-card>
+        <mat-card class="ex1 text-center">
+          <mat-card-title>Assign Admin Access Privilege</mat-card-title>
+        </mat-card>
+        <br>
+        <form action="" #aform="ngForm">
+          <div class="text-center">
+            <mat-form-field>
+              <mat-select [formControl]="adminIdAndNameCtrl" (ngModelChange)="onAdminChanged($event)" placeholder="select admin" #singleSelect required>
+                <mat-option>
+                  <ngx-mat-select-search [formControl]="adminIdAndNameFilterCtrl"
+                  placeholderLabel="Search admin..." 
+                  noEntriesFoundLabel="no matching admin found" >
+                  </ngx-mat-select-search>
+                </mat-option>
+          
+                <mat-option  *ngFor="let bank of adminIdAndNamefiltered | async" [value]="bank.adminPK">
+                  {{bank.adminIdName}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <mat-error *ngIf="this.checkAdmin==1">This user already has privilege.!!!</mat-error>
+          <div class="text-center">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline:none;"
+            [disabled]="adminIdAndNameCtrl.value==null || checkAdmin==1 || updateadmin==1" (click)="onsubmit(); aform.reset()">
+              Assign
+            </button>
+         </div>
+        </form>
+      </mat-card>
+    </div>
+    <!--  -->
+    <br>
+    <mat-card>
+      <mat-card class="ex1 text-center">
+        <mat-card-title> Existing assigned workflows</mat-card-title>
+      </mat-card>
+      <br>
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
+      </mat-form-field>
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!-- Position Column -->
+        <ng-container matColumnDef="ID">
+          <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-center">
+              {{element.w_id}}
+            </p>
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="Hierarchy" class="text-center">
+          <th class="text-center" mat-header-cell *matHeaderCellDef>Hierarchy</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-center">
+              {{element.hierarchy}}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Location" class="text-center">
+          <th class="text-center" mat-header-cell *matHeaderCellDef>Location</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-center">
+              {{element.name}}
+            </p>
+          </td>
+        </ng-container>
+        <!-- Name Column -->
+        <!-- <ng-container matColumnDef="Flow" class="text-center">
       <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow</th>
       <td mat-cell *matCellDef="let element">
         <p class="text-center">
@@ -58,44 +94,46 @@
         </td>
     </ng-container> -->
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="details" class="text-center">
-      <th mat-header-cell *matHeaderCellDef>Action</th>
-      <td mat-cell *matCellDef="let element">
-        <p class="text-center">
-          <button mat-button class="stylepopupbuttonconfirm"
-          (click)='openDialog(element. w_id,element.w_flow)'>
-          View Details
-        </button>
-        </p>
-      </td>
-    </ng-container>
+        <!-- Weight Column -->
+        <ng-container matColumnDef="details" class="text-center">
+          <th class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-center">
+              <button mat-button style="outline:none;" class="stylepopupbuttonconfirm"
+                (click)='openDialog(element. w_id,element.w_flow)'>
+                View Details
+              </button>
+            </p>
+          </td>
+        </ng-container>
 
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  <mat-paginator [pageSizeOptions]="[4]" ></mat-paginator>
-  </mat-card>
-  <br>
-  <div class="row my-1">
-    <div class="col-lg-12">
-      <mat-card>
-        <mat-card class="ex1 text-center">
-          <mat-card-title> Add new workflows & hierarchies</mat-card-title>
-        </mat-card>
-        <br>
-        <h5 class="text-center">
-          Add Workflow
-          <hr>
-        </h5>
-        <!-- <div class="row"> -->
-            <form #form = "ngForm" (submit)="form.reset()">
-              <button mat-button class="text-center stylepopupbuttonconfirm"
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[4]"></mat-paginator>
+    </mat-card>
+    <br>
+    <div class="row my-1">
+      <div class="col-lg-12">
+        <mat-card>
+          <mat-card class="ex1 text-center">
+            <mat-card-title> Add new workflows & hierarchies</mat-card-title>
+          </mat-card>
+          <br>
+          <!-- <h5 class="text-center">
+            Add Workflow
+            <hr>
+          </h5> -->
+          <!-- <div class="row"> -->
+          <form #form="ngForm" (submit)="form.reset()">
+            <div class="text-center">
+            <button mat-button style="outline:none;" class="text-center stylepopupbuttonconfirm"
               (click)='openWorkflowDialog()'>
               Add Workflow
             </button>
-              <!-- <div class="row">
+            </div>
+            <!-- <div class="row">
                 <div class="col-lg-9">
                   <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>Choose Approvers</mat-label>
@@ -113,12 +151,12 @@
                   </button>
                 </div>
               </div> -->
-            </form>
+          </form>
           <!-- </div> -->
-      </mat-card>
-      <hr>
-    </div>
-    <!-- <div class="col-lg-6">
+        </mat-card>
+        <hr>
+      </div>
+      <!-- <div class="col-lg-6">
       <mat-card>
         <h5 class="text-center">
           Add Hierarchy
@@ -153,53 +191,52 @@
       </mat-card>
     </div> -->
 
-    <div class="col-lg-12">
+      <div class="col-lg-12">
 
-      <mat-card>
-        <mat-card class="ex1 text-center">
-          <mat-card-title> Link Hierarchy to Workflow</mat-card-title>
-        </mat-card>
-        <br>
-        <form action="" #hform = "ngForm">
-          <div class="text-center">
-            <mat-form-field appearance="fill" style="width: 100%;">
-              <mat-label>Select Hierarchy</mat-label>
-              <mat-select [formControl]="Approvers" (ngModelChange)="onChanged($event)">
-                <mat-option *ngFor="let topping of AppList" [value]="topping">{{topping}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <div class="row">
-            <div class="form-group col" >
-              <label for="H_id"> Choose Hierarchy</label>
+        <mat-card>
+          <mat-card class="ex1 text-center">
+            <mat-card-title> Link Hierarchy to Workflow</mat-card-title>
+          </mat-card>
+          <br>
+          <form action="" #hform="ngForm">
+            <div class="text-center">
               <mat-form-field appearance="fill" style="width: 100%;">
-                <mat-label>Choose Hierarchy Name</mat-label>
-                <mat-select [formControl]="Approvers" [(ngModel)] = "b_id">
-                  <mat-option *ngFor="let topping of fetechHierarchy[0]" [value]="topping.id">{{topping.name}}</mat-option>
+                <mat-label>Select Hierarchy</mat-label>
+                <mat-select [formControl]="Approvers" (ngModelChange)="onChanged($event)">
+                  <mat-option *ngFor="let topping of AppList" [value]="topping">{{topping}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="form-group col">
-              <label for="w_id"> Workflow Id</label>
-              <input type="number" name="w_id" id="w_id" min="1" [(ngModel)] = "work_id" class="form-control" required>
+            <div class="row">
+              <div class="form-group col">
+                <label for="H_id"> Choose Hierarchy</label>
+                <mat-form-field appearance="fill" style="width: 100%;">
+                  <mat-label>Choose Hierarchy Name</mat-label>
+                  <mat-select [formControl]="Approvers" [(ngModel)]="b_id">
+                    <mat-option *ngFor="let topping of fetechHierarchy[0]" [value]="topping.id">{{topping.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-group col">
+                <label for="w_id"> Workflow Id</label>
+                <input type="number" name="w_id" id="w_id" min="1" [(ngModel)]="work_id" class="form-control" required>
+              </div>
             </div>
-          </div>
-          <p class="error"
-          *ngIf="this.onAddlink==1">* Location and Workflow id is Already Exist!!!</p>
-          <div class="row">
-            <div class="col"></div>
-            <div class="col">
-            <button mat-raised-button color="primary" style="width: 100%;"
-            [disabled]="!hform.valid"
-            (click) = "onAddLink(); hform.reset()">
-            Submit
-          </button>
+            <p class="error" *ngIf="this.onAddlink==1">* Location and Workflow id is Already Exist!!!</p>
+            <div class="row">
+              <div class="col"></div>
+              <div class="col">
+                <button mat-raised-button color="primary" style="width: 100%;outline:none;" [disabled]="!hform.valid"
+                  (click)="onAddLink(); hform.reset()">
+                  Submit
+                </button>
+              </div>
+              <div class="col"></div>
             </div>
-            <div class="col"></div>
-          </div>
-        </form>
-      </mat-card>
+          </form>
+        </mat-card>
       </div>
+    </div>
   </div>
-</div></div>
-
+</div>

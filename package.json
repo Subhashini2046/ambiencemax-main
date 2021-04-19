@@ -41,6 +41,7 @@
     "mysql": "^2.18.1",
     "ng2-charts": "^2.3.0",
     "ng2-file-upload": "^1.4.0",
+    "ngx-mat-select-search": "^3.2.0",
     "pdfmake": "^0.1.70",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",

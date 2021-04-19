@@ -6,7 +6,6 @@ let express = require("express"),
   router.post("/dashboard", (req, res) => {
     let space = req.body.space;
     let role = req.body.role;
-console.log(space,role,"/////////////////////")
     req_stats = {
       All: 0,
       Pending: 0,
@@ -21,8 +20,6 @@ console.log(space,role,"/////////////////////")
    let unreadStatusopen=0;
     if (req.body.role == 0) {
 
-      console.log("mmmmmmmmm");
-
       con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} ; 
       select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Completed'; 
       select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Closed'; 
@@ -34,7 +31,6 @@ console.log(space,role,"/////////////////////")
         unreadStatusclosed=result[2][0].UnreadStatusclosed;
         unreadStatuspending=result[3][0].UnreadStatuspending;
         unreadStatusopen=result[4][0].UnreadStatusopen;
-        console.log(result[0],"-------",unreadStatuscompleted);
         req_stats = {
           
           All: result[0][0].all,
@@ -144,7 +140,6 @@ console.log(space,role,"/////////////////////")
         for (let i = 0; i < result[0].length; i++) {
           let wflowdata = result[0][i].wflow.split(',');
           wflowdata = wflowdata.filter(data => !data.includes('or') && !data.includes('i'));
-          console.log(wflowdata);
           for (let j = 0; j < wflowdata.length; j++) {
             for (k = 0; k < result[1].length; k++) {
               if (result[1][k].id == wflowdata[j]) {
@@ -154,7 +149,6 @@ console.log(space,role,"/////////////////////")
             }
           }
         }
-        console.log(narr,"\\\\\\\\\\");
         con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestflowfk in(${narr}); 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Completed'; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed, count(*) as "closed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Closed'; 
@@ -162,7 +156,6 @@ console.log(space,role,"/////////////////////")
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen, count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestflowfk in(${narr}) and linkrumprolefk=${role} and linkRUMPSpace=${space};`,
            (err, result) => {
             if (err) throw err;
-            console.log("///////////",result[0].all);
         unreadStatusAll=result[0][0].UnreadStatusAll;
         unreadStatuscompleted=result[1][0].UnreadStatuscompleted;
         unreadStatusclosed=result[2][0].UnreadStatusclosed;

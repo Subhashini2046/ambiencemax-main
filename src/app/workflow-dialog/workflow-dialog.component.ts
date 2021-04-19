@@ -22,6 +22,8 @@ dataSource = new MatTableDataSource();
   constructor( public dialogRef: MatDialogRef<WorkflowDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,private userDataService:UserDataService) { 
       this.WorkflowData=data;
+
+      this.w_flow=data.w_flow;
     }
     onNoClick(): void {
       this.dialogRef.close();
@@ -30,13 +32,11 @@ dataSource = new MatTableDataSource();
     indexElectrical;
   w_flowData:any[]=[];
   ngOnInit() {
-  
+ // console.log("uu",this.w_flowData);
     //get w_flow details
     this.userDataService.getFlowDetails(this.WorkflowData).subscribe((res:any)=>{
-
        // get index of Initiator from w_flow
       this.indexOfInitiator= this.w_flow.indexOf('i');
-
       for(let i=0;i<this.indexOfInitiator+1;i++){
         this.w_flowData[i]=res[i];}
 

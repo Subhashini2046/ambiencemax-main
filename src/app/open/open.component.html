@@ -1,10 +1,16 @@
 <div class="text-center container" style="background-color: white; margin-top: 20px;">
   <br>
   <mat-card class="example-card1">
-    <mat-card-title> Open Requests</mat-card-title>
+    <span class="request-Tab"> Open Requests</span>
   </mat-card>
   <br>
-  <mat-card class="example-card1">
+  <div class="col-md-3">
+    <mat-form-field >
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Request Type,Request Number" #input>
+    </mat-form-field>
+  </div>
+    <mat-card class="example-card1">
   <table class="table" mat-table [dataSource]="this.dataSource">
 
 

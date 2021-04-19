@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { SignupFormComponent } from './signup-form/signup-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, CanActivate } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,6 +14,7 @@ import {MatFormFieldModule, MatSelectModule, MatTableModule, MatChipsModule ,
   MatListModule, MatSnackBarModule, MatPaginatorModule} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserDataService } from './Services/UserDataService';
+import{AuthGuardService} from './Services/AuthGuardService';
 import { ViewReqComponent } from './view-req/view-req.component';
 import { ViewStatusComponent } from './view-status/view-status.component';
 import { DoughnutChartComponent } from './doughnut-chart/doughnut-chart.component';
@@ -43,8 +44,11 @@ import {MatBadgeModule} from '@angular/material/badge';
 import  { MatDialogModule } from '@angular/material/dialog'; 
 import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.component';
 import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-dialog.component';
+import { environment } from 'src/environments/environment';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import {AuthenticationGuard} from './authentication.guard';  
 const appRoutes = [
-  {path: 'AmbienceMax' ,component: DashboardComponent,
+  {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
     {path: 'dialogg/:id/:pnc', component: AddDialogComponent,},
     {path: 'viewcomm/:id/:reqId/:pnc' , component: ViewcommComponent},
@@ -58,16 +62,19 @@ const appRoutes = [
     {path: 'open' , component: OpenComponent},
     {path: 'pending' , component: PendingComponent},
     {path: 'allRequest' , component: AllRequestComponent},
-    {path: 'admin' , component: AdminPanelComponent},
+    {path: 'admin/:userId' , component: AdminPanelComponent},
     {path: 'approveRequest/:id' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
   ]
 },
-  {path: '' , component: HomeComponent},
-  {path: 'admin' , component: AdminPanelComponent},
+{ path: '', redirectTo: "/login", pathMatch: 'full' },  
+  {path:'login',component: HomeComponent},
+ // {path: '' , component: HomeComponent},
+ // {path: 'admin' , component: AdminPanelComponent},
 
 ];
-@NgModule({
+@NgModule(
+  {
   declarations: [
     AppComponent,
     LoginFormComponent,
@@ -127,8 +134,10 @@ const appRoutes = [
     MatMomentDateModule,
     MatInputModule,
     MatBadgeModule,
+    NgxMatSelectSearchModule
   ],
-  providers: [ UserDataService],
+  providers: [ UserDataService,AuthGuardService,AuthenticationGuard,
+  {provide:'AMBI_API_URL',useValue:environment.url}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

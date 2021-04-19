@@ -1,12 +1,20 @@
 import { AddWorkflowDialogComponent } from './../add-workflow-dialog/add-workflow-dialog.component';
 import { WorkflowDialogComponent } from './../workflow-dialog/workflow-dialog.component';
 import { UserDataService } from './../Services/UserDataService';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild,AfterViewInit } from '@angular/core';
 import { MatPaginator,  MatSort,MatTableDataSource } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
-
+import { ActivatedRoute } from '@angular/router';
+import { ReplaySubject, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { MatSelect } from '@angular/material';
+import { Router } from '@angular/router';
+export interface admin {
+  adminPK: number;
+  adminIdName: string;
+}
 export interface Workflow {
   id: number;
   flow: string;
@@ -17,8 +25,15 @@ export interface Workflow {
   templateUrl: './admin-panel.component.html',
   styleUrls: ['./admin-panel.component.css']
 })
-export class AdminPanelComponent implements OnInit {
+export class AdminPanelComponent implements OnInit,AfterViewInit {
   Approvers = new FormControl();
+  admin: admin;
+  adminIdAndName: admin[]=[];
+  @ViewChild('singleSelect',{ static: true }) singleSelect: MatSelect;
+  public adminIdAndNameCtrl: FormControl = new FormControl();
+  public adminIdAndNameFilterCtrl: FormControl = new FormControl();
+  public adminIdAndNamefiltered: ReplaySubject<admin[]> = new ReplaySubject<admin[]>(1);
+  protected _onDestroy = new Subject<void>();
   AppList: string[] = ['Geography','Country', 'State',  'City','Building','Location'];
   displayedColumns: string[] = ['ID','Hierarchy', 'Location','details'];
   approverArray = [];
@@ -29,15 +44,18 @@ export class AdminPanelComponent implements OnInit {
   b_id = '';
   h_level = '';
   onAddlink;
+  checkAdmin;
+  updateadmin;
+  userId;
+  checkUserId=112951;
   fetechHierarchy:any[]=[];
-  
   workflowDetails: Workflow[] = [
     // tslint:disable-next-line: max-line-length
   ];
   dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(private http: HttpClient,private userDataService:UserDataService,public dialog: MatDialog) {
+  constructor(private actrouter: ActivatedRoute,private http: HttpClient, private router: Router,private userDataService:UserDataService,public dialog: MatDialog) {
   }
   WorkflowData=[]
 
@@ -63,13 +81,30 @@ export class AdminPanelComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
-  
   ngOnInit() {
-    console.log(this.dataSource);
+    this.actrouter.params.subscribe(params => {
+      this.userId = +params['userId'];
+    });
+    
     this.userDataService.getFlow().subscribe((data:any)=>{
       this.dataSource.data=data;
-      console.log(data);
     });
+
+    if(this.userId==this.checkUserId){
+    this.userDataService.getAdminIdAndName().subscribe((data:any)=>{
+     this.adminIdAndName=data;
+      //this.adminIdAndNameCtrl.setValue(this.adminIdAndName);
+      
+      // load the initial admin list
+      this.adminIdAndNamefiltered.next(this.adminIdAndName.slice());
+  
+      // listen for search field value changes
+      this.adminIdAndNameFilterCtrl.valueChanges
+        .pipe(takeUntil(this._onDestroy))
+        .subscribe(() => {
+          this.adminIdAndNamefilter();
+        });
+    })}
   }
 
 // to serach a location etc.
@@ -141,6 +176,55 @@ export class AdminPanelComponent implements OnInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  // this.setInitialValue();
   }
 
+  ngOnDestroy() {
+    this._onDestroy.next();
+    this._onDestroy.complete();
+  }
+
+  // protected setInitialValue() {
+  //   this.adminIdAndNamefiltered
+  //     .pipe(take(1), takeUntil(this._onDestroy))
+  //     .subscribe(() => {
+  //       this.singleSelect.compareWith = (a: admin, b: admin) => a && b && a.adminPK === b.adminPK;
+  //     });
+  // }
+  protected adminIdAndNamefilter() {
+    if (!this.adminIdAndName) {
+      return;
+    }
+    // get the search keyword
+    let search = this.adminIdAndNameFilterCtrl.value;
+    if (!search) {
+      this.adminIdAndNamefiltered.next(this.adminIdAndName.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+
+    }
+    // filter the banks
+    this.adminIdAndNamefiltered.next(
+      this.adminIdAndName.filter(admin1 => admin1.adminIdName.toLowerCase().indexOf(search) > -1)
+
+    );
+  }
+
+  //check if user has already privilege or not
+  onAdminChanged(adminId){
+    this.updateadmin=0;
+    this.userDataService.adminCheck(adminId).subscribe((data)=>{
+    this.checkAdmin=data[0]['admAccess']
+    })
+  }
+
+  //submit once admin is selected
+  onsubmit(){
+    this.userDataService.addAdminId(this.adminIdAndNameCtrl.value).subscribe((data:any)=>{    
+      alert("Successfully Assigned");
+      this.updateadmin=data['result']
+    })
+    return false;
+  }
 }

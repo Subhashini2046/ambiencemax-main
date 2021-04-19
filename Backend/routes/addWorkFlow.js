@@ -26,7 +26,6 @@ router.post("/getFlowDetails", (req, res) => {
       for (let i = 0; i < w_flow.length; i++) {
         if (typeof w_flow[i] === 'string' && (w_flow[i].includes('or') == false && w_flow[i].includes('i') == false)) {
           wflowdata.push(w_flow[i]);
-          console.log(" wi]", w_flow[i]);
         }
 
         else if (w_flow[i].includes('or')) {
@@ -34,7 +33,6 @@ router.post("/getFlowDetails", (req, res) => {
             nextValue = w_flow.filter(data => data.includes('c')).map(data => {
               return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]
             })
-            console.log("next", nextValue);
             wflowdata.push(nextValue);
           }
           if (w_flow[i].includes('c')) {
@@ -172,11 +170,11 @@ router.get("/getUserRole",(req,res)=> {
   });
 });
 
+
 router.post("/addWorkflow",(req,res)=> {
   let w_flow=req.body.w_flow;
   let w_flowStr='';
 w_flowStr=w_flow.toString();
-  console.log(w_flowStr);
   sql = `insert into linkrumprequestflow (w_flow) values(?);`
   con.query(sql,w_flowStr,(err,result)=>{
     if(err){
@@ -196,7 +194,6 @@ router.post("/addLink", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(result,"mmmm");
       if(result.length>0){
         res.end(JSON.stringify({result:1}));
       }
@@ -213,5 +210,31 @@ router.post("/addLink", (req, res) => {
   })
 })
 
+//get admin id and name for assiging the access priviledge
+router.get("/adminIdAndName",(req,res)=> {
+  con.query(`select admAdminPK as adminPK,concat(admAdminPK,' (',admName,')')
+   as adminIdName from dataadmin;`,(err,result)=>{
+    if (err) throw err;
+    res.end(JSON.stringify(result))
+  });
+});
 
+// check if admin has already access or not
+router.post("/adminCheck",(req,res)=> {
+  adminPK = req.body.id;
+  con.query(`select admAccess from dataadmin where admAdminPK=?;`,
+  adminPK,(err,result)=>{
+    if (err) throw err;
+    res.end(JSON.stringify(result))
+  });
+});
+
+router.post("/addAdminId", (req, res) => {
+  adminPK = req.body.id;
+  con.query(`update dataadmin set admAccess=1 where admAdminPK=?;`,
+  adminPK,(err, result) => {
+    if (err) throw err;
+    res.end(JSON.stringify({result:1})); 
+  })
+})
 module.exports = router;

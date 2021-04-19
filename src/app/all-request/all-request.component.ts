@@ -52,4 +52,10 @@ export class AllRequestComponent implements OnInit {
     else
         this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
   }
+
+  // to serach a location etc.
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 }

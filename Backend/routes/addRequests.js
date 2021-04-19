@@ -93,7 +93,6 @@ router.post("/ViewRequestDetail", (req, res) => {
 router.post("/newReq", (req, response) => {
  let space = req.body.space;
   let spaceCollection = splitHierarchy(space);
-console.log("ggg",req.body.request.req_type);
 
   function splitHierarchy(space) {
     let spaceCollection = [];
@@ -116,7 +115,6 @@ console.log("ggg",req.body.request.req_type);
     }
     return spaceCollection;
   }
-  //console.log("+++",spaceCollection.join("','"));
   sql = `select work_id,b_id from linkrumprequestinitiators where b_id in(?) order by b_id desc limit 1;`;
   con.query(sql, [spaceCollection], (err, res) => {
     if (err) {
@@ -126,7 +124,6 @@ console.log("ggg",req.body.request.req_type);
       console.log(res);
       w_id = res[0].work_id;
       b_id = res[0].b_id;
-      console.log('w_id.......', w_id);
       w_flow = [];
       w_flow1 = 0;
       sql = `Select w_flow from linkrumprequestflow where linkrumprequestflowpk=${w_id};`
@@ -137,9 +134,7 @@ console.log("ggg",req.body.request.req_type);
           w_flow = result[0].w_flow.split(',');
           w_flow1 = w_flow[0];
           req_level = w_flow1;
-          //req_date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
           req_date = new Date();
-          console.log(req_date);
           sql = `select locShortName from datalocation where locLocationPK=${req.body.space.substr(0, 11)};`
           con.query(sql, function (err, result) {
             if (err) {
@@ -180,7 +175,6 @@ console.log("ggg",req.body.request.req_type);
                     nextValue = 1;
                   }
                   requestNumber = requestNumber + nextValue
-                  console.log("nextValue---", requestNumber)
                   let me_type = 0
                   if (req.body.request.me_type == "Civil") {
                     me_type = 0;
@@ -196,7 +190,6 @@ console.log("ggg",req.body.request.req_type);
                   }
                   const now = new Date();
                   let req_date = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-                  console.log('nn', req_date);
 
                   sql_nested = `insert into datarumprequest (RUMPRequestType,RUMPRequestNumber,RUMPRequestUnreadStatus,RUMPRequestCancelStatus,RUMPRequestMEType,RUMPRequestSWON,
                             RUMPRequestSWONType,RUMPRequestBudgetType,RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,
@@ -217,7 +210,6 @@ console.log("ggg",req.body.request.req_type);
                         if(err){
                           console.log(err);
                         }else{
-                          console.log(result[0].RUMPRequestNumber)
                           reqNumber=result[0].RUMPRequestNumber
                           response.send(JSON.stringify({
                             id: res.insertId,
@@ -259,7 +251,6 @@ router.post("/updateRequests", (req, res) => {
         let index = wflowdata.indexOf(data);
         index = index + 1;
         nextValue = wflowdata[index];
-        console.log("next----", nextValue);
       })}
       let me_type = 0
       if (req.body.request.me_type == "Civil") {
@@ -316,7 +307,6 @@ router.post("/BOQRequests", (req, res) => {
       let wflowdata = result[0].wflow.split(',');
       let nextValue = 0;
       if (myrole == 3) {
-        console.log("bbb", wflowdata)
         wflowdata = wflowdata.filter(data => data.includes('c')).map(data => {
           // console.log("index",wflowdata.indexOf(data))
           let index = wflowdata.indexOf(data);
@@ -431,7 +421,6 @@ router.post("/resendRequest", (req, res) => {
             w_flow[i] = w_flow[i].replace('e', '');
             w_flow[i] = w_flow[i].substring(0, w_flow[i].indexOf('or') + 'or'.length);
             w_flow[i] = w_flow[i].replace('or', '');
-            console.log(w_flow[i]);
             wflowdata.push(w_flow[i]);
   
           }
@@ -441,7 +430,6 @@ router.post("/resendRequest", (req, res) => {
             w_flow[i] = w_flow[i].replace('e', '');
             w_flow[i] = w_flow[i].substring(w_flow[i].indexOf('r') + 1);
             w_flow[i] = w_flow[i].replace('or', '');
-            console.log(w_flow[i]);
             wflowdata.push(w_flow[i]);
   
           }
@@ -452,8 +440,6 @@ router.post("/resendRequest", (req, res) => {
         }
       let accessIDIndex=wflowdata.indexOf(accessID.toString());
       let ApprovalLevelIndex = wflowdata.indexOf(ApprovalLevel.toString())
-      console.log("ra",accessID,ApprovalLevel);
-      console.log(wflowdata,accessIDIndex,ApprovalLevelIndex)
       if(accessIDIndex==intiator_id){
         addIntoApprovalLevel=ApprovalLevel
       }else{
@@ -513,12 +499,10 @@ router.post("/addPnc", (req, res) => {
       if (VendorPk == null) {
         VendorPk = null;
       }
-      console.log("bbb", wflowdata)
       wflowdata = wflowdata.filter(data => data.includes('i')).map(data => {
         let index = wflowdata.indexOf(data);
         index = index + 1;
         nextValue = wflowdata[index];
-        console.log("next----", nextValue);
       })
       if (allocationStartDate == null) {
         sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestAllocatedVendor=${VendorPk},
@@ -556,7 +540,6 @@ router.post("/addPnc", (req, res) => {
   });
 });
 router.post("/pncfileUpload", (req, res) => {
-  console.log("filepath-----", req.body.filepath);
   filepath = req.body.filepath;
   const fileAddress = 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\' + filepath;
   sql = `update datarumprequest set RUMPRequestPNCUrl =? where rumprequestpk=${req.body.req_id};`

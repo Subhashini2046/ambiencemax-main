@@ -45,6 +45,12 @@ export class OpenComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
+  // to serach a location etc.
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+  
   ngOnDestroy() {
   }
 }

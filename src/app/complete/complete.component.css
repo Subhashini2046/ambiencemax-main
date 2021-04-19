@@ -5,6 +5,11 @@ mat-card-title{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size:large;
   }
+  mat-form-field {
+    font-size: 14px;
+  width: 100%;
+  }
+  
   mat-card{
     background-color:  rgba(106, 135, 223, 0.589);
   }

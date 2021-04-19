@@ -379,7 +379,7 @@ for(let i=0;i<this.pdfTableData.length;i++){
         }
 
       });
-      doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
+    doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
     })
 
 

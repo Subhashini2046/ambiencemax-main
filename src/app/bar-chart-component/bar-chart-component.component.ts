@@ -40,13 +40,12 @@ export class BarChartComponentComponent implements OnInit ,OnDestroy{
   }
 
   ngOnInit() {
-
-    this.userDataService.changedetectInRole.subscribe(data=>{
+    this.countSubsription=this.userDataService.changedetectInRole.subscribe(data=>{
       this.role = JSON.parse(localStorage.getItem('role_id'));
       this.space = JSON.parse(localStorage.getItem('space'));
 
       // get Request Count for pending,open,close,Complete
-       this.countSubsription= this.userDataService.getRequestCount(this.role, this.space)
+       this.userDataService.getRequestCount(this.role, this.space)
       .subscribe(res => {
         let pending = res['req_stats'].Pending
         let close = res['req_stats'].Closed

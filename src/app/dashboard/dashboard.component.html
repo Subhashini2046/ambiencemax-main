@@ -59,6 +59,9 @@
         <a class="btn" (click)="snav.toggle()" routerLink="allRequest" mat-list-item>
           <span>All Request</span>
           </a>
+          <a class="btn" *ngIf="checkAdmin==1" (click)="snav.toggle();admin()" mat-list-item>
+            <span>Admin</span>
+            </a>
 
         <!-- <a class="btn" *ngFor="let chip of Buttons" (click)="Request(chip.func); snav.toggle(); main = chip.func;
         this.UsrDataService.main = chip.func;" mat-list-item>

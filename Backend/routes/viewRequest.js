@@ -3,6 +3,7 @@ let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
 
+  
 router.post("/viewRequestData", (req, res) => {
   data = req.body;
   req_id = data.reqId;
@@ -13,14 +14,12 @@ router.post("/viewRequestData", (req, res) => {
     }
     else {
       req_data = result;
-      console.log("rrrr", req_id);
       
       sql = `select aaction_taken_by,areq_action as req_action, atime_stamp as req_date,time(atime_stamp) as req_time from request_actionnnn where req_id='${req_id}' order by atime_stamp desc limit 1;`
       con.query(sql, function (err, result) {
         if (err) {
           console.log(err);
         } else {
-          console.log("////", result);
           role_name = result[0].aaction_taken_by;
           req_action = result[0].req_action;
           res.send(
@@ -77,10 +76,8 @@ router.post("/pdfTableData", (req, res) => {
       }
       else {
         for(let i=0;i<=HeadOfMaintenanceIndex;i++){
-          console.log(tableData2,'t2');
         tableData2.push(tableData1[i])
         } 
-        console.log(tableData2,'t1');
         tableData2.push(result[0]);
         for(let i=HeadOfMaintenanceIndex+1;i<tableData1.length;i++){
           tableData2.push(tableData1[i]);
@@ -108,7 +105,6 @@ router.post("/pdfTableData", (req, res) => {
 
 router.post("/viewStatuss",(req,res)=>{
   reqId = req.body.req_id;
-  console.log(reqId);
   let wflowdata=[];
   let me_type = null;
   let intiator_id = '';
@@ -131,11 +127,8 @@ router.post("/viewStatuss",(req,res)=>{
       me_type = result[0].RUMPRequestMEType;
       requestLevel=result[0].RumprequestLevel;
       reqStatus=result[0].RUMPRequestStatus;
-      console.log("dd",requestLevel);
       intiator_id = result[0].RUMPInitiatorId;
       ispnc=result[0].ispnc;
-      console.log("............");
-      console.log("wflow",w_flow);
 
       for (let i = 0; i < w_flow.length; i++) {
 
@@ -149,7 +142,6 @@ router.post("/viewStatuss",(req,res)=>{
         w_flow[i] = w_flow[i].replace('e','');
         w_flow[i] = w_flow[i].substring(0,w_flow[i].indexOf('or')+'or'.length);
         w_flow[i] = w_flow[i].replace('or','');
-        console.log(w_flow[i]);
         wflowdata.push(w_flow[i]);
 
         }
@@ -159,7 +151,6 @@ router.post("/viewStatuss",(req,res)=>{
           w_flow[i] = w_flow[i].replace('e','');
           w_flow[i] = w_flow[i].substring(w_flow[i].indexOf('r')+1);
           w_flow[i] = w_flow[i].replace('or','');
-          console.log(w_flow[i]);
           wflowdata.push(w_flow[i]);
       
         }

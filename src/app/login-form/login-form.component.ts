@@ -14,7 +14,6 @@ export class LoginFormComponent implements OnInit {
     
     //User Authentication
     this.UserDataService.authenticateUser1(this.userId, this.password);
-  
   }
   ngOnInit() {}
 

@@ -4,6 +4,12 @@
       <mat-card-title> Completed Requests</mat-card-title>
     </mat-card>
     <br>
+    <div class="col-md-3">
+      <mat-form-field >
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Request Type,Request Number" #input>
+      </mat-form-field>
+    </div>
     <mat-card class="example-card1">
     <table class="table" mat-table [dataSource]="this.dataSource">
   

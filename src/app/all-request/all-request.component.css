@@ -10,6 +10,10 @@ mat-card-title{
   .make-gold{
     background-color: #F0F0F0;
   }
+  mat-form-field {
+    font-size: 14px;
+  width: 100%;
+  }
 table{
   background-color: white;
   margin: 0;

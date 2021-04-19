@@ -60,10 +60,8 @@ router.post("/getVendor", (req, res) => {
      (err, result) => {
       if (err) throw err;
       if (result.length > 0) {
-        console.log(result,"//");
         let vendorsId=result;
         let vendorId=result[0].vendorId;
-        console.log(vendorId);
         con.query(`select pickrumpvendorcategories.* from 
         linkrumpvendorcategorymap inner join pickrumpvendorcategories 
         on(pickrumpvendorcategories.pickRumpVendorCategoriesPK=linkrumpvendorcategorymap.linkRumpVendorCategoryFK) 
@@ -81,8 +79,6 @@ router.post("/getVendor", (req, res) => {
 router.get("/vendorcategories", (req, res) => {
   role = req.body.userRole;
   reqId = req.body.req_id;
-  console.log('role....', role);
-  console.log('reqId......', reqId);
   sql = `select * from pickrumpvendorcategories;`
   con.query(sql, function (err, result) {
     if (err) {
@@ -95,7 +91,6 @@ router.get("/vendorcategories", (req, res) => {
 })
 // select ventor details //
 router.post("/vendorDetail", (req, res) => {
-  console.log("-----", req.body.vendCategoryId);
   sql = `select  datarumpvendor.rumpvenVendorPK as vendorId,datarumpvendor.rumpvenName as vendorName, if(count is null,0,count) as taggedCount,if(acount is null,0,acount) as alloccatedCount from datarumpvendor 
   left join (select vendpk,count(*) as count from (select  rumprequestpk,rumprequesttaggedvendor1 as vendpk from datarumprequest 
   where RUMPRequestAllocatedVendor is null
@@ -143,7 +138,6 @@ router.post("/vendorDetail", (req, res) => {
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
  let accessID= req.body.accessID;
-  console.log('role....', vendorList, vendorList[0]);
   if (vendorList[0] != null) {
     venderTagged_1 = vendorList[0];
   } else

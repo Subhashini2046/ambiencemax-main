@@ -11,14 +11,15 @@ let express = require("express"),
       callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\')
     },
     filename: (req, file, callBack) => {
-      callBack(null, `${file.originalname}`)
+      const now = new Date();
+      let timestemp = date.format(now, 'YYYY-MM-DD HH-mm-ss');
+      callBack(null, `${timestemp}_${file.originalname}`)
     }
   })
   
   const upload = multer({ storage: storage })
   router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
     const files = req.files;
-    console.log(files);
     if (!files) {
       const error = new Error('No File')
       error.httpStatusCode = 400
@@ -36,8 +37,9 @@ let express = require("express"),
       callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\')
     },
     filename: (req, file, callBack) => {
-  
-      callBack(null, `${req.body.id}-${file.originalname}`)
+      const now = new Date();
+      let timestemp = date.format(now, 'YYYY-MM-DD HH-mm-ss');
+      callBack(null, `${timestemp}_${file.originalname}`)
     }
   })
   const uploadpnc = multer({ storage: storagepnc })
@@ -60,8 +62,9 @@ let express = require("express"),
       callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\')
     },
     filename: (req, file, callBack) => {
-  
-      callBack(null, `${req.body.id}-${file.originalname}`)
+      const now = new Date();
+      let timestemp = date.format(now, 'YYYY-MM-DD HH-mm-ss');
+      callBack(null, `${timestemp}_${file.originalname}`)
     }
   })
   const uploadboq = multer({ storage: storageboq })
@@ -99,7 +102,6 @@ let express = require("express"),
     role = req.body.userRole;
     reqId = req.body.req_id;
     action_by = req.body.action_taken_by;
-    console.log("........role", role, reqId, action_by);
     sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"routerroved",'${action_by}',"routerroved")`
     con.query(sql, function (err, result) {
       if (err) {
@@ -150,18 +152,15 @@ let express = require("express"),
   })
   router.get('/download', (req, res) => {
     const file = 'C:/CommonFolderMirror/RUMP_Req_PNC_Docs/' + req.query.filename;
-    console.log(req.query.filename, file);
     res.download(file);
   });
   
   router.get('/RequestFle', (req, res) => {
     const file = 'C:/CommonFolderMirror/RUMP_Req_RUMP_Supporting_Docs/' + req.query.filename;
-    console.log(req.query.filename, file);
     res.download(file);
   });
   
   router.post("/users1", (req, res) => {
-    console.log("hhhhhhhhh")
     let req_id = req.body.req_id;
     let w_flow = [];
     let wflowdata = [];
@@ -192,7 +191,6 @@ let express = require("express"),
             w_flow[i] = w_flow[i].replace('e', '');
             w_flow[i] = w_flow[i].substring(0, w_flow[i].indexOf('or') + 'or'.length);
             w_flow[i] = w_flow[i].replace('or', '');
-            console.log(w_flow[i]);
             wflowdata.push(w_flow[i]);
   
           }
@@ -202,7 +200,6 @@ let express = require("express"),
             w_flow[i] = w_flow[i].replace('e', '');
             w_flow[i] = w_flow[i].substring(w_flow[i].indexOf('r') + 1);
             w_flow[i] = w_flow[i].replace('or', '');
-            console.log(w_flow[i]);
             wflowdata.push(w_flow[i]);
   
           }
@@ -218,7 +215,6 @@ let express = require("express"),
         if (!wflowdata1.includes(intiator_id.toString())) {
           wflowdata1.push(intiator_id.toString())
         }
-        console.log(wflowdata1, 'w');
         sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
         on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
         where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
@@ -238,8 +234,6 @@ let express = require("express"),
                 if (err) {
                   console.log(err);
                 } else {
-  
-                  console.log(result,"iiiiiiii");
                   res.send(result);
                 }
               })
@@ -256,7 +250,7 @@ let express = require("express"),
                 } else {
                   let res1=[]
                   res1=result;
-                  console.log(res1,"iiiiijjjj");
+
                   res.send(JSON.stringify(result));
                 }
               })

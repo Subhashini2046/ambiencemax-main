@@ -24,13 +24,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
  public UnreadStatuscompleted;
   public UnreadStatusopen;
   menus=[];
-  Buttons: Options[] = [
-    { name: 'Pending Request', func: 'Pending' },
-    { name: 'Open Request', func: 'open' },
-    { name: 'Closed Request', func: 'closed' },
-    { name: 'Completed Request', func: 'complete' },
-    { name: 'All Request', func: 'all' },
-  ];
+  userId;
+  checkAdmin;
+  // Buttons: Options[] = [
+  //   { name: 'Pending Request', func: 'Pending' },
+  //   { name: 'Open Request', func: 'open' },
+  //   { name: 'Closed Request', func: 'closed' },
+  //   { name: 'Completed Request', func: 'complete' },
+  //   { name: 'All Request', func: 'all' },
+  //   { name: 'Admin', func: 'admin' }
+  // ];
   private _mobileQueryListener: () => void;
   constructor(
     public UsrDataService: UserDataService,
@@ -44,34 +47,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
   countSubsription:Subscription;
-  Request(type: string) {
-    this.main = type;
+  // Request(type: string) {
+  //   this.main = type;
     
-    if (type === 'Pending') {
-      this.router.navigate(['/AmbienceMax/pending']);
-    }
-    else if (type === 'all') {
-      this.router.navigate(['/AmbienceMax/allRequest']);
-    }
-     else if (type === 'closed') {
-      this.router.navigate(['/AmbienceMax/close']);
-      console.log('Closed Called');
-    } else if (type === 'open') {
-      this.router.navigate(['/AmbienceMax/open']);
-    }else if (type === 'complete') {
-      this.router.navigate(['/AmbienceMax/complete']);
-    }
+  //   if (type === 'Pending') {
+  //     this.router.navigate(['/AmbienceMax/pending']);
+  //   }
+  //   else if (type === 'all') {
+  //     this.router.navigate(['/AmbienceMax/allRequest']);
+  //   }
+  //    else if (type === 'closed') {
+  //     this.router.navigate(['/AmbienceMax/close']);
+  //     console.log('Closed Called');
+  //   } else if (type === 'open') {
+  //     this.router.navigate(['/AmbienceMax/open']);
+  //   }else if (type === 'complete') {
+  //     this.router.navigate(['/AmbienceMax/complete']);
+  //   }else if (type === 'admin') {
+    
+  //   }
+  // }
+  admin(){
+     let userId=localStorage.getItem('userId');
+     console.log("ff",userId);
+     this.router.navigate(['/AmbienceMax/admin',userId]);
   }
   ngOnInit() {
     console.log("ng!!!!");
+    this.userId=localStorage.getItem('userId');
     this.countSubsription=   this.UsrDataService.changedetectInRole.subscribe(data=>{
-      this.role_id = JSON.parse(localStorage.getItem('role_id'));
+      this.role_id = localStorage.getItem('role_id');
       this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
       console.log(data);
       this.menus=JSON.parse(JSON.stringify(data));
     })
-    this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    this.space= JSON.parse(localStorage.getItem('space')); 
+    this.role_id = localStorage.getItem('role_id');
+    this.space= localStorage.getItem('space'); 
 
     //get Request Count for pending,open,close,Complete,unread status 
     this.UsrDataService.getRequestCount(this.role_id,this.space).subscribe((res)=>{
@@ -87,6 +98,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if(this.UnreadStatusopen==null){this.UnreadStatusopen=0;}
 });
   });
+
+  //check if admin has already access or not
+  this.UsrDataService.adminCheck(this.userId).subscribe((data)=>{
+    this.checkAdmin=data[0]['admAccess']
+    });
+
   }
   ngOnDestroy(): void {
     this.countSubsription.unsubscribe();

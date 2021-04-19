@@ -45,6 +45,7 @@ export class ViewStatusComponent implements OnInit {
   }
   space
   ngOnInit() {
+    
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
     });

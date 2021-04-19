@@ -1,15 +1,16 @@
-import { environment } from './../../environments/environment';
+
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ReqSchema } from './ReqSchema';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
+import { Inject } from '@angular/core';
 @Injectable()
 export class UserDataService {
   changedetectInRole = new BehaviorSubject(null);
  // usersURL = "http://localhost:5600/api/users";
-  URL="http://localhost:3000/";
+ URL;
   httpOptions = {
 
     headers: new HttpHeaders({
@@ -19,7 +20,9 @@ export class UserDataService {
     })
 
   }
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router,@Inject('AMBI_API_URL') private apiUrl:string) {
+    this.URL=apiUrl;
+   }
   meType;
   userId = null;
   space = null;
@@ -123,6 +126,7 @@ export class UserDataService {
   getHomComment(req_id){
     return this.http.post<any>(this.URL+'getComment', { req_id });
   }
+  
 
   //.................(add Request)................//
   getRequestDetail(req_id) {
@@ -330,4 +334,20 @@ getFiles(x: string): Observable<any> {
   addWorkflow(w_flow){
     return this.http.post(this.URL+'addWorkflow',{w_flow});
   }
+
+  //..........get admin id and name for assiging the access priviledge[admin]...........//
+  getAdminIdAndName(){
+    return this.http.get(this.URL+'adminIdAndName');
+  }
+
+//.................add admin access [admin]................//
+  addAdminId(id){
+    return this.http.post(this.URL+'addAdminId',{id});
+  }
+
+  //check if admin has already privilege or not
+  adminCheck(id){
+    return this.http.post(this.URL+'adminCheck',{id});
+  }
+
 }

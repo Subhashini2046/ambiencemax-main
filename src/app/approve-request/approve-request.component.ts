@@ -41,7 +41,7 @@ export class ApproveRequestComponent implements OnInit {
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
 
     //get vendor Category
-    this.http.get<any>('http://localhost:3000/vendorcategories').subscribe((res) => {
+    this.http.get<any>(this.userDataService.URL+'vendorcategories').subscribe((res) => {
       this.vendorCategory = res;
       console.log("ddd", this.vendorCategory);
 

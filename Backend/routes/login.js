@@ -4,7 +4,6 @@ let express = require("express"),
   con = require("../mysql_config/config");
 
 router.post("/login", (req, res) => {
-  console.log("Login Route");
   var sql = `select admAdminPK,admName from dataadmin where admAdminPK = '${req.body.userId}'`;
   con.query(sql, function (err, result) {
     if (err) {
@@ -14,7 +13,6 @@ router.post("/login", (req, res) => {
       if (result.length == 1) {
         console.log(result);
         user_id = result[0].admAdminPK;
-        console.log("user_id",user_id);
         user_name=result[0].admName;
         var sql2 = `select linkRUMPAdminAccessPK,linkRUMPRoleFK,linkRuMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${user_id} order by linkRUMPRoleFK desc limit 1;`
         con.query(sql2, function (err, result) {
@@ -38,7 +36,6 @@ router.post("/login", (req, res) => {
           }
         })
       } else {
-        console.log("Fail");
         res.send(JSON.stringify({ result: "failed2" }));
       }
     }

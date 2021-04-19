@@ -132,35 +132,36 @@
         </form>
       </div>
       <div class="text-center" *ngIf="(!this.req_id)">
-        <button mat-raised-button class="col-bg-button" (click)="form.valid ? onSubmit() : null"
+        <button mat-raised-button class="col-bg-button" style="color: white" (click)="form.valid ? onSubmit() : null"
           [disabled]="!form.valid">
           Raise Request
         </button>
       </div>
 
+
       <div class="text-center">
         <br>
         <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
           <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
-            <button mat-raised-button class="col-bg-button" (click)=" onApprove()">
+            <button mat-raised-button class="col-bg-button" style="color: white" (click)=" onApprove()">
               Approve
             </button>
           </div>
           
           <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
           || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
-            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" (click)=onResend()>
+            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
               Resend
             </button>
             <div class="text-center">
             <div class="form-row">
               <div class="form-group col-md-5">
-            <button  *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" (click)=onSumbitForUpdate()>
+            <button  *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onSumbitForUpdate()>
              Sumbit
             </button>
               </div>
               <div class="form-group col-md-5">
-            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" (click)=onResend()>
+            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
               Resend
             </button>
           </div>
@@ -246,13 +247,13 @@
       <div class="text-center">
         <div class="form-row" *ngIf="(this.role_id==3 || this.role_id==4)">
           <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" (click)="BOQform.valid ? onBOQSubmit() : null"
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="BOQform.valid ? onBOQSubmit() : null"
               [disabled]="!BOQform.valid">
               Submit
             </button>
           </div>
             <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" (click)="onResend()">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onResend()">
               Resend
             </button>
          </div>
@@ -407,14 +408,14 @@
           <br>
           <div class="form-group col-md-5"
             *ngIf="((this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed'))">
-            <button type="submit" mat-raised-button class="col-bg-button" (click)="onPncSumbit()" 
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onPncSumbit()" 
              [disabled]="onPncChange()">
               Submit
             </button>
           </div>
           <div class="form-group col-md-5"
           *ngIf="(this.role_id==0 && this.actualCost1!=null)">
-          <button type="submit" mat-raised-button class="col-bg-button" (click)="onResend()" 
+          <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onResend()" 
            >
             Resend
           </button>
