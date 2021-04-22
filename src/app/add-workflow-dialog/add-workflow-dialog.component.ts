@@ -13,7 +13,7 @@ export class AddWorkflowDialogComponent implements OnInit {
   approverArray = [];
   userLocation: any[] = [];
   userRole: any[] = [];
-  user=1;
+  user1=1;
   constructor(public dialogRef: MatDialogRef<AddWorkflowDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public userDataService: UserDataService, private formBuilder: FormBuilder) {
   }
@@ -26,7 +26,6 @@ export class AddWorkflowDialogComponent implements OnInit {
     return this.formBuilder.group({
       role: ['Jon'],
       user: ['Jon'],
-      userList:[[]],
       accessId: ['Jon'],
     })
   }
@@ -51,7 +50,6 @@ export class AddWorkflowDialogComponent implements OnInit {
 // add the selected data(role,accessId) into createItem() 
   addNext() {
     (this.checkoutForm.controls['items'] as FormArray).push(this.createItem())
-    console.log(this.checkoutForm.controls['items']);
   }
 
   roleId;

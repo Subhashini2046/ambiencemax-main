@@ -8,6 +8,7 @@ var con = mysql.createConnection({
   multipleStatements: true
 });
 
+
 con.connect((err) => {
   if (!err) {
     console.log('DB connection successful!');

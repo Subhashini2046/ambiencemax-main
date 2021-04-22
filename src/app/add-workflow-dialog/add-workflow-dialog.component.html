@@ -4,14 +4,14 @@
       Add Workflow
     </h3>
     <hr>
-    <div formArrayName="items" *ngFor="let item of checkoutForm.controls['items'].controls; let i = index">
+    <div formArrayName="items" *ngFor="let item of checkoutForm.controls['items']['controls']; let i = index">
       <div class="form-row" [formGroupName]="i">
 
         <div class="form-group col-md-3">
           <label>Role</label>
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select Role</mat-label>
-            <mat-select formControlName="role" (ngModelChange)="onChanged($event)">
+            <mat-select formControlName="role"  (ngModelChange)="onChanged($event)">
               <mat-option *ngFor="let topping of userRole" [value]="topping.pickRUMPRolePK">
                 {{topping.pickRUMPRoleDescription}}</mat-option>
             </mat-select>
@@ -36,8 +36,8 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="form-group col-md-3" *ngIf=" roleId!=0">
-          <button type="button" mat-raised-button class="col-bg-button" style="color: white" (click)="addNext()">
+        <div class="form-group col-md-3">
+          <button type="button" mat-raised-button class="col-bg-button" style="color: white;outline:none" (click)="addNext()">
             Add more roles
           </button>
        
