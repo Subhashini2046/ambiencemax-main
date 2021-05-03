@@ -20,6 +20,11 @@ export interface Workflow {
   flow: string;
   location: string;
 }
+
+export interface wFlow{
+  wId:number;
+  wFlow:string;
+}
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
@@ -34,6 +39,14 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
   public adminIdAndNameFilterCtrl: FormControl = new FormControl();
   public adminIdAndNamefiltered: ReplaySubject<admin[]> = new ReplaySubject<admin[]>(1);
   protected _onDestroy = new Subject<void>();
+
+  wFlow:wFlow;
+  wflowIdAndFlow:wFlow[]=[];
+  public wflowIdAndFlowCtrl: FormControl = new FormControl();
+  public wflowIdAndFlowFilterCtrl: FormControl = new FormControl();
+  public wflowIdAndFlowfiltered: ReplaySubject<wFlow[]> = new ReplaySubject<wFlow[]>(1);
+  protected _onDestroys = new Subject<void>();
+
   AppList: string[] = ['Geography','Country', 'State',  'City','Building','Location'];
   displayedColumns: string[] = ['ID','Hierarchy', 'Location','details'];
   approverArray = [];
@@ -49,6 +62,10 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
   userId;
   checkUserId=346755;
   fetechHierarchy:any[]=[];
+  revokeAccess;
+  updateAccess;
+  adminId;
+  location;
   workflowDetails: Workflow[] = [
     // tslint:disable-next-line: max-line-length
   ];
@@ -74,7 +91,7 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
 
   //it will open the dialog for creating the new worlflow.
   openWorkflowDialog(): void {
-    let dialogRef = this.dialog.open(AddWorkflowDialogComponent, {width: '1200px'
+    let dialogRef = this.dialog.open(AddWorkflowDialogComponent, {width: '700px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -89,6 +106,7 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
     this.userDataService.getFlow().subscribe((data:any)=>{
       this.dataSource.data=data;
     });
+    
 
     if(this.userId==this.checkUserId){
     this.userDataService.getAdminIdAndName().subscribe((data:any)=>{
@@ -105,6 +123,25 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
           this.adminIdAndNamefilter();
         });
     })}
+
+    this.userDataService.getwFlow().subscribe((data:any)=>{
+      this.wflowIdAndFlow=data;
+       //this.adminIdAndNameCtrl.setValue(this.adminIdAndName);
+       
+       // load the initial admin list
+       this.wflowIdAndFlowfiltered.next(this.wflowIdAndFlow.slice());
+   
+       // listen for search field value changes
+       this.wflowIdAndFlowFilterCtrl.valueChanges
+         .pipe(takeUntil(this._onDestroy))
+         .subscribe(() => {
+           this.wflowIdAndFlowfilter();
+         });
+     })
+
+    
+
+
   }
 
 // to serach a location etc.
@@ -115,12 +152,16 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
 
   // add w_flow id and b_id in linkrumprequestinitiators
   onAddLink() {
-    console.log(this.b_id,this.work_id);
-    this.userDataService.addLink(this.work_id,this.b_id).subscribe((data)=>{
+    console.log(this.b_id,this.wflowIdAndFlowCtrl.value);
+    this.userDataService.addLink(this.wflowIdAndFlowCtrl.value,this.b_id).subscribe((data)=>{
       this.onAddlink=data["result"]
       console.log(data);
+      if(this.onAddlink!=2){
       if(this.onAddlink!=1) {     
-      alert("Successfully Added");}
+      alert("Successfully Added");
+      this.userDataService.getFlow().subscribe((data:any)=>{
+        this.dataSource.data=data;
+      });}}
     });
     return false;
 
@@ -128,6 +169,7 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
 
 // once the location is selected,it will display all locName in dropdown similarly for others also.
   onChanged(event: any) {
+    if(event!=null){
     if (event.includes('Location')) {
     this.userDataService.getHierarchy(event).subscribe((res) => {
       this.fetechHierarchy.length=0
@@ -171,7 +213,7 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
       this.onAddlink='';
       this.fetechHierarchy.push(res);
     }); }
-
+  }
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -182,6 +224,8 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
   ngOnDestroy() {
     this._onDestroy.next();
     this._onDestroy.complete();
+    this._onDestroys.next();
+    this._onDestroys.complete();
   }
 
   // protected setInitialValue() {
@@ -191,6 +235,26 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
   //       this.singleSelect.compareWith = (a: admin, b: admin) => a && b && a.adminPK === b.adminPK;
   //     });
   // }
+
+  protected wflowIdAndFlowfilter() {
+    if (!this.wflowIdAndFlow) {
+      return;
+    }
+    // get the search keyword
+    let search = this.wflowIdAndFlowFilterCtrl.value;
+    if (!search) {
+      this.wflowIdAndFlowfiltered.next(this.wflowIdAndFlow.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+
+    }
+    // filter the banks
+    this.wflowIdAndFlowfiltered.next(
+      this.wflowIdAndFlow.filter(admin1 => admin1.wFlow.toLowerCase().indexOf(search) > -1)
+
+    );
+  }
   protected adminIdAndNamefilter() {
     if (!this.adminIdAndName) {
       return;
@@ -213,7 +277,9 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
 
   //check if user has already privilege or not
   onAdminChanged(adminId){
+    this.adminId=adminId
     this.updateadmin=0;
+   this.revokeAccess=0;
     this.userDataService.adminCheck(adminId).subscribe((data)=>{
     this.checkAdmin=data[0]['admAccess']
     })
@@ -223,8 +289,19 @@ export class AdminPanelComponent implements OnInit,AfterViewInit {
   onsubmit(){
     this.userDataService.addAdminId(this.adminIdAndNameCtrl.value).subscribe((data:any)=>{    
       alert("Successfully Assigned");
-      this.updateadmin=data['result']
+      this.updateadmin=data['result'];
+      this.onAdminChanged(this.adminId);
     })
     return false;
+  }
+
+//Revoke access from user
+  onRevokeAcess(){
+    this.userDataService.revokeAccess(this.adminIdAndNameCtrl.value).subscribe((data:any)=>{    
+      alert("Successfully Access Revoked");
+      this.revokeAccess=data['result'];
+      this.onAdminChanged(this.adminId);
+      return false;
+    })
   }
 }

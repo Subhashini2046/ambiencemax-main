@@ -350,4 +350,12 @@ getFiles(x: string): Observable<any> {
     return this.http.post(this.URL+'adminCheck',{id});
   }
 
+//Revoke access from userF
+  revokeAccess(id){
+    return this.http.post(this.URL+'revokeAccess',{id});
+  }
+
+  getwFlow(){
+    return this.http.get(this.URL+'wFlow');
+  }
 }

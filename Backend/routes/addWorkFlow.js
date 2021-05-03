@@ -69,15 +69,19 @@ router.post("/getFlowDetails", (req, res) => {
 })
 
 router.get("/getFlow", (req, res) => {
-  sql = `select COALESCE(locname,buiname,cluname,citname) as name,
+  sql = `select COALESCE(locname,buiname,cluname,citname,geoName,couName,staName) as name,
   COALESCE( replace(locLocationPK,locLocationPK,'Location'),replace(buiBuildingPK,buiBuildingPK,'Building'),
-  replace(cluClubPK,cluClubPK,'Cluster'),replace(citCityPK,citCityPK,'City') )
+  replace(cluClubPK,cluClubPK,'Cluster'),replace(citCityPK,citCityPK,'City'),replace(staStatePK,staStatePK,'City'),
+  replace(couCountryPK,couCountryPK,'Country'),replace(geoGeographyPK,geoGeographyPK,'Geography'))
   as hierarchy,linkrumprequestflow.linkrumprequestflowpk as w_id,
       linkrumprequestflow.w_flow as w_flow from linkrumprequestinitiators 
-      left join datalocation on(datalocation.locLocationPK=linkrumprequestinitiators.b_id)
-      left join databuilding on(databuilding.buiBuildingPK=linkrumprequestinitiators.b_id)
-      left join dataclub on(dataclub.cluclubpk=linkrumprequestinitiators.b_id)
-      left join datacity on(datacity.citCityPK=linkrumprequestinitiators.b_id)
+      left join datalocation on(datalocation.locLocationPK LIKE linkrumprequestinitiators.b_id)
+      left join databuilding on(databuilding.buiBuildingPK LIKE linkrumprequestinitiators.b_id)
+      left join dataclub on(dataclub.cluclubpk LIKE linkrumprequestinitiators.b_id)
+      left join datacity on(datacity.citCityPK LIKE linkrumprequestinitiators.b_id)
+      left join datacountry on(datacountry.couCountryPK LIKE linkrumprequestinitiators.b_id)
+	  left join datageography on(datageography.geoGeographyPK LIKE linkrumprequestinitiators.b_id)
+      left join datastate on(datastate.staStatePK LIKE linkrumprequestinitiators.b_id)
       left join linkrumprequestflow on(linkrumprequestflow.linkrumprequestflowpk=linkrumprequestinitiators.work_id);`
   con.query(sql, (err, result) => {
     if (err) {
@@ -189,7 +193,7 @@ router.post("/addLink", (req, res) => {
   work_id = req.body.work_id;
   b_id = req.body.b_id;
 
-  sql = `select * from linkrumprequestinitiators where (b_id='${b_id}' and work_id=${work_id})`;
+  sql = `select * from linkrumprequestinitiators where (b_id='${b_id}' and work_id=${work_id});`
   con.query(sql,(err, result) => {
     if (err) {
       console.log(err);
@@ -198,13 +202,25 @@ router.post("/addLink", (req, res) => {
         res.end(JSON.stringify({result:1}));
       }
       else{
-      sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},'${b_id}')`;
+      sql = `select * from linkrumprequestflow where linkrumprequestflowpk=${work_id};` 
+      con.query(sql,(err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          if(result.length==0){
+            console.log("result",result.length);
+            res.end(JSON.stringify({result:2}));
+          }
+          else{    
+      sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},'${b_id}');`
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
         } else {
           res.send(result);
         }
+      })
+    }}
       })}
     }
   })
@@ -235,6 +251,24 @@ router.post("/addAdminId", (req, res) => {
   adminPK,(err, result) => {
     if (err) throw err;
     res.end(JSON.stringify({result:1})); 
-  })
-})
+  });
+});
+
+//Revoke access from user
+router.post("/revokeAccess", (req, res) => {
+  adminPK = req.body.id;
+  con.query(`update dataadmin set admAccess=0 where admAdminPK=?;`,
+  adminPK,(err, result) => {
+    if (err) throw err;
+    res.end(JSON.stringify({result:1})); 
+  });
+});
+
+router.get("/wFlow",(req,res)=> {
+  con.query(`select linkrumprequestflowpk as wId,concat(linkrumprequestflowpk,' (',w_flow,')') as wFlow from linkrumprequestflow;`,
+  (err,result)=>{
+    if (err) throw err;
+    res.end(JSON.stringify(result))
+  });
+});
 module.exports = router;

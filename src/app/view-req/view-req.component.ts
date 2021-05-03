@@ -221,6 +221,7 @@ export class ViewReqComponent implements OnInit {
   }
  
 
+  
   // download pdf of request form
   ExportPDF() {
     this.userDataService.getpdfTableData(this.req_id).subscribe((res: any) => {

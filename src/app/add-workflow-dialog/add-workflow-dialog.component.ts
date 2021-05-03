@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject} from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UserDataService } from '../Services/UserDataService';
-import { FormBuilder, FormArray} from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-add-workflow-dialog',
   templateUrl: './add-workflow-dialog.component.html',
@@ -13,20 +13,28 @@ export class AddWorkflowDialogComponent implements OnInit {
   approverArray = [];
   userLocation: any[] = [];
   userRole: any[] = [];
-  user1=1;
+  userRole1: any[] = [];
+  user1 = 1;
+  role = '';
+  selectedRole;
+  checkUser = 0;
+  countRole = 0;
+  checkLocation = 0;
   constructor(public dialogRef: MatDialogRef<AddWorkflowDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public userDataService: UserDataService, private formBuilder: FormBuilder) {
   }
-  
+
   onNoClick(): void {
     this.dialogRef.close();
   }
 
   createItem() {
     return this.formBuilder.group({
-      role: ['Jon'],
-      user: ['Jon'],
-      accessId: ['Jon'],
+      role: [''],
+      user: [''],
+      accessId: [''],
+      userlist: [[]],
+      locationlist: [[]]
     })
   }
 
@@ -37,40 +45,89 @@ export class AddWorkflowDialogComponent implements OnInit {
 
     // get all role like intiator,location head etc
     this.userDataService.getUserRole().subscribe((res: any) => {
-      this.userRole = res;
+      for (let i = 0; i < res.length; i++) {
+        if (res[i]['pickRUMPRoleDescription'].includes('Initiator')) {
+          res[i]['pickRUMPRoleDescription'] = 'Initiator For PNC';
+          this.userRole.push(res[i]);
+        }
+        else {
+          this.userRole.push(res[i])
+        }
+      }
     });
 
     this.checkoutForm = this.formBuilder.group({
       items: this.formBuilder.array([this.createItem()])
     })
 
-    
+
   }
 
-// add the selected data(role,accessId) into createItem() 
+  // add the selected data(role,accessId) into createItem() 
   addNext() {
     (this.checkoutForm.controls['items'] as FormArray).push(this.createItem())
+    //console.log(this.roleId);
+    // console.log(this.userRole);
   }
 
   roleId;
 
   // get admin name
-  onChanged(event: any) {
+  onChanged(event: any, i: FormGroup, j) {
     this.roleId = event;
+    this.countRole = 0;
+    let len = this.checkoutForm.value.items.length;
+    if (this.roleId != 0) {
+      if (this.checkoutForm.value.items[len - 1]["role"] != null) {
+        if (this.checkoutForm.value.items[len - 1]["user"].toString() == "") {
+          this.checkUser = 1;
+        }
+      }
+    }
+    console.log("i", this.checkUser);
+    for (let i = 0; i < this.checkoutForm.value.items.length; i++) {
+      if (this.checkoutForm.value.items[i]["role"] == this.roleId) {
+        this.countRole++;
+        console.log(this.countRole, this.roleId);
+      }
+      if (this.countRole == 2) {
+        this.selectedRole = this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription'];
+        console.log(this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription']);
+        console.log("rrr", this.countRole);
+        break;
+      }
+    }
     if (this.roleId != 0) {
       this.userDataService.getUsersWorkflow(event).subscribe((res: any) => {
-        this.users = res;
+        i.get('userlist').setValue(res);
       });
     }
   }
-  
-
   // get location like speez etc.
-  onUsers(userId: any) {
+  onUsers(userId: any, i: FormGroup) {
+    if (this.roleId != 0) {
+      let len = this.checkoutForm.value.items.length;
+      if (this.checkoutForm.value.items[len - 1]["user"] != null) {
+        this.checkUser = 0;
+        if (this.checkoutForm.value.items[len - 1]['accessId'].toString() == "") {
+          this.checkLocation = 1;
+        }
+      }
+    }
     this.userDataService.getUserLocation(userId, this.roleId).subscribe((res: any) => {
-      this.userLocation = res;
+      // this.userLocation = res;
+      i.get('locationlist').setValue(res);
     });
 
+  }
+
+  onLocation() {
+    if (this.roleId != 0) {
+      let len = this.checkoutForm.value.items.length;
+      if (this.checkoutForm.value.items[len - 1]['accessId'].toString() != "") {
+        this.checkLocation = 0;
+      }
+    }
   }
   newWorkflow: any[] = []
   newVal;
@@ -78,6 +135,7 @@ export class AddWorkflowDialogComponent implements OnInit {
     for (let i = 0; i < this.checkoutForm.value.items.length; i++) {
 
       if (this.checkoutForm.value.items[i]["role"] == 3) {
+        console.log(this.checkoutForm.value.items[i]["accessId"]);
         this.newVal = this.checkoutForm.value.items[i]["accessId"] + 'cor';
       }
       else if (this.checkoutForm.value.items[i]["role"] == 0) {
@@ -85,17 +143,17 @@ export class AddWorkflowDialogComponent implements OnInit {
       }
       else if (this.checkoutForm.value.items[i]["role"] == 4) {
         let newVal1 = this.checkoutForm.value.items[i]["accessId"] + 'e';
-        this.newVal = this.newVal + newVal1
+        this.newVal = this.newVal + newVal1;
         this.newWorkflow.push(this.newVal);
       }
       else { this.newWorkflow.push(this.checkoutForm.value.items[i]["accessId"]) }
     }
+    console.log(this.newWorkflow);
     this.userDataService.addWorkflow(this.newWorkflow).subscribe((res: any) => {
       console.log('inserted');
+      alert("Successfully Workflow Added");
+      this.dialogRef.close();
     })
-    console.log(this.newWorkflow);
-    console.log(this.checkoutForm.value.items);
-    this.dialogRef.close();
-   // return false;
+    return false;
   }
 }

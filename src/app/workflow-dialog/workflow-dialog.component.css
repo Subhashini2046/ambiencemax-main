@@ -4,3 +4,14 @@
   .make-Gold{
     background-color:  rgba(243, 236, 234, 0.233);
   }
+
+  .ex1{
+    margin-top: 5px;
+    background-color:  rgba(106, 135, 223, 0.644);
+  }
+  mat-card-title{
+    /* background: linear-gradient(to right, #000046, #1cb5e0); */
+    width: 100% !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size:large;
+  }
