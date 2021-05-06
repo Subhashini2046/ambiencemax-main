@@ -22,11 +22,18 @@ form{
     padding: 10px;
    
   }
+  .mat-select{
+    font-size: 14px;   
+}
   .column_left{
     float: left;
     width: 20%;
     padding: 10px;
     margin-left: 180px;
+  }
+  .m1 {
+    /* margin: 50px; */
+    margin-top: 50px;  
   }
   
   /* Clear floats after the columns */
@@ -54,4 +61,12 @@ form{
   }
   mat-error{
     font-size: small;
+  }
+  mat-label{
+    font-size: small;
+  }
+  .request-Tab{
+    width: 100% !important;
+    font-size: large;
+    font-family:'Roboto', 'Times New Roman', Times, serif;
   }

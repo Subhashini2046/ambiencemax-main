@@ -22,3 +22,8 @@ mat-card-title{
 mat-error{
   font-size: small;
 }
+.request-Tab{
+  width: 100% !important;
+  font-size: large;
+  font-family:'Roboto', 'Times New Roman', Times, serif;
+}

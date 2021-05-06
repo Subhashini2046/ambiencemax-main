@@ -55,7 +55,7 @@ router.post("/getFlowDetails", (req, res) => {
       left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
       inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
       inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK)
-      where linkRUMPAdminAccessPK in (?) order by linkrumprolefk;`
+      where linkRUMPAdminAccessPK in (?);`
       con.query(sql, [wflowdata], (err, result) => {
         if (err) {
           console.log(err);
@@ -127,6 +127,8 @@ router.post("/getHierarchy", (req, res) => {
 
 router.post("/getUsersWorkflow", (req, res) => {
   let role = req.body.role;
+let result1=[];
+if(role!=0){
 sql='select distinct dataadmin.admName as name,linkrumpadminaccess.linkRUMPAdminFK as userId from linkrumpadminaccess inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK) where linkRUMPRoleFK=?;'
   con.query(sql,role, (err, result) => {
     if (err) {
@@ -135,11 +137,21 @@ sql='select distinct dataadmin.admName as name,linkrumpadminaccess.linkRUMPAdmin
       res.send(result);
     }
   })
+}
+else
+{
+  res.send(result1);
+}
 })
 
 router.post("/getUserLocation", (req, res) => {
   let roleId = req.body.roleId;
   let userId=req.body.userId;
+  let result1=[];
+  if(roleId==0){
+    res.send(result1);
+  }
+  else{
   if (roleId==1) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
     where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
@@ -159,6 +171,7 @@ router.post("/getUserLocation", (req, res) => {
       res.send(result);
     }
   })
+}
 });
 
 

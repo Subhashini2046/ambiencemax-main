@@ -3,84 +3,9 @@
 
     <mat-card-content class="example-card">
       <mat-card>
-        <mat-card class="ex1 text-center">
-          <mat-card-title> Existing assigned workflows</mat-card-title>
-        </mat-card>
-        <mat-form-field>
-          <mat-label>Filter</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
-        </mat-form-field>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-          <ng-container matColumnDef="ID">
-            <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
-            <td mat-cell *matCellDef="let element">
-              <p class="text-center">
-                {{element.w_id}}
-              </p>
-            </td>
-
-          </ng-container>
-          <ng-container matColumnDef="Hierarchy" class="text-center">
-            <th class="text-center" mat-header-cell *matHeaderCellDef>Hierarchy</th>
-            <td mat-cell *matCellDef="let element">
-              <p class="text-center">
-                {{element.hierarchy}}
-              </p>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Location" class="text-center">
-            <th class="text-center" mat-header-cell *matHeaderCellDef>Location</th>
-            <td mat-cell *matCellDef="let element">
-              <p class="text-center">
-                {{element.name}}
-              </p>
-            </td>
-          </ng-container>
-
-
-          <ng-container matColumnDef="details" class="text-center">
-            <th class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
-            <td mat-cell *matCellDef="let element">
-              <p class="text-center">
-                <button mat-button style="outline:none;" class="stylepopupbuttonconfirm"
-                  (click)='openDialog(element. w_id,element.w_flow)'>
-                  View Details
-                </button>
-              </p>
-            </td>
-          </ng-container>
-
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        <mat-paginator [pageSizeOptions]="[3]"></mat-paginator>
-      </mat-card>
-      <br>
-      <mat-card>
-        <mat-card class="ex1 text-center">
-          <mat-card-title> Add new workflows & hierarchies</mat-card-title>
-        </mat-card>
-        <br>
-        <form #form="ngForm" (submit)="form.reset()">
-          <div class="text-center">
-            <button mat-button style="outline:none;" class="text-center stylepopupbuttonconfirm"
-              (click)='openWorkflowDialog()'>
-              Add Workflow
-            </button>
-          </div>
-        </form>
-      </mat-card>
-    </mat-card-content>
-
-  </div>
-
-  <div class="col-lg-6">
-    <mat-card-content class="example-card">
-      <mat-card>
-        <div *ngIf="userId==checkUserId">
+        <div *ngIf="checkAdminAcess==1">
           <mat-card class="ex1 text-center">
-            <mat-card-title>Assign or Revoke AmbienceMax Configuration Access to User</mat-card-title>
+            <span class="request-Tab">Assign or Revoke AmbienceMax Configuration Access to User</span>
           </mat-card>
           <br>
           <form action="" #aform="ngForm">
@@ -100,19 +25,22 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <mat-error *ngIf="checkAdmin==1 || revokeAccess==1">This user already has privilege.!!!</mat-error>
+            <!-- <mat-error *ngIf="checkAdmin==1 || revokeAccess==1">This user already has privilege.!!!</mat-error> -->
+            <!-- <mat-error *ngIf="checkLoggedUser==1">Logged in user cannot revoke or assign access to himself.</mat-error> -->
+            <!-- <mat-error *ngIf="(checkSuperUser==1 && userId!=checkUserId)">Superuser access cannot be revoked.</mat-error> -->
+
             <div class="text-center">
               <div class="form-row">
                 <div class="form-group col-md-5">
                   <button type="submit" mat-raised-button class="col-bg-accent" style="color: white;outline:none;"
-                    [disabled]="adminIdAndNameCtrl.value==null || checkAdmin==1 || updateadmin==1"
+                    [disabled]="adminIdAndNameCtrl.value==null || checkAdmin==1 || updateadmin==1 || checkLoggedUser==1"
                     (click)="onsubmit(); aform.reset()">
                     Assign
                   </button>
                 </div>
                 <div class="form-group col-md-5">
                   <button type="submit" mat-raised-button class="col-bg-accent" style="color: white;outline:none;"
-                    [disabled]="adminIdAndNameCtrl.value==null || checkAdmin==0 ||revokeAccess==1"
+                    [disabled]="adminIdAndNameCtrl.value==null || checkAdmin==0 ||revokeAccess==1 || checkSuperUser==1 ||checkLoggedUser==1"
                     (click)="onRevokeAcess(); aform.reset()">
                     Revoke Access
                   </button>
@@ -122,10 +50,30 @@
           </form>
         </div>
       </mat-card>
-      <br>
+    <br>
       <mat-card>
         <mat-card class="ex1 text-center">
-          <mat-card-title> Link Hierarchy to Workflow</mat-card-title>
+          <span class="request-Tab"> Add new workflows & hierarchies</span>
+        </mat-card>
+        <br>
+        <form #form="ngForm" (submit)="form.reset()">
+          <div class="text-center">
+            <button mat-button style="outline:none;" class="text-center stylepopupbuttonconfirm"
+              (click)='openWorkflowDialog()'>
+              Add Workflow
+            </button>
+          </div>
+        </form>
+      </mat-card>
+    </mat-card-content>
+
+  </div>
+
+  <div class="col-lg-6">
+    <mat-card-content class="example-card">
+      <mat-card>
+        <mat-card class="ex1 text-center">
+          <span class="request-Tab">Link Hierarchy to Workflow</span>
         </mat-card>
         <br>
         <form action="" #hform="ngForm">
@@ -179,6 +127,61 @@
             <div class="col"></div>
           </div>
         </form>
+      </mat-card>
+      <br>
+      <mat-card>
+        <mat-card class="ex1 text-center">
+          <span class="request-Tab"> Existing assigned workflows</span>
+        </mat-card>
+        <mat-form-field>
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
+        </mat-form-field>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <ng-container matColumnDef="ID">
+            <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="text-center">
+                {{element.w_id}}
+              </p>
+            </td>
+
+          </ng-container>
+          <ng-container matColumnDef="Hierarchy" class="text-center">
+            <th class="text-center" mat-header-cell *matHeaderCellDef>Hierarchy</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="text-center">
+                {{element.hierarchy}}
+              </p>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Location" class="text-center">
+            <th class="text-center" mat-header-cell *matHeaderCellDef>Location</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="text-center">
+                {{element.name}}
+              </p>
+            </td>
+          </ng-container>
+
+
+          <ng-container matColumnDef="details" class="text-center">
+            <th class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="text-center">
+                <button mat-button style="outline:none;" class="stylepopupbuttonconfirm"
+                  (click)='openDialog(element. w_id,element.w_flow)'>
+                  View Details
+                </button>
+              </p>
+            </td>
+          </ng-container>
+
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[3]"></mat-paginator>
       </mat-card>
     </mat-card-content>
   </div>
