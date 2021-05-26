@@ -597,6 +597,7 @@ router.post("/check_asUnRead", (req, res) => {
 });
 
 router.post("/saveDraftRequest", (req, res) => {
+  console.log("saveDraftRequest",req.body);
   let me_type = 0
   if(req.body.request.me_type != ''){
   if (req.body.request.me_type == "Civil") {
@@ -680,10 +681,10 @@ router.post("/updateDraftRequest", (req, res) => {
 
 router.post("/fetchAllDraftRequest", (req, res) => {
   console.log(req.body.space);
-  sql = `select RUMPRequestPK,RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,
+  sql = `select RUMPRequestPK,if(RUMPRequestType="","No Request Type",RUMPRequestType) as RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,
   RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,RUMPRequestBalanceBudget,
-  if(RUMPRequestSubject="",RUMPRequestSubject,concat(RUMPRequestSubject," - ")) as RUMPRequestSubject,
-  RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${req.body.space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
+  if(RUMPRequestSubject="","(No Subject)",concat(RUMPRequestSubject,"")) as RUMPRequestSubject,
+  if(RUMPRequestDescription="",concat(" - ","No Description Available"),concat(" - ",RUMPRequestDescription)) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${req.body.space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);

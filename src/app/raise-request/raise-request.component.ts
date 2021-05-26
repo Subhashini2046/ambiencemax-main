@@ -4,9 +4,9 @@ import { MatSnackBar } from '@angular/material';
 import { ReqSchema } from '../Services/ReqSchema';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import {Subject} from 'rxjs';
-import {auditTime} from 'rxjs/operators';
-import { FormBuilder,FormControl,Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { auditTime } from 'rxjs/operators';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'app-raise-request',
   templateUrl: './raise-request.component.html',
@@ -36,7 +36,7 @@ export class RaiseRequestComponent implements OnInit {
   draftReqId;
   requestDetails: any[] = [];
   public keyUp = new Subject<KeyboardEvent>();
-  constructor(private formBuilder: FormBuilder,private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
       req_swon: '',
@@ -66,7 +66,7 @@ export class RaiseRequestComponent implements OnInit {
     balance_budget: 0,
     req_subject: '',
     req_description: '',
-    draftReqId:0
+    draftReqId: 0
   };
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
@@ -77,93 +77,93 @@ export class RaiseRequestComponent implements OnInit {
     this.actrouter.params.subscribe(params => {
       this.draftReqId = +params['id'];
     });
-    if(this.draftReqId>0){
+    if (this.draftReqId > 0) {
       this.fetchDraftRequest(this.draftReqId);
     }
   }
-  fetchDraftRequest(draftReqId){
-    this.UserDataService.fetchDraftRequest(draftReqId).subscribe((response:any)=>{
-      this.requestDetails=response
+  fetchDraftRequest(draftReqId) {
+    this.UserDataService.fetchDraftRequest(draftReqId).subscribe((response: any) => {
+      this.requestDetails = response
       this.checkoutForm.controls['req_swon'].setValue(this.requestDetails[0]["RUMPRequestSWON"]);
       this.checkoutForm.controls['available_budget'].setValue(this.requestDetails[0]["RUMPRequestAvailableBudget"]);
       this.checkoutForm.controls['consumed_budget'].setValue(this.requestDetails[0]["RUMPRequestConsumedBudget"]);
       this.checkoutForm.controls['balance_budget'].setValue(this.requestDetails[0]["RUMPRequestBalanceBudget"]);
       this.checkoutForm.controls['subject'].setValue(this.requestDetails[0]["RUMPRequestSubject"]);
       this.checkoutForm.controls['description'].setValue(this.requestDetails[0]["RUMPRequestDescription"]);
-     if(this.requestDetails[0]["RUMPRequestMEType"]==0){
-      this.checkoutForm.controls['me_type'].setValue("Civil");}
-      if(this.requestDetails[0]["RUMPRequestMEType"]==1){
-        this.checkoutForm.controls['me_type'].setValue("Electrical");}
-    if(this.requestDetails[0]["RUMPRequestBudgetType"]==0){
-      this.checkoutForm.controls['budget_type'].setValue("Capex");
-    }
-    if(this.requestDetails[0]["RUMPRequestBudgetType"]==1){
-      this.checkoutForm.controls['budget_type'].setValue("Opex");
-  }
-  if(this.requestDetails[0]["RUMPRequestType"]=="Upgrade"){
-    this.checkoutForm.controls['req_type'].setValue("Upgrade");
-  } if(this.requestDetails[0]["RUMPRequestType"]=="Repair"){
-    this.checkoutForm.controls['req_type'].setValue("Repair");
-  } if(this.requestDetails[0]["RUMPRequestType"]=="Maintenance"){
-    this.checkoutForm.controls['req_type'].setValue("Maintenance");
-  }
+      if (this.requestDetails[0]["RUMPRequestMEType"] == 0) {
+        this.checkoutForm.controls['me_type'].setValue("Civil");
+      }
+      if (this.requestDetails[0]["RUMPRequestMEType"] == 1) {
+        this.checkoutForm.controls['me_type'].setValue("Electrical");
+      }
+      if (this.requestDetails[0]["RUMPRequestBudgetType"] == 0) {
+        this.checkoutForm.controls['budget_type'].setValue("Capex");
+      }
+      if (this.requestDetails[0]["RUMPRequestBudgetType"] == 1) {
+        this.checkoutForm.controls['budget_type'].setValue("Opex");
+      }
+      if (this.requestDetails[0]["RUMPRequestType"] == "Upgrade") {
+        this.checkoutForm.controls['req_type'].setValue("Upgrade");
+      } if (this.requestDetails[0]["RUMPRequestType"] == "Repair") {
+        this.checkoutForm.controls['req_type'].setValue("Repair");
+      } if (this.requestDetails[0]["RUMPRequestType"] == "Maintenance") {
+        this.checkoutForm.controls['req_type'].setValue("Maintenance");
+      }
     });
   }
   ngAfterContentInit() {
 
-    if(this.draftReqId>0){
-      this.checkoutForm.valueChanges.pipe(auditTime(1000)).subscribe((formData:any) =>{ 
-          this.UpdateautoSaveFormData();
-      });
-    }else{
-    this.checkoutForm.valueChanges.pipe(auditTime(1000)).subscribe((formData:any) =>{ 
-      if (this.raiseRequestId > 0)
+    if (this.draftReqId > 0) {
+      this.checkoutForm.valueChanges.pipe(auditTime(1000)).subscribe((formData: any) => {
         this.UpdateautoSaveFormData();
-      else
-        this.autoSaveFormData();
-    });}
+      });
+    } else {
+      this.checkoutForm.valueChanges.pipe(auditTime(1000)).subscribe((formData: any) => {
+        if (this.raiseRequestId > 0) {
+          this.UpdateautoSaveFormData();
+        }
+        else
+          this.autoSaveFormData();
+      });
+    }
+  }
+  passCheckoutFormDataToCuuReq() {
+    this.currReq.me_type = this.checkoutForm.value.me_type
+    this.currReq.req_swon = this.checkoutForm.value.req_swon
+    this.currReq.budget_type = this.checkoutForm.value.budget_type
+    this.currReq.req_type = this.checkoutForm.value.req_type
+    this.currReq.available_budget = this.checkoutForm.value.available_budget
+    this.currReq.consumed_budget = this.checkoutForm.value.consumed_budget
+    this.currReq.balance_budget = this.checkoutForm.value.balance_budget
+    this.currReq.req_subject = this.checkoutForm.value.subject
+    this.currReq.req_description = this.checkoutForm.value.description
   }
   //autosave
   autoSaveFormData() {
-  this.currReq.me_type= this.checkoutForm.value.me_type
-  this.currReq.req_swon=this.checkoutForm.value.req_swon
-  this.currReq.budget_type=this.checkoutForm.value.budget_type
-  this.currReq.req_type=this.checkoutForm.value.req_type
-  this.currReq.available_budget= this.checkoutForm.value.available_budget
-  this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
-  this.currReq.balance_budget =this.checkoutForm.value.balance_budget
-  this.currReq.req_subject=this.checkoutForm.value.subject
-  this.currReq.req_description=this.checkoutForm.value.description
+    this.passCheckoutFormDataToCuuReq();
     this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
       console.log("result", data.id);
       this.raiseRequestId = data.id;
     });
   }
   UpdateautoSaveFormData() {
-   this.currReq.me_type= this.checkoutForm.value.me_type
-   this.currReq.req_swon=this.checkoutForm.value.req_swon
-   this.currReq.budget_type=this.checkoutForm.value.budget_type
-  this.currReq.req_type=this.checkoutForm.value.req_type
-  this.currReq.available_budget= this.checkoutForm.value.available_budget
-  this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
-  this.currReq.balance_budget =this.checkoutForm.value.balance_budget
-  this.currReq.req_subject=this.checkoutForm.value.subject
-  this.currReq.req_description=this.checkoutForm.value.description
-  if(this.draftReqId!=null){
-    this.UserDataService.updateDraftRequest(this.currReq,this.draftReqId).subscribe((data: any) => {
-      console.log("result", data);
-    });}
-  else{
-    this.UserDataService.updateDraftRequest(this.currReq,this.raiseRequestId).subscribe((data: any) => {
-      console.log("result", data);
-    });
-  }
+    this.passCheckoutFormDataToCuuReq();
+    if (this.draftReqId > 0) {
+      this.UserDataService.updateDraftRequest(this.currReq, this.draftReqId).subscribe((data: any) => {
+        console.log("result", data);
+      });
+    }
+    else {
+      this.UserDataService.updateDraftRequest(this.currReq, this.raiseRequestId).subscribe((data: any) => {
+        console.log("result", data);
+      });
+    }
   }
   // calculate how many characters is left to type(subject)
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
-     // this.sub();
+      // this.sub();
     }
   }
 
@@ -215,16 +215,8 @@ export class RaiseRequestComponent implements OnInit {
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
-    this.currReq.me_type= this.checkoutForm.value.me_type
-    this.currReq.req_swon=this.checkoutForm.value.req_swon
-    this.currReq.budget_type=this.checkoutForm.value.budget_type
-   this.currReq.req_type=this.checkoutForm.value.req_type
-   this.currReq.available_budget= this.checkoutForm.value.available_budget
-   this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
-   this.currReq.balance_budget =this.checkoutForm.value.balance_budget
-   this.currReq.req_subject=this.checkoutForm.value.subject
-   this.currReq.req_description=this.checkoutForm.value.description
-   this.currReq.draftReqId=this.draftReqId;
+    this.passCheckoutFormDataToCuuReq();
+    this.currReq.draftReqId = this.draftReqId;
     this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
     const formData = new FormData();
     for (let img of this.fileList) {
