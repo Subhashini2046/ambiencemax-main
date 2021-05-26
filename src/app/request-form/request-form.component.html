@@ -21,7 +21,7 @@
 
         <div class="form-group col-md-6">
           <label>S/WON</label>
-          <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon"
+          <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon" 
           [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
             required />
         </div>
@@ -170,16 +170,181 @@
           </div>
        
         </div>
-        <!-- <div class="text-center" *ngIf="(this.role_id==0 && this.currReq.req_status=='Closed')">
-          <button mat-raised-button class="col-bg-button" (click)=onCompelete()>
-            Compelete
-          </button>
-        </div> -->
       </div>
     </form>
+    <!-- <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value) " style="border-radius: 10px;"
+      action="#">
+      <h5 class="text-center">
+        Request Form
+      </h5>
+      <hr>
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>ME Type</label>
+          <select id="inputme" class="form-control" formControlName="me_type" [value]="currReq.me_type" name="METype"
+          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
+            <option value="" selected>Select the ME Type</option>
+            <option >Civil</option>
+            <option>Electrical</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>S/WON</label>
+          <input class="form-control" id="swon" type="text" formControlName="req_swon" [value]="currReq.req_swon" 
+          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Budget Type</label>
+          <select id="inputbudget" class="form-control" formControlName="budget_type" [value]="currReq.budget_type" name="budgetType"
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
+            <option value="" selected>Select the Budget Type</option>
+            <option>Capex</option>
+            <option>Opex</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Available Budget(INR)</label>
+          <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" formControlName="available_budget" [value]="currReq.available_budget"
+            name="availableBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label>Consumed Budget(INR)</label>
+          <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0" formControlName="consumed_budget" [value]="currReq.consumed_budget"
+            name="consumedBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Balance Budget(INR)</label>
+          <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0" formControlName="balance_budget" [value]="currReq.balance_budget"
+            name="balanceBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputdes">Request Type</label>
+          <select id="request" class="form-control" formControlName="req_type" [value]="currReq.req_type" name="RequestType"
+          [disabled]="(this.req_id)" required>
+            <option value="" selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Request Subject</label>
+        <textarea placeholder="" id="subject" class="form-control"
+        [disabled]="!(this.role_id == 0 && this.is_pnc==0)" formControlName="subject"  [value]="subject" name="ReqSubject"
+          (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
+        {{remainingText}} Characters left.
+      </div>
+
+      <div class="form-group">
+        <label for="reqdes">Request Description</label>
+        <textarea id="description" placeholder="" [disabled]="!(this.role_id == 0 && this.is_pnc==0)"
+        formControlName="description" [value]="description" (ngModelChange)="valueChangeDiscription(description)" class="form-control"
+          name="Requestdes" maxlength="5000" required></textarea>
+        {{remaining_description}} Characters left.
+      </div>
+      <div class="form-group" *ngIf="this.reqComment!=null">
+        <label for="reqdes">Last Provided Comment:</label>
+      <p class="form-control">{{this.reqComment}} </p>
+      </div>
+      <div class="form-group"  *ngIf="(this.req_id)">
+        <label>Request Document</label>
+        <br>
+        <div *ngFor="let f1 of fileName,let i=index">
+        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
+          Download Document
+        </button>
+        <label> {{fileName[i]}}</label>
+      </div>
+      </div>
+      <div class="form-group" *ngIf="(this.role_id == 0 && this.is_pnc==0)">
+        <form>
+
+          <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
+          <button mat-raised-button (click)="fileInput.click()">Select File</button>
+
+
+          <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
+            multiple="true">
+
+          <div *ngFor="let selected of listOfFiles;let index = index">
+            <label>
+              <h6>{{selected}}</h6>
+            </label>
+            <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+          <div class="alert alert-danger" role="alert" *ngIf="areCredentialsInvalid">
+            File Size should not be greater than 10MB.
+          </div>
+          <br>
+        </form>
+      </div>
+      <div class="text-center" *ngIf="(!this.req_id)">
+        <button mat-raised-button class="col-bg-button" style="color: white"
+          [disabled]="!form.valid">
+          Raise Request
+        </button>
+      </div>
+
+
+      <div class="text-center">
+        <br>
+        <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
+          <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
+            <button mat-raised-button class="col-bg-button" style="color: white" (click)=" onApprove()">
+              Approve
+            </button>
+          </div>
+          
+          <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
+          || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
+            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
+              Resend
+            </button>
+            <div class="text-center">
+            <div class="form-row">
+              <div class="form-group col-md-5">
+            <button  *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onSumbitForUpdate()>
+             Sumbit
+            </button>
+              </div>
+              <div class="form-group col-md-5">
+            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
+              Resend
+            </button>
+          </div>
+          </div>
+        </div>
+          </div>
+       
+        </div>
+      </div>
+    </form> -->
   </div>
 </div>
-<!-- BOQ Form -->
 
 <div class="row my-3"
   *ngIf="((this.boqDescription1!=null && this.boqDescription1!='') || this.role_id==3 || this.role_id==4)">
@@ -263,9 +428,7 @@
   </div>
   <div class="col-md-3"></div>
 </div>
-<!-- BOQ End -->
 
-<!-- PNC Form -->
 <div class="row my-3" *ngIf="(this.is_pnc==1 || this.actualCost!=null)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
@@ -283,7 +446,7 @@
 
           <table mat-table [dataSource]="dataSource" >
 
-            <!-- Selected Column -->
+            
             <ng-container matColumnDef="selected">
               <th mat-header-cell *matHeaderCellDef>
               </th>
@@ -300,19 +463,19 @@
               <td class="text-center"  mat-cell *matCellDef="let element"> {{element.venName}} </td>
             </ng-container>
 
-            <!-- Position Column -->
+           
             <ng-container matColumnDef="spoc1">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
               <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
             </ng-container>
 
-            <!-- Name Column -->
+            
             <ng-container matColumnDef="spoc2">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
               <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
             </ng-container>
 
-            <!-- Weight Column -->
+           
             <ng-container matColumnDef="spoc3">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
               <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
@@ -366,9 +529,9 @@
           </div>
 
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && reqPnc==null)">
-        <!-- PNC Doc -->
+      
         <form>
-          <!-- <label for="file">Upload File Here:</label><br> -->
+        
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="filesInput.click()">Add</button>
           <input style="display: none"  #attachments  type="file" (change)="onPncFile($event)" #filesInput required>
@@ -385,9 +548,9 @@
       </div>
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1)">
         <hr>
-        <!-- PNC Supproting Doc -->
+    
         <form>
-          <!-- <label for="file">Upload File Here:</label><br> -->
+         
           <label for="fileUpload">Supporting Document: &nbsp;&nbsp;</label><br>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button (click)="fileInput.click()">Add</button>

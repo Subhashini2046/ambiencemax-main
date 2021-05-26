@@ -1,16 +1,16 @@
 <mat-dialog-content>
-  <mat-card>
+  <mat-card >
   <mat-card class="ex1 text-center">
     <span class="request-Tab">Add Workflow</span>
   </mat-card>
   <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" action="#">
-    <hr>
-    
-    <div formArrayName="items" *ngFor="let item of checkoutForm.controls['items']['controls']; let i = index">
+    <!-- <hr> -->
+    <br>
+    <div  formArrayName="items" *ngFor="let item of checkoutForm.controls['items']['controls']; let i = index">
       <div class="form-row" [formGroupName]="i">
 
         <div class="form-group col-md-3">
-          <label>Role</label>
+          <!-- <label>Role</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select Role</mat-label>
             <mat-select formControlName="role" (ngModelChange)="onChanged($event,item)" required>
@@ -20,7 +20,7 @@
           </mat-form-field>
         </div>
         <div class="form-group col-md-3">
-          <label>User</label>
+          <!-- <label>User</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select User</mat-label>
             <mat-select formControlName="user" (ngModelChange)="onUsers($event,item)">
@@ -31,7 +31,7 @@
           </mat-form-field>
         </div>
         <div class="form-group col-md-3">
-          <label>Location</label>
+          <!-- <label>Location</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select Location</mat-label>
             <mat-select formControlName="accessId" (ngModelChange)="onLocation($event)">

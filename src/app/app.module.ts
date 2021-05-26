@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginFormComponent } from './login-form/login-form.component';
@@ -46,7 +46,10 @@ import { WorkflowDialogComponent } from './workflow-dialog/workflow-dialog.compo
 import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-dialog.component';
 import { environment } from 'src/environments/environment';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import {AuthenticationGuard} from './authentication.guard';  
+import {AuthenticationGuard} from './authentication.guard';
+import { RaiseRequestComponent } from './raise-request/raise-request.component';
+import { DraftRequestComponent } from './draft-request/draft-request.component'; 
+
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
@@ -57,6 +60,7 @@ const appRoutes = [
     {path: 'view/:id' , component: ViewReqComponent},
     {path: 'dashboard' , component: NavigationHomeComponent},
     {path: 'request-form' , component: RequestFormComponent},
+    {path: 'raiseRequest' , component: RaiseRequestComponent},
     {path: 'request-form/:id/:pnc' , component: RequestFormComponent},
     {path: 'close' , component: CloseComponent },
     {path: 'open' , component: OpenComponent},
@@ -65,6 +69,8 @@ const appRoutes = [
     {path: 'admin/:userId' , component: AdminPanelComponent},
     {path: 'approveRequest/:id' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
+    {path:'draftRequest',component:DraftRequestComponent},
+    {path: 'raiseRequest/:id' , component: RaiseRequestComponent}
   ]
 },
 { path: '', redirectTo: "/login", pathMatch: 'full' },  
@@ -99,6 +105,8 @@ const appRoutes = [
     CompleteComponent,
     WorkflowDialogComponent,
     AddWorkflowDialogComponent,
+    RaiseRequestComponent,
+    DraftRequestComponent,
   ],
   entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent],
   imports: [

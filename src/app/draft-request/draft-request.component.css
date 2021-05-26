@@ -1,0 +1,29 @@
+.example-card{
+    margin-top: 5px;
+  }
+  mat-card-title{
+    /* background: linear-gradient(to right, #000046, #1cb5e0); */
+    width: 100% !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size:large;
+  }
+  mat-card{
+    background-color:  rgba(106, 135, 223, 0.589);
+  }
+  .make-gold{
+    background-color: #F0F0F0;
+  }
+  mat-form-field {
+    font-size: 14px;
+  width: 100%;
+  }
+  .button3:hover {
+    background-color: #F0F0F0;
+    cursor: pointer;
+  }
+  
+table{
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}

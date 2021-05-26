@@ -1,0 +1,136 @@
+<div class="row my-3">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value) " style="border-radius: 10px;"
+        action="#">
+        <h5 class="text-center">
+          Request Form
+        </h5>
+        <hr>
+        <div class="form-row">
+  
+          <div class="form-group col-md-6">
+            <label>ME Type</label>
+            <select id="inputme" class="form-control" formControlName="me_type"  name="METype"
+           required>
+              <option value="" selected>Select the ME Type</option>
+              <option >Civil</option>
+              <option>Electrical</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-md-6">
+            <label>S/WON</label>
+            <input class="form-control" id="swon" type="text" formControlName="req_swon"
+             
+            name="RequestSwon" placeholder=""
+              required />
+          </div>
+  
+        </div>
+  
+        <div class="form-row">
+  
+          <div class="form-group col-md-6">
+            <label>Budget Type</label>
+            <select id="inputbudget" class="form-control" formControlName="budget_type"
+              name="budgetType"
+             required>
+              <option value="" selected>Select the Budget Type</option>
+              <option>Capex</option>
+              <option>Opex</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-md-6">
+            <label>Available Budget(INR)</label>
+            <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" formControlName="available_budget"
+             
+              name="availableBudget" required />
+          </div>
+  
+        </div>
+  
+        <div class="form-row">
+  
+          <div class="form-group col-md-6">
+            <label>Consumed Budget(INR)</label>
+            <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0" formControlName="consumed_budget"
+            
+              name="consumedBudget" required />
+          </div>
+  
+          <div class="form-group col-md-6">
+            <label>Balance Budget(INR)</label>
+            <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0" formControlName="balance_budget" 
+              name="balanceBudget"  required />
+          </div>
+  
+        </div>
+  
+  
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputdes">Request Type</label>
+            <select id="request" class="form-control" formControlName="req_type"
+              name="RequestType"
+            required>
+              <option value="" selected>Select the Request Type</option>
+              <option>Upgrade</option>
+              <option>Repair</option>
+              <option>Maintenance</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Request Subject</label>
+          <textarea placeholder="" id="subject" class="form-control"
+         formControlName="subject" name="ReqSubject"
+            (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
+          {{remainingText}} Characters left.
+        </div>
+  
+        <div class="form-group">
+          <label for="reqdes">Request Description</label>
+          <textarea id="description" placeholder=""
+          formControlName="description"  (ngModelChange)="valueChangeDiscription(description)" class="form-control"
+            name="Requestdes" maxlength="5000" required></textarea>
+          {{remaining_description}} Characters left.
+        </div>
+       
+        <div class="form-group">
+          <form>
+  
+            <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
+            <button mat-raised-button (click)="fileInput.click()">Select File</button>
+  
+  
+            <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
+              multiple="true">
+  
+            <div *ngFor="let selected of listOfFiles;let index = index">
+              <label>
+                <h6>{{selected}}</h6>
+              </label>
+              <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+  
+            <div class="alert alert-danger" role="alert" *ngIf="areCredentialsInvalid">
+              File Size should not be greater than 10MB.
+            </div>
+            <br>
+          </form>
+        </div>
+        <div class="text-center" >
+          <button mat-raised-button class="col-bg-button" style="color: white"
+            [disabled]="!form.valid">
+            Raise Request
+          </button>
+        </div>
+ 
+      </form>
+    </div>
+  </div>
+

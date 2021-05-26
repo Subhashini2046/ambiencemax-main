@@ -31,7 +31,7 @@ export class UserDataService {
   public filepath = [];
   public mainSub = new Subject<string>();
   public main = '';
-
+  
   mainObservable() {
     return this.mainSub.asObservable();
   }
@@ -357,5 +357,21 @@ getFiles(x: string): Observable<any> {
 
   getwFlow(){
     return this.http.get(this.URL+'wFlow');
+  }
+
+  //save the raise request as Draft Request
+  saveDraftRequest(newReq: ReqSchema,space,role_id){
+  return this.http.post(this.URL+'saveDraftRequest', { request: newReq,space,role_id});
+  }
+
+  updateDraftRequest(newReq: ReqSchema,raiseRequestId){
+    return this.http.post(this.URL+'updateDraftRequest', {request: newReq,raiseRequestId});
+  }
+  
+  fetchAllDraftRequest(space,role_id){
+    return this.http.post(this.URL+'fetchAllDraftRequest', {space,role_id});
+  }
+  fetchDraftRequest(draftReqId){
+    return this.http.post(this.URL+'fetchDraftRequest', {draftReqId});
   }
 }

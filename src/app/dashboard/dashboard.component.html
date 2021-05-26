@@ -37,7 +37,7 @@
         <a class="btn" (click)="snav.toggle();" routerLink="dashboard" mat-list-item>
           Dashboard
         </a>
-        <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="request-form" mat-list-item>Raise
+        <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="raiseRequest" mat-list-item>Raise
           Request </a>
         <a class="btn"  (click)="snav.toggle()" routerLink="pending" mat-list-item>
           <span> Pending Requests</span>
@@ -59,6 +59,8 @@
         <a class="btn" (click)="snav.toggle()" routerLink="allRequest" mat-list-item>
           <span>All Request</span>
           </a>
+          <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="draftRequest" mat-list-item>Draft
+            Request </a>
           <a class="btn" *ngIf="checkAdmin==1" (click)="snav.toggle();admin()" mat-list-item>
             <span>AmbienceMax Configuration</span>
             </a>

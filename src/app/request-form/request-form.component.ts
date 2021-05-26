@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit} from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
 import { ReqSchema } from '../Services/ReqSchema';
@@ -6,13 +6,16 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as FileSaver from 'file-saver';
-import { environment } from './../../environments/environment';
+import {Observable, of, Subject,fromEvent} from 'rxjs';
+import {bufferTime,auditTime} from 'rxjs/operators';
+import { interval, Subscription,} from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
   styleUrls: ['./request-form.component.css']
 })
-export class RequestFormComponent implements OnInit {
+export class RequestFormComponent implements OnInit,OnDestroy {
   public userId;
   public role_id;
   req_id = 0;
@@ -55,7 +58,29 @@ export class RequestFormComponent implements OnInit {
   reqComment;
   reqType = '';
   actualCost1;
-  constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  subscription: Subscription;
+  raiseRequestId;
+  checkoutForm;
+  public keyUp = new Subject<KeyboardEvent>();
+  constructor(private formBuilder: FormBuilder,private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+    this.checkoutForm = this.formBuilder.group({
+      me_type: '',
+      req_swon: '',
+      budget_type: '',
+      req_type: '',
+      available_budget: 0,
+      consumed_budget: 0,
+      balance_budget: 0,
+      subject: '',
+      description: ''
+    });
+
+    this.checkoutForm.valueChanges.pipe(auditTime(2000)).subscribe((formData:any) =>{ 
+      if (this.raiseRequestId > 0)
+        this.UpdateautoSaveFormData();
+      else
+        this.autoSaveFormData();
+    });
 
   }
 
@@ -77,7 +102,8 @@ export class RequestFormComponent implements OnInit {
     consumed_budget: 0,
     balance_budget: 0,
     req_subject: '',
-    req_description: ''
+    req_description: '',
+    draftReqId:0
   };
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
@@ -110,6 +136,7 @@ export class RequestFormComponent implements OnInit {
   BoqfileName = [];
   pncSupportingDoc = [];
   ngAfterContentInit() {
+  
     if (this.req_id > 0) {
       this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
       });
@@ -157,7 +184,7 @@ export class RequestFormComponent implements OnInit {
         this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
         this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
         this.actualCost = this.requestDetails[0]["ActualCost"];
-        this.actualCost1=this.actualCost;
+        this.actualCost1 = this.actualCost;
         this.is_pnc = this.requestDetails[0]["ispnc"];
         this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
         this.currReq.req_level = this.requestDetails[0]["requestLevel"];
@@ -172,12 +199,42 @@ export class RequestFormComponent implements OnInit {
     }
   }
 
+  key(){
+    console.log(this.currReq.req_type)
+  }
+  //autosave
+  autoSaveFormData() {
+
+    this.currReq.req_subject = this.subject;
+    this.currReq.req_description = this.description;
+    this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
+      console.log("result", data.id);
+      this.raiseRequestId = data.id;
+    });
+  }
+  UpdateautoSaveFormData() {
+    this.currReq.req_subject = this.subject;
+    this.currReq.req_description = this.description;
+    this.UserDataService.updateDraftRequest(this.currReq,this.raiseRequestId).subscribe((data: any) => {
+      console.log("result", data);
+    });
+  }
   // calculate how many characters is left to type(subject)
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
+     // this.sub();
     }
   }
+
+  // sub(){
+  //     this.subscription = interval(5000).subscribe((val: any) => {
+  //     if (this.raiseRequestId > 0)
+  //       this.UpdateautoSaveFormData();
+  //     else
+  //       this.autoSaveFormData();
+  //  });
+  // }
 
   // calculate how many characters is left to type(subject)
   valueChangeDiscription(value) {
@@ -277,6 +334,17 @@ export class RequestFormComponent implements OnInit {
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
+  //  this.currReq.me_type= this.checkoutForm.value.me_type
+  //  this.currReq.req_swon=this.checkoutForm.value.req_swon
+  //  this.currReq.budget_type=this.checkoutForm.value.budget_type
+  // this.currReq.req_type=this.checkoutForm.value.req_type
+  // this.currReq.available_budget= this.checkoutForm.value.available_budget
+  // this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
+  // this.currReq.balance_budget =this.checkoutForm.value.balance_budget
+  // this.currReq.req_subject=this.checkoutForm.value.subject
+  // this.currReq.req_description=this.checkoutForm.value.description
+  //   console.log(this.currReq);
+
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
     this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
@@ -285,12 +353,12 @@ export class RequestFormComponent implements OnInit {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>(this.UserDataService.URL+'multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL + 'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
       console.log(this.filepath, "this.filepath");
-      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath,this.admin_access_id);
+      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
     //this.openSnackBar('Request Submitted Successfully !');
 
@@ -305,7 +373,7 @@ export class RequestFormComponent implements OnInit {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>(this.UserDataService.URL+'multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL + 'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
@@ -326,7 +394,7 @@ export class RequestFormComponent implements OnInit {
     for (let img of this.fileList) {
       formData.append('files', img);
     }
-    this.http.post<any>(this.UserDataService.URL+'BoqFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL + 'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
@@ -341,12 +409,12 @@ export class RequestFormComponent implements OnInit {
   onPncChange() {
     if (this.reqPnc == null) {
       if (this.selectedElement.length > 0) {
-        if (this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length<1) {
+        if (this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length < 1) {
           return true
         }
       }
       else {
-        if (this.actualCost == null || this.pncfile.length<1) {
+        if (this.actualCost == null || this.pncfile.length < 1) {
           return true
         }
       }
@@ -371,11 +439,11 @@ export class RequestFormComponent implements OnInit {
     formData1.append('id', id);
     formData1.append('files', this.pncfile[0]);
     let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
-    this.http.post<any>(this.UserDataService.URL+'BoqFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.UserDataService.URL + 'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
       }
-      this.http.post<any>(this.UserDataService.URL+'pncFiles', formData1).subscribe((res) => {
+      this.http.post<any>(this.UserDataService.URL + 'pncFiles', formData1).subscribe((res) => {
         console.log(this.pncfile.length);
         if (this.pncfile.length > 0) {
           console.log(res.files[0]['filename'], "hh")
@@ -436,5 +504,8 @@ export class RequestFormComponent implements OnInit {
       }
     });
     return false;
+  }
+  ngOnDestroy() {
+  //  this.subscription.unsubscribe();
   }
 }

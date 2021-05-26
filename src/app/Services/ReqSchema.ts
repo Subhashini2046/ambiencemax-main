@@ -15,4 +15,5 @@ export interface ReqSchema {
   balance_budget:number;
   req_subject:string;
   req_description: string;
+  draftReqId:number;
 }

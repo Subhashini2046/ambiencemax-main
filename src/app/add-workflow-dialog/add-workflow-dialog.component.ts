@@ -69,18 +69,21 @@ export class AddWorkflowDialogComponent implements OnInit {
     (this.checkoutForm.controls['items'] as FormArray).push(this.createItem())
   }
 
-  delete(i){
+  delete(i) {
     (this.checkoutForm.controls['items'] as FormArray).removeAt(i);
-    this.checkUser=0
-     this.checkLocation=0
+    this.checkUser = 0;
+    this.checkLocation = 0;
+    this.countRole = 0;
   }
 
   // get admin name
   onChanged(event: any, i: FormGroup, j) {
     this.roleId = event;
     this.countRole = 0;
+  //  this.checkUser = 1;
     let len = this.checkoutForm.value.items.length;
     if (this.roleId != 0) {
+      this.checkUser = 1;
       if (this.checkoutForm.value.items[len - 1]["role"] != null) {
         if (this.checkoutForm.value.items[len - 1]["user"].toString() == "") {
           this.checkUser = 1;
@@ -94,35 +97,37 @@ export class AddWorkflowDialogComponent implements OnInit {
         console.log(this.countRole, this.roleId);
       }
       if (this.countRole == 2) {
-       this.selectedRole = this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription'];
-       console.log(this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription']);
+        this.selectedRole = this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription'];
+        console.log(this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription']);
         console.log("rrr", this.countRole);
         break;
       }
     }
-  
-    console.log("event",event);
-    if(this.countRole!=2){
+
+    console.log("event", event);
+    if (this.countRole != 2) {
       this.userDataService.getUsersWorkflow(event).subscribe((res: any) => {
         i.get('userlist').setValue(res);
       });
     }
-      if(event==0){
-        this.userDataService.getUserLocation(event, this.roleId).subscribe((res: any) => {
-          // this.userLocation = res;
-          i.get('locationlist').setValue(res);
-        });
-      }
+    if (event == 0 || event == 8) {
+      this.userDataService.getUserLocation(event, this.roleId).subscribe((res: any) => {
+        // this.userLocation = res;
+        i.get('locationlist').setValue(res);
+      });
+    }
   }
 
   // get location like speez etc.
   onUsers(userId: any, i: FormGroup) {
     if (this.roleId != 0) {
+      this.checkLocation = 1;
       let len = this.checkoutForm.value.items.length;
       if (this.checkoutForm.value.items[len - 1]["user"] != null) {
         this.checkUser = 0;
         if (this.checkoutForm.value.items[len - 1]['accessId'].toString() == "") {
           this.checkLocation = 1;
+          console.log("this.checkLocation", this.checkLocation);
         }
       }
     }
@@ -134,11 +139,17 @@ export class AddWorkflowDialogComponent implements OnInit {
 
   }
 
-  onLocation() {
+  onLocation(event) {
+    console.log("location", event);
     if (this.roleId != 0) {
       let len = this.checkoutForm.value.items.length;
       if (this.checkoutForm.value.items[len - 1]['accessId'].toString() != "") {
         this.checkLocation = 0;
+        // console.log("this.checkLocation",this.checkLocation);
+      }
+      else if (event != "") {
+        this.checkLocation = 0;
+        console.log("this.checkLocation", this.checkLocation);
       }
     }
   }
@@ -152,14 +163,14 @@ export class AddWorkflowDialogComponent implements OnInit {
       if (this.checkoutForm.value.items[i]["role"] == 3) {
         console.log(this.checkoutForm.value.items[i]["accessId"]);
         newVal1 = this.checkoutForm.value.items[i]["accessId"] + 'cor';
-       // this.newWorkflow.push(newVal1);
+        // this.newWorkflow.push(newVal1);
       }
       else if (this.checkoutForm.value.items[i]["role"] == 0) {
         this.newWorkflow.push('i');
       }
       else if (this.checkoutForm.value.items[i]["role"] == 4) {
         newVal2 = this.checkoutForm.value.items[i]["accessId"] + 'e';
-        this.newVal = newVal1  + newVal2;
+        this.newVal = newVal1 + newVal2;
         this.newWorkflow.push(this.newVal);
       }
       else { this.newWorkflow.push(this.checkoutForm.value.items[i]["accessId"]) }
