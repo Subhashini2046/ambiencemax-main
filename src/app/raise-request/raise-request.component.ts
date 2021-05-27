@@ -127,7 +127,7 @@ export class RaiseRequestComponent implements OnInit {
       });
     }
   }
-  passCheckoutFormDataToCuuReq() {
+  passCheckoutFormDataToCurrReq() {
     this.currReq.me_type = this.checkoutForm.value.me_type
     this.currReq.req_swon = this.checkoutForm.value.req_swon
     this.currReq.budget_type = this.checkoutForm.value.budget_type
@@ -140,14 +140,14 @@ export class RaiseRequestComponent implements OnInit {
   }
   //autosave
   autoSaveFormData() {
-    this.passCheckoutFormDataToCuuReq();
+    this.passCheckoutFormDataToCurrReq();
     this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
       console.log("result", data.id);
       this.raiseRequestId = data.id;
     });
   }
   UpdateautoSaveFormData() {
-    this.passCheckoutFormDataToCuuReq();
+    this.passCheckoutFormDataToCurrReq();
     if (this.draftReqId > 0) {
       this.UserDataService.updateDraftRequest(this.currReq, this.draftReqId).subscribe((data: any) => {
         console.log("result", data);
@@ -215,7 +215,7 @@ export class RaiseRequestComponent implements OnInit {
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
-    this.passCheckoutFormDataToCuuReq();
+    this.passCheckoutFormDataToCurrReq();
     this.currReq.draftReqId = this.draftReqId;
     this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
     const formData = new FormData();

@@ -75,12 +75,12 @@ export class RequestFormComponent implements OnInit,OnDestroy {
       description: ''
     });
 
-    this.checkoutForm.valueChanges.pipe(auditTime(2000)).subscribe((formData:any) =>{ 
-      if (this.raiseRequestId > 0)
-        this.UpdateautoSaveFormData();
-      else
-        this.autoSaveFormData();
-    });
+    // this.checkoutForm.valueChanges.pipe(auditTime(2000)).subscribe((formData:any) =>{ 
+    //   if (this.raiseRequestId > 0)
+    //     this.UpdateautoSaveFormData();
+    //   else
+    //     this.autoSaveFormData();
+    // });
 
   }
 
@@ -105,6 +105,7 @@ export class RequestFormComponent implements OnInit,OnDestroy {
     req_description: '',
     draftReqId:0
   };
+
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     this.currReq.req_initiator_id = this.userId;
@@ -203,22 +204,22 @@ export class RequestFormComponent implements OnInit,OnDestroy {
     console.log(this.currReq.req_type)
   }
   //autosave
-  autoSaveFormData() {
+  // autoSaveFormData() {
 
-    this.currReq.req_subject = this.subject;
-    this.currReq.req_description = this.description;
-    this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
-      console.log("result", data.id);
-      this.raiseRequestId = data.id;
-    });
-  }
-  UpdateautoSaveFormData() {
-    this.currReq.req_subject = this.subject;
-    this.currReq.req_description = this.description;
-    this.UserDataService.updateDraftRequest(this.currReq,this.raiseRequestId).subscribe((data: any) => {
-      console.log("result", data);
-    });
-  }
+  //   this.currReq.req_subject = this.subject;
+  //   this.currReq.req_description = this.description;
+  //   this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
+  //     console.log("result", data.id);
+  //     this.raiseRequestId = data.id;
+  //   });
+  // }
+  // UpdateautoSaveFormData() {
+  //   this.currReq.req_subject = this.subject;
+  //   this.currReq.req_description = this.description;
+  //   this.UserDataService.updateDraftRequest(this.currReq,this.raiseRequestId).subscribe((data: any) => {
+  //     console.log("result", data);
+  //   });
+  // }
   // calculate how many characters is left to type(subject)
   valueChange(value) {
     if (value != null) {
@@ -226,7 +227,14 @@ export class RequestFormComponent implements OnInit,OnDestroy {
      // this.sub();
     }
   }
-
+cancelRequest(){
+  console.log("ggggg")
+  this.UserDataService.cancelRequest(this.req_id).subscribe((response:any)=>{
+console.log("request is cancelled")
+this.openSnackBar('Request Cancelled Successfully !');
+    this.router.navigateByUrl('/AmbienceMax/open');
+  })
+}
   // sub(){
   //     this.subscription = interval(5000).subscribe((val: any) => {
   //     if (this.raiseRequestId > 0)

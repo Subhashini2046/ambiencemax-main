@@ -92,7 +92,7 @@ router.post("/openReq", (req, res) => {
     con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest
       inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK
-      where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestStatus='Pending' order by RUMPRequestdate desc`, [req.body.space, req.body.access_id], (err, result) => {
+      where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestCancelStatus=0 and RUMPRequestStatus='Pending' order by RUMPRequestdate desc`, [req.body.space, req.body.access_id], (err, result) => {
       if (err) throw err;
       res.end(JSON.stringify(result))
     })
@@ -104,12 +104,12 @@ router.post("/openReq", (req, res) => {
     }
     con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel
-        where rumprequestmetype=? and rumprequestflowfk in(select linkrumprequestflowpk as wid
+        where rumprequestmetype=?  and rumprequestflowfk in(select linkrumprequestflowpk as wid
 from linkrumprequestflow where 
 if(${myrole}=3,REVERSE(SUBSTRING_INDEX(REVERSE(SUBSTRING_INDEX(w_flow, 'c', 1)), ',', 1)),
 REVERSE(SUBSTRING_INDEX(REVERSE(SUBSTRING_INDEX(w_flow, 'e', 1)), 'r', 1)))=
 (select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and 
-linkrumpspace=?)) and linkrumprolefk=? and linkRUMPSpace=? order by RUMPRequestdate desc;`,
+linkrumpspace=?)) and linkrumprolefk=? and linkRUMPSpace=? and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc;`,
       [metype, myrole, req.body.space, myrole, req.body.space], (err, result) => {
         if (err) throw err;
         res.end(JSON.stringify(result))
@@ -135,7 +135,7 @@ linkrumpspace=?)) and linkrumprolefk=? and linkRUMPSpace=? order by RUMPRequestd
 
       con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel
-        where rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace=? order by RUMPRequestdate desc;`,
+        where rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace=? and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc;`,
         [narr, req.body.role, req.body.space], (err, result) => {
           if (err) throw err;
           res.end(JSON.stringify(result))

@@ -123,7 +123,7 @@ router.post("/vendorDetail", (req, res) => {
   left join (select rumprequestallocatedvendor as vend,count(*) as acount from datarumprequest where rumprequestallocatedvendor is not null
   and RUMPRequestStatus !='completed'  group by rumprequestallocatedvendor) as t3
   on(t3.vend=rumpvenvendorpk)
-  where rumpvenvendorpk in(select linkRumpVendorCategoryMapPK from linkrumpvendorcategorymap 
+  where rumpvenvendorpk in(select linkRumpVendorFK from linkrumpvendorcategorymap 
   where linkRumpVendorCategoryFK=${req.body.vendCategoryId});`
   con.query(sql, function (err, result) {
     if (err) {
@@ -352,5 +352,14 @@ router.post("/approveRequest", (req, res) => {
   });
 });
 
-
+router.post("/cancelRequest", (req, res) => {
+  sql = `update datarumprequest set RUMPRequestCancelStatus=1 where RUMPRequestPK=?;`
+  con.query(sql,[req.body.req_id], function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(JSON.stringify({result:"cancelled"}));
+    }
+  })
+})
 module.exports = router;

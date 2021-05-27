@@ -90,7 +90,7 @@ let express = require("express"),
     if (req.body.role == 0) {
       con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest
-      inner join linkrumpadminaccess as t1 on RUMPInitiatorId=t1.linkRUMPAdminAccessPK inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t1.linkRUMPRoleFK=0 and t1.linkRUMPSpace=? and RUMPRequestStatus='Pending' and (t1.linkrumpspace!=t2.linkRUMPSpace or t1.linkRUMPRoleFK != t2.linkRUMPRoleFK) order by RUMPRequestdate desc;`, [req.body.space], (err, result) => {
+      inner join linkrumpadminaccess as t1 on RUMPInitiatorId=t1.linkRUMPAdminAccessPK inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t1.linkRUMPRoleFK=0 and t1.linkRUMPSpace=? and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t1.linkrumpspace!=t2.linkRUMPSpace or t1.linkRUMPRoleFK != t2.linkRUMPRoleFK) order by RUMPRequestdate desc;`, [req.body.space], (err, result) => {
         if (err) throw err;
         res.end(JSON.stringify(result))
       })
@@ -107,7 +107,7 @@ let express = require("express"),
           if(${myrole}=3,REVERSE(SUBSTRING_INDEX(REVERSE(SUBSTRING_INDEX(w_flow, 'c', 1)), ',', 1)),
           REVERSE(SUBSTRING_INDEX(REVERSE(SUBSTRING_INDEX(w_flow, 'e', 1)), 'r', 1)))=
           (select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and 
-          linkrumpspace=?)) and RUMPRequestStatus='Pending' and (t2.linkRUMPSpace != ? or t2.linkrumprolefk != ?) order by RUMPRequestdate desc`,
+          linkrumpspace=?)) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ? or t2.linkrumprolefk != ?) order by RUMPRequestdate desc`,
           [metype,myrole, req.body.space,req.body.space,req.body.role], (err, result) => {
             if (err) throw err;
             res.end(JSON.stringify(result))
@@ -132,7 +132,7 @@ let express = require("express"),
           }
         }
         con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-        RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(?) and RUMPRequestStatus='Pending' and (t2.linkRUMPSpace != ? or t2.linkrumprolefk != ?) order by RUMPRequestdate desc`,
+        RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(?) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ? or t2.linkrumprolefk != ?) order by RUMPRequestdate desc`,
           [narr,req.body.space,req.body.role], (err, result) => {
             if (err) throw err;
             res.end(JSON.stringify(result))
