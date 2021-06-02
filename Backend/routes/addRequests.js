@@ -91,6 +91,7 @@ router.post("/ViewRequestDetail", (req, res) => {
 })
 
 router.post("/newReq", (req, response) => {
+  console.log(req.body);
   let space = req.body.space;
   let spaceCollection = splitHierarchy(space);
 
@@ -115,6 +116,7 @@ router.post("/newReq", (req, response) => {
     }
     return spaceCollection;
   }
+  console.log("spaceCollection:",spaceCollection);
   sql = `select work_id,b_id from linkrumprequestinitiators where b_id in(?) order by b_id desc limit 1;`;
   con.query(sql, [spaceCollection], (err, res) => {
     if (err) {
@@ -683,8 +685,8 @@ router.post("/fetchAllDraftRequest", (req, res) => {
   console.log(req.body.space);
   sql = `select RUMPRequestPK,if(RUMPRequestType="","No Request Type",RUMPRequestType) as RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,
   RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,RUMPRequestBalanceBudget,
-  if(RUMPRequestSubject="","(No Subject)",concat(RUMPRequestSubject,"")) as RUMPRequestSubject,
-  if(RUMPRequestDescription="",concat(" - ","No Description Available"),concat(" - ",RUMPRequestDescription)) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${req.body.space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
+  if(RUMPRequestSubject="","(No Subject)",RUMPRequestSubject) as RUMPRequestSubject,
+  if(RUMPRequestDescription="","No Description Available",RUMPRequestDescription) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${req.body.space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
@@ -704,6 +706,14 @@ router.post("/fetchDraftRequest", (req, res) => {
     } else {
       res.end(JSON.stringify(result));
     }
+  })
+});
+
+router.post("/deleteDraftRequest", (req, res) => {
+  con.query(`delete from datarumpdraftrequest where RUMPRequestPK=?;`
+  ,[req.body.draftReqId], function (err, result) {
+    if (err) throw err;
+    res.end(JSON.stringify({result:"deleted Successfully"}))
   })
 });
 

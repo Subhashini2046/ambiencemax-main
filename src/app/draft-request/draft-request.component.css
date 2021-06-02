@@ -18,7 +18,11 @@
   width: 100%;
   }
   .button3:hover {
-    background-color: #F0F0F0;
+    cursor: pointer;
+  }
+
+  .mat-row:hover {
+    background-color:  #F0F0F0;
     cursor: pointer;
   }
   

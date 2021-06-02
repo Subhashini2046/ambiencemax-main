@@ -9,13 +9,14 @@ import { Router } from '@angular/router';
   styleUrls: ['./draft-request.component.css']
 })
 export class DraftRequestComponent implements OnInit {
-  displayedColumns: string[] = ['RequestType','RequestDescription',
-  'RequestDate'];
+  displayedColumns: string[] = ['RequestType','RequestSubject','RequestDescription',
+  'RequestDate','view'];
 dataSource = new MatTableDataSource();
 members;
 role_id;
 accessId;
 readstatus:any[]=[]
+hover=false;
 @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 @ViewChild(MatSort, { static: true }) sort: MatSort;
 constructor(private route: Router, public UserDataService: UserDataService) { }
@@ -24,20 +25,30 @@ ngOnInit() {
 
   this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
   this.role_id = JSON.parse(localStorage.getItem('role_id'));
-  
-  //get all Pending Request
+  this.fetchAllDraftRequest();
+}
+fetchAllDraftRequest(){
   this.UserDataService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('space')),this.role_id).subscribe((response: any) => {
     this.dataSource.data= response;
     console.log(response)
   });
-
 }
-
+deleteDraftRequest(draftReqId) {
+  this.hover=true;
+  this.UserDataService.deleteDraftReques(draftReqId).subscribe((response:any)=>{
+    console.log(response);
+    this.fetchAllDraftRequest();
+  })}
 // navigate to view reuqest data
-view(req_id) {
+viewDraftRequest(req_id) {
+  if (this.hover==true){
+    this.hover=false;
+    return;
+  }
+  if(this.hover==false){
   this.route.navigate(['/AmbienceMax/raiseRequest', req_id]);
 }
-
+}
 
 // to serach a location etc.
 applyFilter(event: Event) {

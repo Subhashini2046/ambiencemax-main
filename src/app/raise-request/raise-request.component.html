@@ -80,20 +80,21 @@
               <option>Repair</option>
               <option>Maintenance</option>
             </select>
+
           </div>
         </div>
         <div class="form-group">
           <label>Request Subject</label>
           <textarea placeholder="" id="subject" class="form-control"
          formControlName="subject" name="ReqSubject"
-            (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
+         maxlength="100" name="RequestSubject" required></textarea>
           {{remainingText}} Characters left.
         </div>
   
         <div class="form-group">
           <label for="reqdes">Request Description</label>
           <textarea id="description" placeholder=""
-          formControlName="description"  (ngModelChange)="valueChangeDiscription(description)" class="form-control"
+          formControlName="description" class="form-control"
             name="Requestdes" maxlength="5000" required></textarea>
           {{remaining_description}} Characters left.
         </div>

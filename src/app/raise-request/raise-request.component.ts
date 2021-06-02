@@ -112,7 +112,18 @@ export class RaiseRequestComponent implements OnInit {
     });
   }
   ngAfterContentInit() {
-
+    this.checkoutForm.get("subject").valueChanges.subscribe(selectedValue => {
+      let formSubject=this.checkoutForm.get("subject").value;
+      if (formSubject != null) {
+        this.remainingText = 100 - formSubject.length;
+      }
+    });
+    this.checkoutForm.get("description").valueChanges.subscribe(selectedValue => {
+      let formDescription=this.checkoutForm.get("description").value;
+      if (formDescription != null) {
+        this.remaining_description = 5000 - formDescription.length;
+      }
+    });
     if (this.draftReqId > 0) {
       this.checkoutForm.valueChanges.pipe(auditTime(1000)).subscribe((formData: any) => {
         this.UpdateautoSaveFormData();
@@ -161,6 +172,7 @@ export class RaiseRequestComponent implements OnInit {
   }
   // calculate how many characters is left to type(subject)
   valueChange(value) {
+    console.log("fffffff");
     if (value != null) {
       this.remainingText = 100 - value.length;
       // this.sub();
@@ -216,7 +228,11 @@ export class RaiseRequestComponent implements OnInit {
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
     this.passCheckoutFormDataToCurrReq();
-    this.currReq.draftReqId = this.draftReqId;
+    if(this.draftReqId>0){
+    this.currReq.draftReqId = this.draftReqId;}
+    else{
+      this.currReq.draftReqId = this.raiseRequestId;
+    }
     this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
     const formData = new FormData();
     for (let img of this.fileList) {

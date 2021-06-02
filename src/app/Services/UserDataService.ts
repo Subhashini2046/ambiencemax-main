@@ -374,7 +374,9 @@ getFiles(x: string): Observable<any> {
   fetchDraftRequest(draftReqId){
     return this.http.post(this.URL+'fetchDraftRequest', {draftReqId});
   }
-
+  deleteDraftReques(draftReqId){
+   return this.http.post(this.URL+'deleteDraftRequest',{draftReqId});
+  }
   cancelRequest(req_id){
     return this.http.post(this.URL+'cancelRequest', {req_id});
   }
