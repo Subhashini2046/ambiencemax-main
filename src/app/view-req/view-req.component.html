@@ -105,19 +105,18 @@
       </div>
       </div>
       <div class="text-center" *ngIf="(this.role_id==0 && this.req_status=='Closed')">
-        <button mat-raised-button class="col-bg-button" style="color: white" (click)=onCompelete()>
+        <button mat-raised-button class="col-bg-button" style="color: white;outline:none;" (click)=onCompelete()>
           Compelete
         </button>
       </div>
-      <div class="text-center" *ngIf="req_status=='Completed'">
-        <button mat-raised-button class="col-bg-button"  (click)=ExportPDF()>
+      <br>
+      <div class="text-center" *ngIf="req_status=='Completed' || req_status=='Closed'">
+        <button mat-raised-button class="col-bg-button" style="color: white;outline:none;" (click)=ExportPDF()>
           
           Download PDF
         </button>
       </div>
     </form>
-
-
 
   </div>
 </div>

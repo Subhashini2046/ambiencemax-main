@@ -224,8 +224,13 @@ export class ViewReqComponent implements OnInit {
   
   // download pdf of request form
   ExportPDF() {
+    this.pdfTableData = [];
     this.userDataService.getpdfTableData(this.req_id).subscribe((res: any) => {
-      this.pdfTableData = res;
+      for (let i = 0; i < res.length; i++) {
+        if (res[i] != null) {
+          this.pdfTableData.push(res[i]);
+        }
+      }
       const doc = new jsPDF('p', 'pt', 'a4');
       let reqNum=this.req_number.indexOf('Form');
       console.log(reqNum,'reqNum');
@@ -254,7 +259,7 @@ for(let i=0;i<this.pdfTableData.length;i++){
       let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
       data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
         + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
-      data2.push(" ");
+      data2.push([""]);
  }
  else if(this.pdfTableData[i].roleId==3 || this.pdfTableData[i].roleId==4){
       let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user);
@@ -283,9 +288,9 @@ for(let i=0;i<this.pdfTableData.length;i++){
       data2.push([""]);
  }
  else if(this.pdfTableData[i].roleId==6){
-      let bspace1 = this.space("From: Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
+      let bspace1 = this.space("From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From: Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
+      data2.push(["From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
         + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
  }
  else if(this.pdfTableData[i].roleId==7){
@@ -308,46 +313,55 @@ for(let i=0;i<this.pdfTableData.length;i++){
         tableLineColor: 200,
         styles: { fontSize: 12, textColor: 20, font: "times" },
         didParseCell: function (data) {
-          if (data.row.index === 8) {
+          // console.log("data",data.row.raw[0].includes("From"))
+          // console.log("data row",data.row)
+          // if (data.row.index === 8) {
+          //   data.cell.styles.fillColor = [62, 172, 148];
+          // }
+          if (data.row.raw[0] === "") {
             data.cell.styles.fillColor = [62, 172, 148];
           }
-          if (data.row.index === 5) {
+          if (data.row.raw[0].includes("Initiator:") || data.row.raw[0].includes("Recommender:")||
+          data.row.raw[0].includes("Approved by:")|| data.row.raw[0].includes("From :")) {
             data.cell.styles.fontStyle = "bold"
           }
-          if (data.row.index === 6) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 7) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 9) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 14) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 16) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 19) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 20) {
-            data.cell.styles.fontStyle = "bold"
-          }
-          if (data.row.index === 21) {
-            data.cell.styles.fontStyle = "bold"
-          }
+          // if (data.row.index === 5) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 6) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 7) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 9) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 14) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 16) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 19) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 20) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
+          // if (data.row.index === 21) {
+          //   data.cell.styles.fontStyle = "bold"
+          // }
 
-          if (data.row.index === 13) {
-            data.cell.styles.fillColor = [62, 172, 148];
-          }
-          if (data.row.index === 15) {
-            data.cell.styles.fillColor = [62, 172, 148];
-          }
-          if (data.row.index === 18) {
-            data.cell.styles.fillColor = [62, 172, 148];
-          }
+          // if (data.row.index === 13) {
+          //   data.cell.styles.fillColor = [62, 172, 148];
+          // }
+          // if (data.row.index === 15) {
+          //   data.cell.styles.fillColor = [62, 172, 148];
+          // }
+          // if (data.row.index === 18) {
+          //   data.cell.styles.fillColor = [62, 172, 148];
+          // }
         },
         didDrawPage: (dataArg) => {
           doc.text('', dataArg.settings.margin.left, 10);
