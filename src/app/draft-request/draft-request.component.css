@@ -7,9 +7,9 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size:large;
   }
-  mat-card{
+  /* mat-card{
     background-color:  rgba(106, 135, 223, 0.589);
-  }
+  } */
   .make-gold{
     background-color: #F0F0F0;
   }
@@ -30,4 +30,20 @@ table{
   background-color: white;
   margin: 0;
   padding: 0;
+}
+
+th{
+  background-color: rgb(60,53,63);
+  color: white;
+}
+
+.text-center{
+  vertical-align:middle;
+}
+
+.truncate-cell{
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -1,8 +1,12 @@
 <mat-dialog-content>
-  <mat-card >
-  <mat-card class="ex1 text-center">
+  <!-- <mat-card > -->
+  <!-- <mat-card class="ex1 text-center">
     <span class="request-Tab">Add Workflow</span>
-  </mat-card>
+  </mat-card> -->
+  <div class="text-center" style="display: flex;">
+    <span style="font-size: 20px;flex: 3;">Add Workflow</span>
+  </div>
+  <mat-divider style="margin: 10px 0;"></mat-divider>
   <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" action="#">
     <!-- <hr> -->
     <br>
@@ -74,5 +78,5 @@
       </button> -->
     </div>
   </form>
-  </mat-card>
+  <!-- </mat-card> -->
 </mat-dialog-content>

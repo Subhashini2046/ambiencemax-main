@@ -20,9 +20,9 @@ let express = require("express"),
    let unreadStatusopen=0;
     if (req.body.role == 0) {
 
-      con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} ; 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Completed'; 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Closed'; 
+      con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0; 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Completed'and RUMPRequestCancelStatus=0; 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0; 
       select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t1 on RUMPInitiatorId=t1.linkRUMPAdminAccessPK inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t1.linkrumprolefk=0 and t1.linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t1.linkrumpspace!=t2.linkRUMPSpace or t1.linkRUMPRoleFK != t2.linkRUMPRoleFK); 
       select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0;`, (err, result) => {
         if (err) throw err;
@@ -92,9 +92,10 @@ let express = require("express"),
         let unreadStatusclosed=0;
         let unreadStatuspending=0;
         let unreadStatusopen=0;
-        con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}); 
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Completed'; 
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Closed';
+
+        con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestCancelStatus=0; 
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Completed'and RUMPRequestCancelStatus=0; 
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Closed'and RUMPRequestCancelStatus=0;
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role});
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and linkrumprolefk=${role} and RUMPRequestCancelStatus=0 and linkRUMPSpace=${space} `,
          (err, result) => {
@@ -149,8 +150,8 @@ let express = require("express"),
             }
           }
         }
-        con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestflowfk in(${narr}); 
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Completed'; 
+        con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestCancelStatus=0; 
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed, count(*) as "closed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Closed'; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending, count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role}); 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen, count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestflowfk in(${narr}) and linkrumprolefk=${role} and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0;`,

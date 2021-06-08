@@ -15,3 +15,16 @@ form{
   .frm{
     border-radius: 4px;
   }
+  th{
+    background-color: rgb(60,53,63);
+    color: white;
+  }
+  
+  .text-center{
+    vertical-align:middle;
+  }
+  table{
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }

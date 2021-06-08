@@ -4,9 +4,13 @@
     <mat-card-content class="example-card">
       <mat-card>
         <div *ngIf="checkAdminAcess==1">
-          <mat-card class="ex1 text-center">
+          <!-- <mat-card class="ex1 text-center">
             <span class="request-Tab">Assign or Revoke AmbienceMax Configuration Access to User</span>
-          </mat-card>
+          </mat-card> -->
+          <div style="display: flex;">
+            <span style="font-size: 20px;flex: 3;">Assign or Revoke AmbienceMax Configuration Access to User</span>
+          </div>
+          <mat-divider style="margin: 10px 0;"></mat-divider>
           <br>
           <form action="" #aform="ngForm">
               <div class="row">
@@ -79,10 +83,15 @@
         </div>
       </mat-card>
     <br>
+
     <mat-card>
-      <mat-card class="ex1 text-center">
+      <!-- <mat-card class="ex1 text-center">
         <span class="request-Tab">Link Hierarchy to Workflow</span>
-      </mat-card>
+      </mat-card> -->
+      <div style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">Link Hierarchy to Workflow</span>
+      </div>
+      <mat-divider style="margin: 10px 0;"></mat-divider>
       <br>
       <br>
       <form action="" #hform="ngForm">
@@ -173,9 +182,13 @@
   <div class="col-lg-6">
     <mat-card-content class="example-card">
       <mat-card>
-        <mat-card class="ex1 text-center">
+        <!-- <mat-card class="ex1 text-center">
           <span class="request-Tab"> Add new workflows & hierarchies</span>
-        </mat-card>
+        </mat-card> -->
+        <div style="display: flex;">
+          <span style="font-size: 20px;flex: 3;">Add new workflows & hierarchies</span>
+        </div>
+        <mat-divider style="margin: 10px 0;"></mat-divider>
         <br>
         <br>
         <form #form="ngForm" (submit)="form.reset()">
@@ -191,13 +204,20 @@
       </mat-card>
       <br>
       <mat-card>
-        <mat-card class="ex1 text-center">
+        <!-- <mat-card class="ex1 text-center">
           <span class="request-Tab"> Existing assigned workflows</span>
-        </mat-card>
-        <mat-form-field>
-          <mat-label>Filter</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. city" #input>
-        </mat-form-field>
+        </mat-card> -->
+        <div style="display: flex;">
+          <span style="font-size: 20px;flex: 3;">Existing assigned workflows</span>
+          <div style="display: inline-block;margin-left: auto;">
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Request Type,Request Number" #input>
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-divider style="margin: 10px 0;"></mat-divider>
+<br>
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
           <ng-container matColumnDef="ID">
             <th class="text-center" mat-header-cell *matHeaderCellDef>Work Flow Id</th>
@@ -242,7 +262,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[3]"></mat-paginator>
+        <mat-paginator [hidden]="!this.dataSource.data.length>=1" [pageSizeOptions]="[3]"></mat-paginator>
       </mat-card>
     </mat-card-content>
   </div>

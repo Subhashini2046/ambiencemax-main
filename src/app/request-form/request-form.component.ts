@@ -6,16 +6,16 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as FileSaver from 'file-saver';
-import {Observable, of, Subject,fromEvent} from 'rxjs';
-import {bufferTime,auditTime} from 'rxjs/operators';
-import { interval, Subscription,} from 'rxjs';
+import { Observable, of, Subject, fromEvent } from 'rxjs';
+import { bufferTime, auditTime } from 'rxjs/operators';
+import { interval, Subscription, } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
   styleUrls: ['./request-form.component.css']
 })
-export class RequestFormComponent implements OnInit,OnDestroy {
+export class RequestFormComponent implements OnInit, OnDestroy {
   public userId;
   public role_id;
   req_id = 0;
@@ -62,7 +62,7 @@ export class RequestFormComponent implements OnInit,OnDestroy {
   raiseRequestId;
   checkoutForm;
   public keyUp = new Subject<KeyboardEvent>();
-  constructor(private formBuilder: FormBuilder,private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
       req_swon: '',
@@ -103,7 +103,7 @@ export class RequestFormComponent implements OnInit,OnDestroy {
     balance_budget: 0,
     req_subject: '',
     req_description: '',
-    draftReqId:0
+    draftReqId: 0
   };
 
   ngOnInit() {
@@ -137,18 +137,23 @@ export class RequestFormComponent implements OnInit,OnDestroy {
   BoqfileName = [];
   pncSupportingDoc = [];
   ngAfterContentInit() {
-  
+
     if (this.req_id > 0) {
       this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
       });
     }
-    if (this.is_pnc == 1) {
-      this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-        this.dataSource = response;
-        this.selectedElement = response;
-        this.selectedSpoc = this.dataSource.length;
-      });
-    }
+    // if (this.is_pnc == 1) {
+    //   this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+    //     this.dataSource = response;
+    //     this.selectedElement = response;
+    //     this.selectedSpoc = this.dataSource.length;
+    //   });
+    // }
+    this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+      this.dataSource = response;
+      this.selectedElement = response;
+      this.selectedSpoc = this.dataSource.length;
+    });
     if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
 
       //request files
@@ -200,7 +205,7 @@ export class RequestFormComponent implements OnInit,OnDestroy {
     }
   }
 
-  key(){
+  key() {
     console.log(this.currReq.req_type)
   }
   //autosave
@@ -224,17 +229,17 @@ export class RequestFormComponent implements OnInit,OnDestroy {
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
-     // this.sub();
+      // this.sub();
     }
   }
-cancelRequest(){
-  console.log("ggggg")
-  this.UserDataService.cancelRequest(this.req_id).subscribe((response:any)=>{
-console.log("request is cancelled")
-this.openSnackBar('Request Cancelled Successfully !');
-    this.router.navigateByUrl('/AmbienceMax/open');
-  })
-}
+  cancelRequest() {
+    console.log("ggggg")
+    this.UserDataService.cancelRequest(this.req_id).subscribe((response: any) => {
+      console.log("request is cancelled")
+      this.openSnackBar('Request Cancelled Successfully !');
+      this.router.navigateByUrl('/AmbienceMax/open');
+    })
+  }
   // sub(){
   //     this.subscription = interval(5000).subscribe((val: any) => {
   //     if (this.raiseRequestId > 0)
@@ -342,16 +347,16 @@ this.openSnackBar('Request Cancelled Successfully !');
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
-  //  this.currReq.me_type= this.checkoutForm.value.me_type
-  //  this.currReq.req_swon=this.checkoutForm.value.req_swon
-  //  this.currReq.budget_type=this.checkoutForm.value.budget_type
-  // this.currReq.req_type=this.checkoutForm.value.req_type
-  // this.currReq.available_budget= this.checkoutForm.value.available_budget
-  // this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
-  // this.currReq.balance_budget =this.checkoutForm.value.balance_budget
-  // this.currReq.req_subject=this.checkoutForm.value.subject
-  // this.currReq.req_description=this.checkoutForm.value.description
-  //   console.log(this.currReq);
+    //  this.currReq.me_type= this.checkoutForm.value.me_type
+    //  this.currReq.req_swon=this.checkoutForm.value.req_swon
+    //  this.currReq.budget_type=this.checkoutForm.value.budget_type
+    // this.currReq.req_type=this.checkoutForm.value.req_type
+    // this.currReq.available_budget= this.checkoutForm.value.available_budget
+    // this.currReq.consumed_budget=this.checkoutForm.value.consumed_budget
+    // this.currReq.balance_budget =this.checkoutForm.value.balance_budget
+    // this.currReq.req_subject=this.checkoutForm.value.subject
+    // this.currReq.req_description=this.checkoutForm.value.description
+    //   console.log(this.currReq);
 
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
@@ -447,6 +452,7 @@ this.openSnackBar('Request Cancelled Successfully !');
     formData1.append('id', id);
     formData1.append('files', this.pncfile[0]);
     let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
+    if (VendorPk == null) { VendorPk = this.RequestAllocatedVendor }
     this.http.post<any>(this.UserDataService.URL + 'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepnc[i] = res.files[i]['filename'];
@@ -514,6 +520,6 @@ this.openSnackBar('Request Cancelled Successfully !');
     return false;
   }
   ngOnDestroy() {
-  //  this.subscription.unsubscribe();
+    //  this.subscription.unsubscribe();
   }
 }

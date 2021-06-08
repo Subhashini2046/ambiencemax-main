@@ -1,9 +1,13 @@
 <mat-dialog-content>
   <div class="text-center container" style="background-color: white;">
-    <mat-card class="ex1 text-center">
+    <!-- <mat-card class="ex1 text-center">
       <mat-card-title>Workflow {{wflowId}}</mat-card-title>
-    </mat-card>
-    <mat-card class="example-card1">
+    </mat-card> -->
+    <div style="display: flex;">
+      <span style="font-size: 20px;flex: 3;">Workflow {{wflowId}}</span>
+    </div>
+    <mat-divider style="margin: 10px 0;"></mat-divider>
+    <!-- <mat-card class="example-card1"> -->
     <table class="table" mat-table [dataSource]="this.dataSource">
   
   
@@ -26,6 +30,6 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row [ngClass]="{'make-Gold': row.id == this.indexCivil[0],'make-gold': row.id == this.indexElectrical[0]}" *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    </mat-card>
+    <!-- </mat-card> -->
   </div>
 </mat-dialog-content>

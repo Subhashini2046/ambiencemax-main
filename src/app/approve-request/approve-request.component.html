@@ -2,10 +2,14 @@
     <div class="col-md-3"></div>
     <div class="col-md-6" style="border-radius: 10px;">
         <form class="px-3 py-3 my-4" #form="ngForm" (submit)="form.reset()">
-            <mat-card class="example-card1 text-center">
+            <!-- <mat-card class="example-card1 text-center">
                 <mat-card-title> Request Action Form</mat-card-title>
-              </mat-card>
-              <br>
+              </mat-card> -->
+            <div class="text-center" style="display: flex;">
+                <span style="font-size: 20px;flex: 3;">Request Action Form</span>
+            </div>
+            <mat-divider style="margin: 10px 0;"></mat-divider>
+            <br>
             <div class="text-center">
                 <label>Request Comment</label>
                 <div class="text-center">
@@ -36,8 +40,7 @@
                                 <mat-checkbox (click)="$event.stopPropagation();"
                                     (change)="$event ? selection.toggle(row) : null"
                                     [disabled]="this.selection.selected.length > 6"
-                                    [checked]="selection.isSelected(row)"
-                                   >
+                                    [checked]="selection.isSelected(row)">
                                 </mat-checkbox>
                             </td>
                         </ng-container>
@@ -67,7 +70,7 @@
                     <br>
                 </div>
                 <div class="text-center" style="width: 100%;">
-                    <button mat-raised-button color="accent" style="width:80%" type="submit" (click)="onSubmit()">
+                    <button mat-raised-button color="accent" style="width:80%;outline:none;" type="submit" (click)="onSubmit()">
                         Submit
                     </button>
                 </div>

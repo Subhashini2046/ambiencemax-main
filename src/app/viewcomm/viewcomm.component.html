@@ -3,10 +3,15 @@
   <div class="col-md-6">
     <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
       action="#">
-      <h5 class="text-center">
+      <!-- <h5 class="text-center">
         Request Details
       </h5>
-      <hr>
+      <hr> -->
+      <div class="text-center" style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">Request Details</span>
+    </div>
+    <mat-divider style="margin: 10px 0;"></mat-divider>
+    <br>
       <div class="form-row">
         <div class="form-group">
           <label for="inputdes">Request Type</label>
@@ -97,7 +102,7 @@
       </div>
 
       <div class="text-center" *ngIf="this.req_status!='Closed'">
-        <button mat-raised-button class="col-bg-button" (click)="form.valid ? onSubmit() : null"
+        <button mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)="form.valid ? onSubmit() : null"
           [disabled]="!form.valid">
           Resend for change
         </button>

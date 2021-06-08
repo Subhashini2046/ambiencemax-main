@@ -3,10 +3,15 @@
   <div class="col-md-6">
     <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
       action="#">
-      <h5 class="text-center">
+      <!-- <h5 class="text-center">
         Request Form
       </h5>
-      <hr>
+      <hr> -->
+      <div class="text-center" style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">Request Form</span>
+    </div>
+    <mat-divider style="margin: 10px 0;"></mat-divider>
+    <br>
       <div class="form-row">
 
         <div class="form-group col-md-6">
@@ -141,19 +146,19 @@
       <div class="text-center" *ngIf="this.role_id==0">
         <div class="form-row">
           <div class="form-group col-md-4">
-        <button mat-raised-button class="col-bg-button" style="color: white"
+        <button mat-raised-button class="col-bg-button" style="color: white;outline: none"
         [disabled]="(this.role_id==0 && is_pnc==1)"  (click)=onSumbitForUpdate()>
          Sumbit
         </button>
           </div>
           <div class="form-group col-md-4">
-        <button mat-raised-button class="col-bg-button" style="color: white"
+        <button mat-raised-button class="col-bg-button" style="color: white; outline: none"
         [disabled]="(this.role_id==0 && is_pnc==1)"  (click)=onResend()>
           Resend
         </button>
       </div>
       <div class="form-group col-md-4">
-        <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white"
+        <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white;outline: none;"
          (click)=cancelRequest()>Cancel
         </button>
       </div>
@@ -163,14 +168,14 @@
         <br>
         <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
           <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
-            <button mat-raised-button class="col-bg-button" style="color: white" (click)=" onApprove()">
+            <button mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)=" onApprove()">
               Approve
             </button>
           </div>
           
           <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
           || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
-            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
+            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)=onResend()>
               Resend
             </button>
             <!-- <div class="text-center">
@@ -372,10 +377,15 @@
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
       style="border-radius: 10px;" action="#">
-      <h5 class="text-center">
+      <!-- <h5 class="text-center">
         Enter BOQ Details
       </h5>
-      <hr>
+      <hr> -->
+      <div class="text-center" style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">Enter BOQ Details</span>
+    </div>
+    <mat-divider style="margin: 10px 0;"></mat-divider>
+    <br>
       <div class="form-group">
         <label>BOQ Description</label>
         <textarea id="subject" class="form-control" [(ngModel)]="boqDescription"
@@ -432,13 +442,13 @@
       <div class="text-center">
         <div class="form-row" *ngIf="(this.role_id==3 || this.role_id==4)">
           <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="BOQform.valid ? onBOQSubmit() : null"
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)="BOQform.valid ? onBOQSubmit() : null"
               [disabled]="!BOQform.valid">
               Submit
             </button>
           </div>
             <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onResend()">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)="onResend()">
               Resend
             </button>
          </div>
@@ -454,23 +464,28 @@
   <div class="col-md-6" style="border-radius: 10px;">
     <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
       style="border-radius: 10px;" action="#">
-      <h5 class="text-center">
+      <!-- <h5 class="text-center">
         PNC Upload & Vendor Tagging/Allocation
       </h5>
-      <hr>
+      <hr> -->
+      <div class="text-center" style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">PNC Upload & Vendor Tagging/Allocation</span>
+    </div>
+    <mat-divider style="margin: 10px 0;"></mat-divider>
+    <br>
 
       <div class="example-container mat-elevation-z8" *ngIf="selectedSpoc>0">
 
         <mat-radio-group required [(ngModel)]="pncvendorSelection" name="radio" [disabled]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')" 
         >
 
-          <table mat-table [dataSource]="dataSource" >
+          <table class="table" mat-table [dataSource]="dataSource" >
 
             
             <ng-container matColumnDef="selected">
-              <th mat-header-cell *matHeaderCellDef>
+              <th class="text-center" mat-header-cell *matHeaderCellDef>
               </th>
-              <td mat-cell *matCellDef="let element">
+              <td class="text-center" mat-cell *matCellDef="let element">
                 <mat-radio-button [value]="element"
                 [checked]="RequestAllocatedVendor==element.rumpvenVendorPK"
                 >
@@ -513,7 +528,7 @@
         <label>Allocated Days</label>
         <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0"
           [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
-          [(ngModel)]="allocatedDays" name="consumedBudget" required />
+          [(ngModel)]="allocatedDays" name="AllocatedDays" required />
       </div>
 
       <div class="form-group" *ngIf="selectedSpoc>0">
@@ -530,9 +545,9 @@
       </div>
       <div class="form-group">
         <label>Actual Cost</label>
-        <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0"
+        <input class="form-control" id="ActualCost" type="number" pattern="[0-9]+" min="0"
           [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
-          [(ngModel)]="actualCost" name="consumedBudget" required />
+          [(ngModel)]="actualCost" name="ActualCost" required />
       </div>
 
       <div class="form-group" *ngIf="reqPnc!=null">
@@ -591,14 +606,14 @@
           <br>
           <div class="form-group col-md-5"
             *ngIf="((this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed'))">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onPncSumbit()" 
-             [disabled]="onPncChange()">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)="onPncSumbit()" 
+             [disabled]="onPncChange() ">
               Submit
             </button>
           </div>
           <div class="form-group col-md-5"
           *ngIf="(this.role_id==0 && this.actualCost1!=null)">
-          <button type="submit" mat-raised-button class="col-bg-button" style="color: white" (click)="onResend()" 
+          <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)="onResend()" 
            >
             Resend
           </button>
