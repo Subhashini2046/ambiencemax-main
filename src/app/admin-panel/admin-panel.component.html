@@ -1,5 +1,5 @@
-<div style="margin-top:1.5em" class="row graph">
-  <div class="col-lg-6">
+<div style="display: flex; margin-top:1em" class="row graph">
+  <div class="col-lg-6" >
 
     <mat-card-content class="example-card">
       <mat-card>
@@ -262,7 +262,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <mat-paginator [hidden]="!this.dataSource.data.length>=1" [pageSizeOptions]="[3]"></mat-paginator>
+        <mat-paginator [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[3]"></mat-paginator>
       </mat-card>
     </mat-card-content>
   </div>

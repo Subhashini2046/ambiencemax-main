@@ -77,7 +77,7 @@ export class AddWorkflowDialogComponent implements OnInit {
   }
 
   // get admin name
-  onChanged(event: any, i: FormGroup, j) {
+  onChanged(event: any, i: FormGroup) {
     this.roleId = event;
     this.countRole = 0;
   //  this.checkUser = 1;

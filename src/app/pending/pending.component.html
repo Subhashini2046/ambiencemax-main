@@ -72,7 +72,7 @@
     <tr mat-row [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   <!-- </mat-card> -->
-  <mat-paginator [hidden]="!this.dataSource.data.length>=1" [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
 <div style="text-align: center;color:red;margin: 20px 0;padding-bottom: 20px;"
 *ngIf="this.dataSource.data.length<1">
   No data is available
