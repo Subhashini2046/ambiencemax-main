@@ -105,17 +105,20 @@
         <label>Request Document</label>
         <br>
         <div *ngFor="let f1 of fileName,let i=index">
-        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
-          Download Document
+        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i].fileName)">
+          Download
         </button>
-        <label> {{fileName[i]}}</label>
+        <button *ngIf="(role_id==0 && is_pnc==0)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deleteBoqDoc(fileName[i].fileName,fileName[i].file_pk)">
+          Delete
+        </button>
+        <label> {{fileName[i].fileName}}</label>
       </div>
       </div>
       <div class="form-group" *ngIf="(this.role_id == 0 && this.is_pnc==0)">
         <form>
 
-          <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
-          <button mat-raised-button (click)="fileInput.click()">Select File</button>
+          <label for="fileUpload">Upload File Here: &nbsp;&nbsp;</label>
+          <button mat-raised-button style=" outline:none;" (click)="fileInput.click()">Select File</button>
 
 
           <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
@@ -414,17 +417,20 @@
         <label>Request Document</label>
         <br>
         <div *ngFor="let f1 of BoqfileName,let i=index">
-        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i])">
-          Download Document
+        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i].fileName)">
+          Download
         </button>
-        <label> {{BoqfileName[i]}}</label>
+        <button *ngIf="(role_id==3 || role_id==4)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deleteBoqDoc(BoqfileName[i].fileName,BoqfileName[i].file_pk)">
+          Delete
+        </button>
+        <label> {{BoqfileName[i].fileName}}</label>
         </div>
       </div>
       <div class="form-group" *ngIf="(this.role_id==3 || this.role_id==4)">
         <form>
           <label for="file">Upload File Here:</label><br>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
-          <button mat-raised-button (click)="fileInput.click()">Add</button>
+          <button mat-raised-button style="outline:none;" (click)="fileInput.click()">Add</button>
           <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
             multiple="true">
           <div *ngFor="let selected of listOfFiles;let index = index">
@@ -501,19 +507,22 @@
            
             <ng-container matColumnDef="spoc1">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
+                element.venSpoc1Email,element.venSpoc1Mobile,element.venSpoc1Phone)">add_circle_outline</mat-icon> </td>
             </ng-container>
 
             
             <ng-container matColumnDef="spoc2">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3" *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
+                element.venSpoc2Email,element.venSpoc2Mobile,element.venSpoc2Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 
            
             <ng-container matColumnDef="spoc3">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3" *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
+                element.venSpoc3Email,element.venSpoc3Mobile,element.venSpoc3Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -538,7 +547,7 @@
           <mat-label>Choose a date</mat-label>
           <input matInput [matDatepicker]="picker1" 
             [disabled]="!(this.role_id==0 && this.is_pnc==1)"
-            [(ngModel)]="allocationStartDate" name="allocationStartDate" required>
+            [(ngModel)]="allocationStartDate" name="allocationStartDate1" required>
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
@@ -549,26 +558,24 @@
           [readonly]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')"
           [(ngModel)]="actualCost" name="ActualCost" required />
       </div>
-
+      <label for="fileUpload1"> PNC Document: &nbsp;&nbsp;</label><br>
       <div class="form-group" *ngIf="reqPnc!=null">
+
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile(reqPnc)">
-          Download PNC Document
+          Download
+        </button>
+        <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deletePncDoc(reqPnc)">
+          Replace
         </button>
         <label> {{reqPnc}}</label>
         </div>
-        <div *ngFor="let f1 of pncSupportingDoc,let i=index">
-          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i])">
-            Download Supporting Document
-          </button>
-          <label> {{pncSupportingDoc[i]}}</label>
-          </div>
 
-      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && reqPnc==null)">
+      <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && reqPnc==null) || (replacePnc==1)">
       
         <form>
         
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
-          <button mat-raised-button (click)="filesInput.click()">Add</button>
+          <button mat-raised-button style="outline:none;" (click)="filesInput.click()">Add</button>
           <input style="display: none"  #attachments  type="file" (change)="onPncFile($event)" #filesInput required>
           <div *ngFor="let selected of pncfileName;let index = index">
             <label>
@@ -581,14 +588,23 @@
           <br>
         </form>
       </div>
+      <hr>
+      <label for="fileUpload"> PNC Supporting Document: &nbsp;&nbsp;</label><br>
+      <div *ngIf="pncSupportingDoc.length>0">
+        <div *ngFor="let f1 of pncSupportingDoc,let i=index">
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i].fileName)">
+            Download
+          </button>
+          <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deleteBoqDoc(pncSupportingDoc[i].fileName,pncSupportingDoc[i].file_pk)">
+            Delete
+          </button>
+          <label> {{pncSupportingDoc[i].fileName}}</label>
+          </div>
+        </div>
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1)">
-        <hr>
-    
         <form>
-         
-          <label for="fileUpload">Supporting Document: &nbsp;&nbsp;</label><br>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
-          <button mat-raised-button (click)="fileInput.click()">Add</button>
+          <button mat-raised-button style="outline:none;" (click)="fileInput.click()">Add</button>
           <input style="display: none"  #attachments  type="file" (change)="onPncFileChanged($event)" #fileInput>
           <div *ngFor="let selected of listOfFiles1;let index = index">
             <label>

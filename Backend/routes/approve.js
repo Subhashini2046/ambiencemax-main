@@ -9,8 +9,20 @@ let express = require("express"),
 router.post("/getSpocs", (req, res) => {
   reqId = req.body.req_id;
   sql = `select (select rumpspoName from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1,
+  (select rumpspoEmailUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Email,
+(select rumpspoPhone from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Phone,
+(select rumpspoMobileUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Mobile,
+(select rumpspoAddress from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Address,
   (select rumpspoName from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc2FK) as venSpoc2,
+  (select rumpspoEmailUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc2FK) as venSpoc2Email,
+  (select rumpspoPhone from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc2FK) as venSpoc2Phone,
+  (select rumpspoMobileUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc2FK) as venSpoc2Mobile,
+  (select rumpspoAddress from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc2FK) as venSpoc2Address,
   (select rumpspoName from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc3FK) as venSpoc3,
+  (select rumpspoEmailUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc3FK) as venSpoc3Email,
+  (select rumpspoPhone from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc3FK) as venSpoc3Phone,
+  (select rumpspoMobileUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc3FK) as venSpoc3Mobile,
+  (select rumpspoAddress from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc3FK) as venSpoc3Address,
   rumpvenVendorPK,rumpvenName as venName from datarumpvendor where rumpvenVendorPK in(
   select  RUMPRequestTaggedVendor1 as v1 from datarumprequest
   where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor1 is not null
@@ -57,19 +69,21 @@ router.post("/getVendor", (req, res) => {
   select COALESCE(RUMPRequestTaggedVendor6) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor6 is not null
   union
   select COALESCE(RUMPRequestTaggedVendor7) as vendorId from datarumprequest  where RUMPRequestPK=${reqId} and RUMPRequestTaggedVendor7 is not null;`,
-     (err, result) => {
+    (err, result) => {
       if (err) throw err;
       if (result.length > 0) {
-        let vendorsId=result;
-        let vendorId=result[0].vendorId;
+        let vendorsId = result;
+        let vendorId = result[0].vendorId;
         con.query(`select pickrumpvendorcategories.* from 
         linkrumpvendorcategorymap inner join pickrumpvendorcategories 
         on(pickrumpvendorcategories.pickRumpVendorCategoriesPK=linkrumpvendorcategorymap.linkRumpVendorCategoryFK) 
         where linkrumpvendorcategorymap.linkRumpVendorFK=${vendorId};`,
           [vendorId], (err, result) => {
             if (err) throw err;
-            res.end(JSON.stringify({result:result,
-              vendorsId:vendorsId}))
+            res.end(JSON.stringify({
+              result: result,
+              vendorsId: vendorsId
+            }))
           })
       }
       // res.end(JSON.stringify(result))
@@ -137,7 +151,7 @@ router.post("/vendorDetail", (req, res) => {
 
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
- let accessID= req.body.accessID;
+  let accessID = req.body.accessID;
   if (vendorList[0] != null) {
     venderTagged_1 = vendorList[0];
   } else
@@ -179,50 +193,50 @@ router.post("/addVendors", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      let approvalLevel=result[0].RUMPRequestApprovalLevel;
+      let approvalLevel = result[0].RUMPRequestApprovalLevel;
       let initiatorId = result[0].initiatorId;
       console.log(result);
-      sql=`select distinct RUMPRequestRole from datarumprequestaction 
+      sql = `select distinct RUMPRequestRole from datarumprequestaction 
       where RUMPRequestRole=? and RUMPRequestFK=?;`
-      con.query(sql,[accessID,req.body.req_id],function(err,result){
+      con.query(sql, [accessID, req.body.req_id], function (err, result) {
         if (err) {
           console.log(err);
         } else {
-      if(result.length>0){
-      sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
+          if (result.length > 0) {
+            sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
       RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
       RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
       RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
       RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK = '${req.body.req_id}';`
-      }
-      else{
-        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
+          }
+          else {
+            sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
         RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
         RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
         RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
         RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK = '${req.body.req_id}';`
-      }
-      con.query(sql, function (err, result) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(result);
-          const now = new Date();
-          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
-
+          }
           con.query(sql, function (err, result) {
             if (err) {
               console.log(err);
             } else {
               console.log(result);
-              res.send(JSON.stringify({
-                result: "passed"
-              }));
+              const now = new Date();
+              let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+
+              con.query(sql, function (err, result) {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log(result);
+                  res.send(JSON.stringify({
+                    result: "passed"
+                  }));
+                }
+              })
             }
           })
-        }
-      })
         }
       })
     }
@@ -285,7 +299,7 @@ router.post("/getComment", (req, res) => {
   })
 })
 router.post("/approveRequest", (req, res) => {
-  let accessID=req.body.accessID;
+  let accessID = req.body.accessID;
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow,datarumprequest.RumprequestLevel as requestLevel,
   datarumprequest.RUMPInitiatorId as initiatorId from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
@@ -354,11 +368,11 @@ router.post("/approveRequest", (req, res) => {
 
 router.post("/cancelRequest", (req, res) => {
   sql = `update datarumprequest set RUMPRequestCancelStatus=1 where RUMPRequestPK=?;`
-  con.query(sql,[req.body.req_id], function (err, result) {
+  con.query(sql, [req.body.req_id], function (err, result) {
     if (err) {
       console.log(err);
     } else {
-      res.send(JSON.stringify({result:"cancelled"}));
+      res.send(JSON.stringify({ result: "cancelled" }));
     }
   })
 })

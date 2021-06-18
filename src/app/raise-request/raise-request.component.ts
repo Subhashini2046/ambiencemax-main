@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+
 @Component({
   selector: 'app-raise-request',
   templateUrl: './raise-request.component.html',
@@ -68,6 +69,8 @@ export class RaiseRequestComponent implements OnInit {
     req_description: '',
     draftReqId: 0
   };
+
+ 
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     this.currReq.req_initiator_id = this.userId;

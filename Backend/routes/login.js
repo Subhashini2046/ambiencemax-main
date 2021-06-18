@@ -14,7 +14,7 @@ router.post("/login", (req, res) => {
         console.log(result);
         user_id = result[0].admAdminPK;
         user_name=result[0].admName;
-        var sql2 = `select linkRUMPAdminAccessPK,linkRUMPRoleFK,linkRuMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${user_id} order by linkRUMPRoleFK desc limit 1;`
+        var sql2 = `select linkRUMPAdminAccessPK,linkRUMPRoleFK,linkRuMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${user_id} and linkRUMPActiveFlag=1 order by linkRUMPRoleFK desc limit 1;`
         con.query(sql2, function (err, result) {
           if (err) {
             console.log(err);
@@ -145,7 +145,7 @@ left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUM
 left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
 left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
 inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
-where linkrumpadminfk=? order by linkrumprolefk
+where linkrumpadminfk=? and linkRUMPActiveFlag=1 order by linkrumprolefk
 `;
 con.query(getrolesquery,[req.query.userid],(err,result)=>{
   if(err) throw err;

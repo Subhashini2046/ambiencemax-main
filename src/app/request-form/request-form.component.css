@@ -23,8 +23,14 @@ form{
   .text-center{
     vertical-align:middle;
   }
+  .button3:hover {
+    cursor: pointer;
+  }
   table{
     background-color: white;
     margin: 0;
     padding: 0;
+  }
+  .mat-icon{
+    font-size: small;
   }

@@ -20,7 +20,9 @@ th{
   background-color: rgb(60,53,63);
   color: white;
 }
-
+.mat-icon{
+  font-size: small;
+}
 .text-center{
   vertical-align:middle;
 }
@@ -28,4 +30,8 @@ table{
   background-color: white;
   margin: 0;
   padding: 0;
+}
+
+.button3:hover {
+  cursor: pointer;
 }

@@ -92,6 +92,7 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
       // w_id.clear();
     });
   }
+  
 
   //it will open the dialog for creating the new worlflow.
   openWorkflowDialog(): void {

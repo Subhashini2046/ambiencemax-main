@@ -1,4 +1,5 @@
 var multer = require('multer');
+var fs = require('fs');
 const date = require('date-and-time');
 let express = require("express"),
   async = require("async"),
@@ -217,7 +218,7 @@ let express = require("express"),
         }
         sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
         on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-        where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
+        where rumprequestfk=${req_id} and linkRUMPActiveFlag=1 and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
         con.query(sql, function (err, result) {
           if (err) {
             console.log(err);
@@ -229,7 +230,7 @@ let express = require("express"),
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where RUMPRequestFK=? and RUMPRequestRole in(?) and RUMPRequestRole!=(select RUMPRequestRole from datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-              where rumprequestfk=? and linkRUMProleFK=? and linkRUMPSpace=? limit 1);`
+              where rumprequestfk=? and linkRUMProleFK=? and linkRUMPActiveFlag=1 and linkRUMPSpace=? limit 1);`
               con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
                 if (err) {
                   console.log(err);
@@ -243,7 +244,7 @@ let express = require("express"),
               from datarumprequestaction datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
-              where RUMPRequestFK=? and RUMPRequestRole in(?);`
+              where linkRUMPActiveFlag=1 and RUMPRequestFK=? and RUMPRequestRole in(?);`
               con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
                 if (err) {
                   console.log(err);
@@ -267,7 +268,7 @@ let express = require("express"),
     let accessId = req.body.accessId;
     sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
       on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-      where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
+      where rumprequestfk=${req_id} and linkRUMPActiveFlag=1 and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -280,7 +281,7 @@ let express = require("express"),
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where rumprequestfk=${req_id} and (RUMPRequestActionTiming <(select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-              where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) or (RUMPRequestAction like 'Resent%' and RUMPRequestRole!=${accessId})) 
+              where rumprequestfk=${req_id} and and linkRUMPActiveFlag=1 linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) or (RUMPRequestAction like 'Resent%' and RUMPRequestRole!=${accessId})) 
               group by linkRUMPRoleFK,linkRUMPSpace;`
           con.query(sql1, function (err, result) {
             if (err) {
@@ -297,7 +298,7 @@ let express = require("express"),
               inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
-              where rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
+              where linkRUMPActiveFlag=1 and rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
           con.query(sql2, function (err, result) {
             if (err) {
               console.log(err);
@@ -312,9 +313,31 @@ let express = require("express"),
   
   });
   
-  router.get("/addLink", (req, res) => {
-  
-  
+  router.post("/deleteBOQFile", (req, res) => {
+    var file_Name=req.body.file_Name;
+    console.log(file_Name);
+    con.query('delete from datarumprequestfiles where RUMPRequestFilesPK=?',
+    [req.body.file_pk],(err,result)=>{
+      if (err) throw err;
+      var filePath = 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\'+file_Name; 
+      console.log("filePath",filePath);
+      fs.unlinkSync(filePath);
+      res.end(JSON.stringify({result:"file deleted"}));
+    })
+  });
+
+  router.post("/deletePncFile", (req, res) => {
+    var file_Name=req.body.Pnc_File;
+    console.log(req.body);
+    let pncUrl=null;
+    var filePath = 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\'+file_Name; 
+    con.query('update datarumprequest set RUMPRequestPNCUrl=? where RUMPRequestPK=? ',
+    [pncUrl,req.body.req_id],(err,result)=>{
+      if (err) throw err;
+      // console.log("filePath",filePath);
+      // fs.unlinkSync(filePath);
+      res.end(JSON.stringify({result:"file Replaced"}));
+    })
   });
 
   module.exports = router;

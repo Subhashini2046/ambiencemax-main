@@ -1,0 +1,12 @@
+table{
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .text-center{
+    vertical-align:middle;
+  }
+  .t1{
+      font-weight: bold;
+  }

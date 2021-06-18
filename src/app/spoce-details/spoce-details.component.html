@@ -1,0 +1,31 @@
+<mat-dialog-content>
+    <div class="text-center container" style="background-color: white;">
+      <!-- <mat-card class="ex1 text-center">
+        <mat-card-title>Workflow {{wflowId}}</mat-card-title>
+      </mat-card> -->
+      <div style="display: flex;">
+        <span style="font-size: 20px;flex: 3;">Spoc Details</span>
+      </div>
+      <br>
+      <!-- <mat-card class="example-card1"> -->
+      <table class="table" mat-table [dataSource]="this.dataSource">
+    
+    
+        <!-- REQUEST NO COULMN -->
+        <ng-container matColumnDef="name">
+         <!-- <th class="text-center" mat-header-cell *matHeaderCellDef> Name </th> -->
+          <td class="text-center t1" mat-cell *matCellDef="let element"> {{element.data}} </td>
+        </ng-container>
+    
+        <!-- REQUEST TITLE Column -->
+        <ng-container matColumnDef="details">
+          <!-- <th class="text-center" mat-header-cell *matHeaderCellDef> Email </th> -->
+          <td class="text-center" mat-cell *matCellDef="let element"> {{element.details}} </td>
+        </ng-container>
+  
+        <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr> -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <!-- </mat-card> -->
+    </div>
+  </mat-dialog-content>

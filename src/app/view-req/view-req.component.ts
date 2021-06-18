@@ -8,7 +8,8 @@ import * as FileSaver from 'file-saver';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-
+import { MatDialog } from '@angular/material';
+import { SpoceDetailsComponent } from '../spoce-details/spoce-details.component';
 @Component({
   selector: 'app-view-req',
   templateUrl: './view-req.component.html',
@@ -62,7 +63,7 @@ export class ViewReqComponent implements OnInit {
   dataSource3: any[] = [];
   dataSource: any[] = [];
   selectedElement: any[] = [];
-  constructor(private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
+  constructor(public dialog: MatDialog,private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   filestage;
   fileName = [];
@@ -167,7 +168,16 @@ export class ViewReqComponent implements OnInit {
     console.log('file downloaded');
     return new Blob([res], { type: 'pdf' });
   }
+  openDialog(venSpoc1,venSpoc1Address,venSpoc1Email,venSpoc1Mobile,venSpoc1Phone): void {
+    let dialogRef = this.dialog.open(SpoceDetailsComponent, {
+      width: '550px',
+      data: {venSpoc:venSpoc1,venSpocAddress:venSpoc1Address,venSpocEmail:venSpoc1Email,venSpocMobile:venSpoc1Mobile,venSpocPhone:venSpoc1Phone}
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
   // download request,BOQ and PNC supporting file
   download(downloadfile) {
     this.userDataService.getFiles(downloadfile).subscribe((res) => {

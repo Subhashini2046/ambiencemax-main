@@ -380,4 +380,12 @@ getFiles(x: string): Observable<any> {
   cancelRequest(req_id){
     return this.http.post(this.URL+'cancelRequest', {req_id});
   }
+
+  deleteBOQFile(file_Name,file_pk){
+    return this.http.post(this.URL+'deleteBOQFile', {file_Name,file_pk});
+  }
+
+  deletePncFile(Pnc_File,req_id){
+    return this.http.post(this.URL+'deletePncFile', {Pnc_File,req_id});
+  }
 }

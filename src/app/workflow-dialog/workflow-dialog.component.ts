@@ -27,6 +27,7 @@ export class WorkflowDialogComponent implements OnInit {
     this.wflowId = this.WorkflowData.data
     this.w_flow = data.w_flow;
   }
+  
   onNoClick(): void {
     this.dialogRef.close();
   }

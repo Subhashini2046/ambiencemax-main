@@ -48,7 +48,8 @@ import { environment } from 'src/environments/environment';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import {AuthenticationGuard} from './authentication.guard';
 import { RaiseRequestComponent } from './raise-request/raise-request.component';
-import { DraftRequestComponent } from './draft-request/draft-request.component'; 
+import { DraftRequestComponent } from './draft-request/draft-request.component';
+import { SpoceDetailsComponent } from './spoce-details/spoce-details.component'; 
 
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
@@ -107,8 +108,9 @@ const appRoutes = [
     AddWorkflowDialogComponent,
     RaiseRequestComponent,
     DraftRequestComponent,
+    SpoceDetailsComponent,
   ],
-  entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent],
+  entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent,SpoceDetailsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

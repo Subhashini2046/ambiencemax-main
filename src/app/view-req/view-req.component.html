@@ -100,7 +100,7 @@
         <br>
         <div *ngFor="let f1 of fileName,let i=index">
           <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
-            Download Document
+            Download
           </button>
           <label> {{fileName[i]}}</label>
         </div>
@@ -157,7 +157,7 @@
           <br>
           <div *ngFor="let f1 of BoqfileName,let i=index">
             <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i])">
-              Download Document
+              Download
             </button>
             <label> {{BoqfileName[i]}}</label>
           </div>
@@ -178,6 +178,7 @@
       <div class="text-center" style="display: flex;">
         <span style="font-size: 20px;flex: 3;">PNC Upload & Vendor Tagging/Allocation</span>
       </div>
+
       <mat-divider style="margin: 10px 0;"></mat-divider>
       <br>
       <div class="example-container mat-elevation-z8" *ngIf="selectedSpoc>0">
@@ -202,21 +203,24 @@
             </ng-container>
 
             <!-- Position Column -->
-            <ng-container matColumnDef="spoc1">
+             <ng-container matColumnDef="spoc1">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
+                element.venSpoc1Email,element.venSpoc1Mobile,element.venSpoc1Phone)">add_circle_outline</mat-icon> </td>
             </ng-container>
 
             <!-- Name Column -->
             <ng-container matColumnDef="spoc2">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3" *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
+                element.venSpoc2Email,element.venSpoc2Mobile,element.venSpoc2Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="spoc3">
               <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} </td>
+              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3" *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
+                element.venSpoc3Email,element.venSpoc3Mobile,element.venSpoc3Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -252,7 +256,7 @@
         <label>PNC Document</label>
         <br>
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile()">
-          Download Document
+          Download
         </button>
         <label> {{filename}}</label>
       </div>
@@ -262,7 +266,7 @@
         <div *ngFor="let f1 of pncSupportingDoc,let i=index">
           <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
             (click)="download(pncSupportingDoc[i])">
-            Download Document
+            Download
           </button>
           <label> {{pncSupportingDoc[i]}}</label>
         </div>

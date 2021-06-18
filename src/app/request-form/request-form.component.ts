@@ -10,6 +10,8 @@ import { Observable, of, Subject, fromEvent } from 'rxjs';
 import { bufferTime, auditTime } from 'rxjs/operators';
 import { interval, Subscription, } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { SpoceDetailsComponent } from '../spoce-details/spoce-details.component';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
@@ -61,8 +63,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   raiseRequestId;
   checkoutForm;
+  replacePnc=0;
   public keyUp = new Subject<KeyboardEvent>();
-  constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  constructor(public dialog: MatDialog,private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
       req_swon: '',
@@ -75,6 +78,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       description: ''
     });
 
+   
     // this.checkoutForm.valueChanges.pipe(auditTime(2000)).subscribe((formData:any) =>{ 
     //   if (this.raiseRequestId > 0)
     //     this.UpdateautoSaveFormData();
@@ -106,6 +110,16 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     draftReqId: 0
   };
 
+  openDialog(venSpoc1,venSpoc1Address,venSpoc1Email,venSpoc1Mobile,venSpoc1Phone): void {
+    let dialogRef = this.dialog.open(SpoceDetailsComponent, {
+      width: '550px',
+      data: {venSpoc:venSpoc1,venSpocAddress:venSpoc1Address,venSpocEmail:venSpoc1Email,venSpocMobile:venSpoc1Mobile,venSpocPhone:venSpoc1Phone}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     this.currReq.req_initiator_id = this.userId;
@@ -127,7 +141,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     if (this.role_id == 3 || this.role_id == 4) {
 
       return this.UserDataService.getRequestDetails(this.req_id).subscribe((response: any) => {
-        console.log(response)
+
       });
     }
   }
@@ -149,62 +163,76 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     //     this.selectedSpoc = this.dataSource.length;
     //   });
     // }
+   this.getSpoceDetails();
+    if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
+
+      //request files
+     this.getRequestFiles();
+
+      //request details
+    this.getRequestDetails();
+    }
+  }
+  getSpoceDetails(){
     this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
       this.dataSource = response;
       this.selectedElement = response;
       this.selectedSpoc = this.dataSource.length;
     });
-    if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
-
-      //request files
-      this.UserDataService.getRequestFile(this.req_id).subscribe((response: any) => {
-        for (let i = 0; i < response.length; i++) {
-          if (response[i].RUMPRequestFilesStage == 1) {
-            this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-          }
-          if (response[i].RUMPRequestFilesStage == 2) {
-            this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-          }
-          if (response[i].RUMPRequestFilesStage == 3) {
-            this.pncSupportingDoc.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-          }
-        }
-      });
-
-      //request details
-      this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
-        this.requestDetails = response;
-        this.currReq.budget_type = this.requestDetails[0]["BudgetType"];
-        this.currReq.me_type = this.requestDetails[0]["METype"];
-        this.currReq.available_budget = this.requestDetails[0]["RequestAvailableBudget"];
-        this.currReq.balance_budget = this.requestDetails[0]["RequestBalanceBudget"];
-        this.currReq.consumed_budget = this.requestDetails[0]["RequestConsumedBudget"];
-        this.description = this.requestDetails[0]["RequestDescription"];
-        this.currReq.req_swon = this.requestDetails[0]["RequestSWON"];
-        this.subject = this.requestDetails[0]["RequestSubject"];
-        this.currReq.req_type = this.requestDetails[0]["RequestType"];
-        this.boqDescription1 = this.requestDetails[0]["BOQDescription"];
-        this.boqDescription = this.requestDetails[0]["BOQDescription"];
-        this.boqEstimatedCost = this.requestDetails[0]["BOQEstimatedCost"];
-        this.boqEstimatedTime = this.requestDetails[0]["BOQEstimatedTime"];
-        this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
-        this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
-        this.actualCost = this.requestDetails[0]["ActualCost"];
-        this.actualCost1 = this.actualCost;
-        this.is_pnc = this.requestDetails[0]["ispnc"];
-        this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
-        this.currReq.req_level = this.requestDetails[0]["requestLevel"];
-        this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
-        this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
-        this.reqComment = this.requestDetails[0]["requestComments"];
-        this.reqPnc = response[0]["PNCUrl"]
-        if (this.reqPnc != null) {
-          this.reqPnc = this.reqPnc.replace(/^.*[\\\/]/, '')
-        };
-      });
-    }
   }
-
+  getRequestDetails(){
+    this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+      this.requestDetails = response;
+      this.currReq.budget_type = this.requestDetails[0]["BudgetType"];
+      this.currReq.me_type = this.requestDetails[0]["METype"];
+      this.currReq.available_budget = this.requestDetails[0]["RequestAvailableBudget"];
+      this.currReq.balance_budget = this.requestDetails[0]["RequestBalanceBudget"];
+      this.currReq.consumed_budget = this.requestDetails[0]["RequestConsumedBudget"];
+      this.description = this.requestDetails[0]["RequestDescription"];
+      this.currReq.req_swon = this.requestDetails[0]["RequestSWON"];
+      this.subject = this.requestDetails[0]["RequestSubject"];
+      this.currReq.req_type = this.requestDetails[0]["RequestType"];
+      this.boqDescription1 = this.requestDetails[0]["BOQDescription"];
+      this.boqDescription = this.requestDetails[0]["BOQDescription"];
+      this.boqEstimatedCost = this.requestDetails[0]["BOQEstimatedCost"];
+      this.boqEstimatedTime = this.requestDetails[0]["BOQEstimatedTime"];
+      this.allocatedDays = this.requestDetails[0]["AllocatedDays"];
+      this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
+      this.actualCost = this.requestDetails[0]["ActualCost"];
+      this.actualCost1 = this.actualCost;
+      this.is_pnc = this.requestDetails[0]["ispnc"];
+      this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
+      this.currReq.req_level = this.requestDetails[0]["requestLevel"];
+      this.currReq.req_status = this.requestDetails[0]["RequestStatus"];
+      this.RequestAllocatedVendor = this.requestDetails[0]["RequestAllocatedVendor"];
+      if(this.RequestAllocatedVendor!=null){
+     for(let i=0;i<this.selectedElement.length;i++){
+      if(this.RequestAllocatedVendor==this.selectedElement[i].rumpvenVendorPK){
+        this.pncvendorSelection=this.selectedElement[i];
+        break;
+      }}}
+      this.reqComment = this.requestDetails[0]["requestComments"];
+      this.reqPnc = response[0]["PNCUrl"]
+      if (this.reqPnc != null) {
+        this.reqPnc = this.reqPnc.replace(/^.*[\\\/]/, '')
+      };
+    });
+  }
+getRequestFiles(){
+  this.UserDataService.getRequestFile(this.req_id).subscribe((response: any) => {
+    for (let i = 0; i < response.length; i++) {
+      if (response[i].RUMPRequestFilesStage == 1) {
+        this.fileName.push({fileName:response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''),file_pk:response[i].RUMPRequestFilesPK});
+      }
+      if (response[i].RUMPRequestFilesStage == 2) {
+        this.BoqfileName.push({fileName:response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''),file_pk:response[i].RUMPRequestFilesPK});
+      }
+      if (response[i].RUMPRequestFilesStage == 3) {
+        this.pncSupportingDoc.push({fileName:response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''),file_pk:response[i].RUMPRequestFilesPK});
+      }
+    }
+  });
+}
   key() {
     console.log(this.currReq.req_type)
   }
@@ -233,7 +261,6 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     }
   }
   cancelRequest() {
-    console.log("ggggg")
     this.UserDataService.cancelRequest(this.req_id).subscribe((response: any) => {
       console.log("request is cancelled")
       this.openSnackBar('Request Cancelled Successfully !');
@@ -286,11 +313,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     }
     var fileInMB = 10485760;
     if (filesize > fileInMB) {
-      console.log("lll", filesize > fileInMB);
       this.areCredentialsInvalid = true;
       return;
     }
-    console.log("mmmm", this.fileList);
     this.attachment.nativeElement.value = '';
   }
 
@@ -314,11 +339,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     }
     var fileInMB = 10485760;
     if (filesize > fileInMB) {
-      console.log("lll", filesize > fileInMB);
       this.areCredentialsInvalid = true;
       return;
     }
-    console.log("mmmm", this.fileList1);
     this.attachment.nativeElement.value = '';
   }
 
@@ -462,8 +485,10 @@ export class RequestFormComponent implements OnInit, OnDestroy {
         if (this.pncfile.length > 0) {
           console.log(res.files[0]['filename'], "hh")
           this.pncfilesName = res.files[0]['filename'];
+          this.replacePnc=0;
           this.UserDataService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.pncfilesName, this.admin_access_id, this.user_name);
         } else {
+          this.replacePnc=0;
           this.UserDataService.addPncByInitiator1(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name);
         }
       });
@@ -516,6 +541,32 @@ export class RequestFormComponent implements OnInit, OnDestroy {
         FileSaver.saveAs(res, downloadfile);
         // window.open(url);
       }
+    });
+    return false;
+  }
+  deleteBoqDoc(file_Name,file_pk){
+    this.fileName=[];
+    this.BoqfileName=[];
+    this.pncSupportingDoc=[];
+    this.UserDataService.deleteBOQFile(file_Name,file_pk).subscribe((res) => {
+      console.log(res);
+      this.getRequestFiles();
+    });
+    return false;
+  }
+
+  deletePncDoc(Pnc_File){
+    console.log(Pnc_File);
+    this.fileName=[];
+    this.BoqfileName=[];
+    this.pncSupportingDoc=[];
+    this.reqPnc='';
+    this.UserDataService.deletePncFile(Pnc_File,this.req_id).subscribe((res) => {
+      console.log(res);
+      this.getRequestFiles();
+      this.getRequestDetails();
+      this.getSpoceDetails();
+      this.replacePnc=1;
     });
     return false;
   }
