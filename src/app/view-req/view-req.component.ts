@@ -80,7 +80,6 @@ export class ViewReqComponent implements OnInit {
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
-      console.log('this.req_id ', this.req_id, this.resendToId);
     });
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.accessID = JSON.parse(localStorage.getItem('admin_access_id'));
@@ -91,7 +90,7 @@ export class ViewReqComponent implements OnInit {
       for (let i = 0; i < response.length; i++) {
         if (response[i].RUMPRequestFilesStage == 1) {
           this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-          console.log(this.fileName);
+       
         }
         if (response[i].RUMPRequestFilesStage == 2) {
           this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
@@ -107,7 +106,7 @@ export class ViewReqComponent implements OnInit {
         this.dataSource = response;
         this.selectedElement = response;
         this.selectedSpoc = this.dataSource.length;
-        console.log(response);
+      
       });
       this.budget_type = response[0]["BudgetType"];
       this.me_type = response[0]["METype"];
@@ -127,7 +126,7 @@ export class ViewReqComponent implements OnInit {
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
       this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
-      console.log(this.RequestAllocatedVendor,"v");
+
       // if (this.RequestAllocatedVendor != null) {
       //   this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
       //     for (let i = 0; i < response.length; i++) {
@@ -139,14 +138,14 @@ export class ViewReqComponent implements OnInit {
       // }
       //console.log(this.req_number.substr(12,15),"n")
       this.reqComment = response[0]["requestComments"];
-      console.log(this.reqComment);
+   
       this.pncurl = response[0]["PNCUrl"];
       if (this.pncurl != null) {
         this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');
       }
       if (this.req_status.toString().trim() != 'Pending') {
         this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
-          console.log(response, "check_asRead");
+        
         });
       }
     });
@@ -203,7 +202,7 @@ export class ViewReqComponent implements OnInit {
   // Mark request status as Complete
   onCompelete() {
     this.userDataService.addCompleteRequest(this.req_id, this.accessID, this.user_name).subscribe((ResData) => {
-      console.log(ResData);
+    
     })
     this.route.navigateByUrl('/AmbienceMax/close');
   }
@@ -243,7 +242,7 @@ export class ViewReqComponent implements OnInit {
       }
       const doc = new jsPDF('p', 'pt', 'a4');
       let reqNum=this.req_number.indexOf('Form');
-      console.log(reqNum,'reqNum');
+    
       autoTable(doc, { html: '#my-table' })
       const columns1 = [[this.req_number.slice(reqNum, reqNum+5)]];
       const data2 = [];
@@ -382,7 +381,7 @@ for(let i=0;i<this.pdfTableData.length;i++){
       const columns = [['User', 'Role', 'Action', 'Action Timing', 'Comment']];
       const data1 = [];
       if (this.pdfTableData.length > 0) {
-        console.log(this.pdfTableData[7].user);
+    
         for (let i = 0; i <this.pdfTableData.length; i++) {
           data1.push([this.pdfTableData[i].user, this.pdfTableData[i].role1, this.pdfTableData[i].action, this.dateFormate(this.pdfTableData[i].actionTiming), this.pdfTableData[i].comment])
         }

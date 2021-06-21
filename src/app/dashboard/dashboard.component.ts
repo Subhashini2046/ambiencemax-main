@@ -69,16 +69,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // }
   admin(){
      let userId=localStorage.getItem('userId');
-     console.log("ff",userId);
      this.router.navigate(['/AmbienceMax/admin',userId]);
   }
   ngOnInit() {
-    console.log("ng!!!!");
     this.userId=localStorage.getItem('userId');
     this.countSubsription=   this.UsrDataService.changedetectInRole.subscribe(data=>{
       this.role_id = localStorage.getItem('role_id');
       this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(data=>{
-      console.log(data);
       this.menus=JSON.parse(JSON.stringify(data));
     })
     this.role_id = localStorage.getItem('role_id');
@@ -119,7 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // change dashboard data when user is switched 
   navigateToDashboard(role,space,id){
-    console.log(id,"id");
     localStorage.setItem('role_id', JSON.stringify(role));
     localStorage.setItem('space', JSON.stringify(space));
     localStorage.setItem('admin_access_id', JSON.stringify(id));

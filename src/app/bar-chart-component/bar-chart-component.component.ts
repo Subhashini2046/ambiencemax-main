@@ -66,7 +66,7 @@ export class BarChartComponentComponent implements OnInit ,OnDestroy{
             label: 'No Of Requests'
           }
         ];
-        console.log('bar Called!');
+   
       })
     })
   }

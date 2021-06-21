@@ -24,3 +24,6 @@ form{
   mat-card{
     background-color:  rgba(106, 135, 223, 0.589);
   }
+  .mat-button{
+    outline:none;
+  }

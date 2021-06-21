@@ -163,10 +163,10 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
 
   // add w_flow id and b_id in linkrumprequestinitiators
   onAddLink() {
-    console.log(this.b_id, this.wflowIdAndFlowCtrl.value);
+   
     this.userDataService.addLink(this.wflowIdAndFlowCtrl.value, this.b_id).subscribe((data) => {
       this.onAddlink = data["result"]
-      console.log(data);
+   
       if (this.onAddlink != 2) {
         if (this.onAddlink != 1) {
           alert("Successfully Added");

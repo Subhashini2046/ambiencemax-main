@@ -39,7 +39,7 @@ export class ViewcommComponent implements OnInit {
       this.req_id = +params['reqId'];
       this.resendToId=+params['id'];
       this.is_pnc=+params['pnc']
-      console.log('this.req_id ', this.req_id,this.resendToId);
+     
     });
     this.user_name=JSON.parse(localStorage.getItem('user_name'));
     this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));

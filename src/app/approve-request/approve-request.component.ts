@@ -43,13 +43,13 @@ export class ApproveRequestComponent implements OnInit {
     //get vendor Category
     this.http.get<any>(this.userDataService.URL+'vendorcategories').subscribe((res) => {
       this.vendorCategory = res;
-      console.log("ddd", this.vendorCategory);
+     
 
     });
   }
   vendorID = []
   ngAfterContentInit() {
-    console.log(this.role_id)
+   
 
     //get request comment
     // this.userDataService.getHomComment(this.req_id).subscribe((res) => {
@@ -82,7 +82,7 @@ if(this.role_id==5){
 
   //get vendor details when click on vendor Category
   onChanged(event: any) {
-    console.log(event, this.vendCategoryId);
+  
     this.selection.clear();
     this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
       this.dataSource.data = res;
@@ -96,9 +96,9 @@ if(this.role_id==5){
         this.vendorList[i] = (this.selection.selected[i]["vendorId"]);
       }
       this.userDataService.addVendors(this.vendorList, this.req_id, this.requestComment, this.admin_access_id, this.user_name).subscribe((ResData) => {
-        console.log(ResData);
+    
       })
-      console.log("......", this.vendorList);
+    
     } else
       this.userDataService.approveRequest(this.requestComment, this.req_id, this.user_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
         console.log("Successfully Inserted");

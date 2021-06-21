@@ -156,7 +156,6 @@ export class RaiseRequestComponent implements OnInit {
   autoSaveFormData() {
     this.passCheckoutFormDataToCurrReq();
     this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
-      console.log("result", data.id);
       this.raiseRequestId = data.id;
     });
   }
@@ -164,18 +163,15 @@ export class RaiseRequestComponent implements OnInit {
     this.passCheckoutFormDataToCurrReq();
     if (this.draftReqId > 0) {
       this.UserDataService.updateDraftRequest(this.currReq, this.draftReqId).subscribe((data: any) => {
-        console.log("result", data);
       });
     }
     else {
       this.UserDataService.updateDraftRequest(this.currReq, this.raiseRequestId).subscribe((data: any) => {
-        console.log("result", data);
       });
     }
   }
   // calculate how many characters is left to type(subject)
   valueChange(value) {
-    console.log("fffffff");
     if (value != null) {
       this.remainingText = 100 - value.length;
       // this.sub();
@@ -213,11 +209,11 @@ export class RaiseRequestComponent implements OnInit {
     }
     var fileInMB = 10485760;
     if (filesize > fileInMB) {
-      console.log("lll", filesize > fileInMB);
+     
       this.areCredentialsInvalid = true;
       return;
     }
-    console.log("mmmm", this.fileList);
+  
     this.attachment.nativeElement.value = '';
   }
 
@@ -246,7 +242,7 @@ export class RaiseRequestComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      console.log(this.filepath, "this.filepath");
+      
       this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
     //this.openSnackBar('Request Submitted Successfully !');

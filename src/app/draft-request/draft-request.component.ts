@@ -21,7 +21,7 @@ hover=false;
 @ViewChild(MatSort, { static: true }) sort: MatSort;
 constructor(private route: Router, public UserDataService: UserDataService) { }
 ngOnInit() {
-  console.log("pending Component");
+  
 
   this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
   this.role_id = JSON.parse(localStorage.getItem('role_id'));
@@ -30,13 +30,13 @@ ngOnInit() {
 fetchAllDraftRequest(){
   this.UserDataService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('space')),this.role_id).subscribe((response: any) => {
     this.dataSource.data= response;
-    console.log(response)
+ 
   });
 }
 deleteDraftRequest(draftReqId) {
   this.hover=true;
   this.UserDataService.deleteDraftReques(draftReqId).subscribe((response:any)=>{
-    console.log(response);
+
     this.fetchAllDraftRequest();
   })}
 // navigate to view reuqest data

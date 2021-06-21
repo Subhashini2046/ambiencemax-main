@@ -90,7 +90,6 @@ export class AddWorkflowDialogComponent implements OnInit {
         }
       }
     }
-    console.log("i", this.checkUser);
     for (let i = 0; i < this.checkoutForm.value.items.length; i++) {
       if (this.checkoutForm.value.items[i]["role"] == this.roleId) {
         this.countRole++;

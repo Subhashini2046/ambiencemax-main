@@ -551,6 +551,64 @@ router.post("/addPnc", (req, res) => {
     }
   });
 });
+router.post("/updatePnc", (req, res) => {
+  var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+      res.send(JSON.stringify({ result: "failed1" }));
+    } else {
+      let wflowdata = result[0].wflow.split(',');
+      let nextValue = 0;
+      let VendorPk = req.body.VendorPk;
+      let allocatedDays = req.body.allocatedDays;
+      let allocationStartDate = req.body.allocationStartDate;
+
+      if (VendorPk == null) {
+        VendorPk = null;
+      }
+      wflowdata = wflowdata.filter(data => data.includes('i')).map(data => {
+        let index = wflowdata.indexOf(data);
+        index = index + 1;
+        nextValue = wflowdata[index];
+      })
+      if (allocationStartDate == null) {
+        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestAllocatedVendor=${VendorPk},
+  RUMPRequestVendorAllocatedDays=${allocatedDays},
+  RUMPRequestVendorAllocationStartDate=null,RumprequestLevel=${nextValue},
+  RUMPRequestActualCost=${req.body.actualCost} where rumprequestpk=${req.body.req_id};`
+      }
+      else {
+        allocationStartDate = req.body.allocationStartDate.toString().substr(0, 10);
+        sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestAllocatedVendor=${VendorPk},
+  RUMPRequestVendorAllocatedDays=${allocatedDays},
+  RUMPRequestVendorAllocationStartDate='${allocationStartDate}',RumprequestLevel=${nextValue},
+  RUMPRequestActualCost=${req.body.actualCost} where rumprequestpk=${req.body.req_id};`
+      }
+      con.query(sql, function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+          // res.send(result);
+          const now = new Date();
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Submitted','${actionTime}','','${req.body.role_name}',1);`
+          con.query(sql, function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(result);
+
+            }
+          })
+        }
+      })
+    }
+  });
+});
 router.post("/pncfileUpload", (req, res) => {
   filepath = req.body.filepath;
   const fileAddress = 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\' + filepath;

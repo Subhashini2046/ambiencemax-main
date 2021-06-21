@@ -40,8 +40,6 @@ export class ViewStatusComponent implements OnInit {
 
   backClicked() {
     this._location.back();
-    console.log('goBack()...');
-
   }
   space
   ngOnInit() {
@@ -129,10 +127,10 @@ export class ViewStatusComponent implements OnInit {
             status: this.view_status
           };
           this.viewStatus1.push(this.viewStatus);
-          console.log( this.viewStatus1);
+     
         }
       }
-      console.log( this.viewStatus1);
+   
       for(let i=0;i<this.viewStatus1.length;i++){
         if (this.viewStatus1[i]["name"] == null) {
           this.viewStatus1.splice(i, 1);

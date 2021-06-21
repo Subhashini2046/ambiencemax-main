@@ -21,7 +21,6 @@ export class AllRequestComponent implements OnInit {
 
     // fetech all request
     return this.UserDataService.getAllRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
-      console.log(response);
       this.dataSource.data = response
     });
 

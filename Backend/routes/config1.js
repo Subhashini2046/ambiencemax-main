@@ -329,13 +329,13 @@ let express = require("express"),
   router.post("/deletePncFile", (req, res) => {
     var file_Name=req.body.Pnc_File;
     console.log(req.body);
-    let pncUrl=null;
+    let pncUrl=req.body.replacePncfile;
     var filePath = 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\'+file_Name; 
     con.query('update datarumprequest set RUMPRequestPNCUrl=? where RUMPRequestPK=? ',
     [pncUrl,req.body.req_id],(err,result)=>{
       if (err) throw err;
-      // console.log("filePath",filePath);
-      // fs.unlinkSync(filePath);
+      console.log("filePath",filePath);
+      fs.unlinkSync(filePath);
       res.end(JSON.stringify({result:"file Replaced"}));
     })
   });

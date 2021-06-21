@@ -76,8 +76,7 @@ export class WorkflowDialogComponent implements OnInit {
           }
         }
       }
-      console.log("i", this.w_flowData);
-      console.log("j", this.WorkflowData1);
+    
       // get index of Civil from w_flow
       this.indexCivil = this.w_flow.filter(data => data.includes('c')).map(data => {
         return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]

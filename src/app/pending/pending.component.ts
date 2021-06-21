@@ -27,7 +27,6 @@ export class PendingComponent implements OnInit {
     //get all Pending Request
     this.UserDataService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
       this.dataSource.data= response;
-      console.log(this.dataSource);
     });
 
   }

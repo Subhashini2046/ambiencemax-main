@@ -62,7 +62,7 @@ export class ChartRepresentComponent implements OnInit ,OnDestroy{
             label: 'No Of Requests'
           }
         ];
-        console.log('horizontalBar Called!');
+   
       })
     })
   }
