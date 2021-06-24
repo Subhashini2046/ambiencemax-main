@@ -154,15 +154,15 @@ router.post("/getUserLocation", (req, res) => {
   else{
   if (roleId==1) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   else if (roleId==2 || roleId==3 || roleId==4 || roleId==5) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,dataclub.cluName as locName from linkrumpadminaccess inner join dataclub on(dataclub.cluClubPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   else if (roleId==6 || roleId==7 || roleId==9) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datacity.citName as locName from linkrumpadminaccess inner join datacity on(datacity.citCityPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   con.query(sql,[userId,roleId], (err, result) => {
     if (err) {
