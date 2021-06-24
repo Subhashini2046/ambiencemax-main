@@ -50,7 +50,7 @@ import {AuthenticationGuard} from './authentication.guard';
 import { RaiseRequestComponent } from './raise-request/raise-request.component';
 import { DraftRequestComponent } from './draft-request/draft-request.component';
 import { SpoceDetailsComponent } from './spoce-details/spoce-details.component'; 
-
+//import { LoadingComponent } from './loading'
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [

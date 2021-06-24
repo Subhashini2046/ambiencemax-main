@@ -55,7 +55,7 @@ router.post("/getFlowDetails", (req, res) => {
       left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
       inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
       inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK)
-      where linkRUMPActiveFlag=1 and linkRUMPAdminAccessPK in (?);`
+      where linkRUMPAdminAccessPK in (?);`
       con.query(sql, [wflowdata], (err, result) => {
         if (err) {
           console.log(err);
@@ -154,15 +154,15 @@ router.post("/getUserLocation", (req, res) => {
   else{
   if (roleId==1) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   else if (roleId==2 || roleId==3 || roleId==4 || roleId==5) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,dataclub.cluName as locName from linkrumpadminaccess inner join dataclub on(dataclub.cluClubPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   else if (roleId==6 || roleId==7 || roleId==9) {
     sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datacity.citName as locName from linkrumpadminaccess inner join datacity on(datacity.citCityPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPActiveFlag=1 and  linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    where linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
   }
   con.query(sql,[userId,roleId], (err, result) => {
     if (err) {
@@ -173,8 +173,6 @@ router.post("/getUserLocation", (req, res) => {
   })
 }
 });
-
-
 
 router.get("/getUserRole",(req,res)=> {
   sql = `select * from pickrumprole;`

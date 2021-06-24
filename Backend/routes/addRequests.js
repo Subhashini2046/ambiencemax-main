@@ -460,7 +460,7 @@ router.post("/resendRequest", (req, res) => {
         else { addIntoApprovalLevel = ApprovalLevel }
       }
       var sql = `select pickrumprole.pickRUMPRoleDescription as role from pickrumprole inner join linkrumpadminaccess 
-  on pickRUMPRolePK=linkRUMPRoleFK where linkRUMPAdminAccessPK=${req.body.resendToId} and linkRUMPActiveFlag=1;`
+  on pickRUMPRolePK=linkRUMPRoleFK where linkRUMPAdminAccessPK=${req.body.resendToId};`
       con.query(sql, function (err, result) {
         if (err) {
           console.log(err);

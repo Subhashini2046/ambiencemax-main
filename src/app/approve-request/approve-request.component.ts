@@ -30,6 +30,7 @@ export class ApproveRequestComponent implements OnInit {
   admin_access_id;
   user_name;
   me_type;
+  isLoading = false;
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
@@ -41,48 +42,52 @@ export class ApproveRequestComponent implements OnInit {
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
 
     //get vendor Category
-    this.http.get<any>(this.userDataService.URL+'vendorcategories').subscribe((res) => {
+    if (this.role_id == 5) {
+      this.getVendorCategory();
+    }
+  }
+  getVendorCategory() {
+    this.http.get<any>(this.userDataService.URL + 'vendorcategories').subscribe((res) => {
       this.vendorCategory = res;
-     
-
     });
   }
   vendorID = []
   ngAfterContentInit() {
-   
+
 
     //get request comment
     // this.userDataService.getHomComment(this.req_id).subscribe((res) => {
     //   this.requestComment = res[0].RUMPRequestComments;
     // });
-    
-if(this.role_id==5){
 
-    //get vendorId
-    this.userDataService.getVendor(this.req_id).subscribe((res) => {
-      for (let i = 0; i < res.vendorsId.length; i++) {
-        this.vendorID.push(res.vendorsId[i].vendorId);
-      }
-      this.vendCategoryId = res.result[0].pickRumpVendorCategoriesPK;
-      if (this.vendCategoryId != null) {
+    if (this.role_id == 5) {
 
-        this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
-          this.dataSource.data = res;
-          this.dataSource.data.forEach(data=>{
-            this.vendorID.forEach(id=>{
-              if(id==data['vendorId']){
-                this.selection.toggle(data);
-              }
+      //get vendorId
+      this.userDataService.getVendor(this.req_id).subscribe((res) => {
+        for (let i = 0; i < res.vendorsId.length; i++) {
+          this.vendorID.push(res.vendorsId[i].vendorId);
+        }
+        this.vendCategoryId = res.result[0].pickRumpVendorCategoriesPK;
+        if (this.vendCategoryId != null) {
+
+          this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
+            this.dataSource.data = res;
+            this.dataSource.data.forEach(data => {
+              this.vendorID.forEach(id => {
+                if (id == data['vendorId']) {
+                  this.selection.toggle(data);
+                }
+              })
             })
-          })
-        });
-      }
-    });}
+          });
+        }
+      });
+    }
   }
 
   //get vendor details when click on vendor Category
   onChanged(event: any) {
-  
+
     this.selection.clear();
     this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
       this.dataSource.data = res;
@@ -90,20 +95,21 @@ if(this.role_id==5){
   }
 
   onSubmit() {
-
+    this.isLoading = true;
     if (this.role_id == 5) {
+
+      console.log("fff");
       for (let i = 0; i < this.selection.selected.length; i++) {
         this.vendorList[i] = (this.selection.selected[i]["vendorId"]);
       }
       this.userDataService.addVendors(this.vendorList, this.req_id, this.requestComment, this.admin_access_id, this.user_name).subscribe((ResData) => {
-    
+        this.route.navigate(['/AmbienceMax/open']);
       })
-    
+
     } else
       this.userDataService.approveRequest(this.requestComment, this.req_id, this.user_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
+        this.route.navigate(['/AmbienceMax/open']);
         console.log("Successfully Inserted");
       });
-
-      this.route.navigate(['/AmbienceMax/open']);
   }
 }

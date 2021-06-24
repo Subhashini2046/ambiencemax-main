@@ -165,7 +165,7 @@ router.post("/viewStatuss",(req,res)=>{
 
         tval = element;
 
-        sql1= `select pickRUMPRoleDescription from linkrumpadminaccess inner join pickrumprole on linkrumpadminaccess.linkRUMPRoleFK = pickrumprole.pickRUMPRolePK where linkRUMPAdminAccessPK = ${tval} and linkRUMPActiveFlag=1;`
+        sql1= `select pickRUMPRoleDescription from linkrumpadminaccess inner join pickrumprole on linkrumpadminaccess.linkRUMPRoleFK = pickrumprole.pickRUMPRolePK where linkRUMPAdminAccessPK = ${tval};`
 
         let fetch = new Promise((resolve,reject)=>{
 

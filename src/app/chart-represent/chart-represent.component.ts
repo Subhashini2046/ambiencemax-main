@@ -51,7 +51,7 @@ export class ChartRepresentComponent implements OnInit ,OnDestroy{
         console.log('Sub called!...');
         this.barChartData = [
           {
-            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(54, 162, 235, 0.2)'],
+            backgroundColor: ['rgba(214, 245, 39, 0.507)', 'rgba(255, 159, 64, 0.2)', 'rgba(54, 162, 235, 0.2)'],
             borderColor: ['rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(75, 192, 192)'],
             borderWidth: 1,
             barPercentage: 0.5,

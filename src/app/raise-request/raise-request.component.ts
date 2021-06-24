@@ -36,6 +36,7 @@ export class RaiseRequestComponent implements OnInit {
   checkoutForm;
   draftReqId;
   requestDetails: any[] = [];
+  isLoading=false;
   public keyUp = new Subject<KeyboardEvent>();
   constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
@@ -226,6 +227,7 @@ export class RaiseRequestComponent implements OnInit {
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
+    this.isLoading=true;
     this.passCheckoutFormDataToCurrReq();
     if(this.draftReqId>0){
     this.currReq.draftReqId = this.draftReqId;}
@@ -246,6 +248,7 @@ export class RaiseRequestComponent implements OnInit {
       this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
     //this.openSnackBar('Request Submitted Successfully !');
+
 
   }
 }

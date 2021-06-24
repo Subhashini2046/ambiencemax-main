@@ -54,9 +54,10 @@ export class BarChartComponentComponent implements OnInit ,OnDestroy{
         console.log('Sub called!...');
         this.barChartData = [
 
+          
           {
-            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-            borderColor: ['rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(75, 192, 192)'],
+            backgroundColor: ['rgba(228, 231, 24, 0.315)', 'rgba(71, 99, 255, 0.301)', 'rgba(255, 99, 71, 0.233)','rgba(71, 255, 71, 0.226)'],
+            borderColor: ['rgba(228, 231, 24, 0.315)', 'rgba(71, 99, 255, 0.301)', 'rgba(255, 99, 71, 0.233)','rgba(71, 255, 71, 0.226)'],
             borderWidth: 1,
             barPercentage: 0.5,
             barThickness: 70,

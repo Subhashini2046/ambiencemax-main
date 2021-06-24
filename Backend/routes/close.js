@@ -10,7 +10,7 @@ router.post("/closedReq",(req,res) =>{
     con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
-    where linkRUMPActiveFlag=1 and linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 order by rumprequestpk desc `, req.body.space, (err, result) => {
+    where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 order by rumprequestpk desc `, req.body.space, (err, result) => {
       if (err) throw err;
       res.end(JSON.stringify(result))
     })
@@ -18,7 +18,7 @@ router.post("/closedReq",(req,res) =>{
     let myrole = req.body.role;
     let narr = [];
     con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-    select linkrumpadminaccesspk as id from linkrumpadminaccess where linkRUMPActiveFlag=1 and linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
+    select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
       if (err) throw err;
       for (let i = 0; i < result[0].length; i++) {
         let wflowdata = result[0][i].wflow.split(',');
@@ -56,7 +56,7 @@ router.post("/closedReq",(req,res) =>{
   } else {
     let narr = [];
     con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-    select linkrumpadminaccesspk as id from linkrumpadminaccess where linkRUMPActiveFlag=1 and linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
+    select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
       if (err) throw err;
       for (let i = 0; i < result[0].length; i++) {
         let wflowdata = result[0][i].wflow.split(',');
@@ -87,7 +87,7 @@ router.post("/closedReq",(req,res) =>{
       con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
       inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
-      where linkrumprolefk=0 and linkRUMPActiveFlag=1 and linkRUMPSpace=? and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 order by RUMPRequestDate desc`, req.body.space, (err, result) => {
+      where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 order by RUMPRequestDate desc`, req.body.space, (err, result) => {
         if (err) throw err;
         res.end(JSON.stringify(result))
       })
@@ -95,7 +95,7 @@ router.post("/closedReq",(req,res) =>{
       let myrole = req.body.role;
       let narr = [];
       con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkRUMPActiveFlag=1 and linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
+      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
         if (err) throw err;
         for (let i = 0; i < result[0].length; i++) {
           let wflowdata = result[0][i].wflow.split(',');
@@ -134,7 +134,7 @@ router.post("/closedReq",(req,res) =>{
     } else {
       let narr = [];
       con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkRUMPActiveFlag=1 and linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
+      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=? and linkrumpspace=? ;`, [req.body.role, req.body.space], (err, result) => {
         if (err) throw err;
         for (let i = 0; i < result[0].length; i++) {
           let wflowdata = result[0][i].wflow.split(',');

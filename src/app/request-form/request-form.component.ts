@@ -67,6 +67,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   delete_pnc_file = [];
   delete_pnc_doc = '';
   delete_pnc_option = 0;
+  isLoading=false;
+  isLoadingRequest=false
+  isLoadingPnc=false
   constructor(public dialog: MatDialog, private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
@@ -355,6 +358,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   // update the reuqest data
   onSumbitForUpdate() {
+    this.isLoadingRequest=true;
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
     const formData = new FormData();
@@ -374,6 +378,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   //store the BQO details in database.
   onBOQSubmit() {
+    this.isLoading=true;
     let boqDis = this.boqDescription;
     let boqCost = this.boqEstimatedCost;
     let boqTime = this.boqEstimatedTime;
@@ -398,12 +403,12 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   onPncChange() {
     if (this.reqPnc == null) {
       if (this.selectedElement.length > 0) {
-        if (this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length < 1) {
+        if (this.isLoadingPnc==true|| this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length < 1) {
           return true
         }
       }
       else {
-        if (this.actualCost == null || this.pncfile.length < 1) {
+        if (this.isLoadingPnc==true|| this.actualCost == null || this.pncfile.length < 1) {
           return true
         }
       }
@@ -413,6 +418,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   //store the Pnc details in database.
   onPncSumbit() {
+    this.isLoadingPnc=true;
     let allocationStartDate = this.allocationStartDate;
     let cost = this.actualCost;
     let allocatedDay = this.allocatedDays;

@@ -20,11 +20,11 @@ let express = require("express"),
    let unreadStatusopen=0;
     if (req.body.role == 0) {
 
-      con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPActiveFlag=1 and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0; 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPActiveFlag=1 and linkRUMPSpace=${space} and RUMPRequestStatus='Completed'and RUMPRequestCancelStatus=0; 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPActiveFlag=1 and linkRUMPSpace=${space} and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0; 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t1 on RUMPInitiatorId=t1.linkRUMPAdminAccessPK inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t1.linkrumprolefk=0 and t1.linkRUMPActiveFlag=1 and t1.linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t1.linkrumpspace!=t2.linkRUMPSpace or t1.linkRUMPRoleFK != t2.linkRUMPRoleFK); 
-      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK where linkrumprolefk=0 and linkRUMPActiveFlag=1 and linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0;`, (err, result) => {
+      con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0  and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0; 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0  and linkRUMPSpace=${space} and RUMPRequestStatus='Completed'and RUMPRequestCancelStatus=0; 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK where linkrumprolefk=0  and linkRUMPSpace=${space} and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0; 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t1 on RUMPInitiatorId=t1.linkRUMPAdminAccessPK inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t1.linkrumprolefk=0 and t1.linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t1.linkrumpspace!=t2.linkRUMPSpace or t1.linkRUMPRoleFK != t2.linkRUMPRoleFK); 
+      select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK where linkrumprolefk=0  and linkRUMPSpace=${space} and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0;`, (err, result) => {
         if (err) throw err;
         unreadStatusAll=result[0][0].UnreadStatusAll;
         unreadStatuscompleted=result[1][0].UnreadStatuscompleted;
@@ -60,7 +60,7 @@ let express = require("express"),
       let myrole = req.body.role;
       let narr = [];
       con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=${role} and linkRUMPActiveFlag=1 and linkrumpspace=${space} ;`, (err, result) => {
+      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=${role} and linkrumpspace=${space} ;`, (err, result) => {
         if (err) throw err;
         for (let i = 0; i < result[0].length; i++) {
           let wflowdata = result[0][i].wflow.split(',');
@@ -96,8 +96,8 @@ let express = require("express"),
         con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestCancelStatus=0; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Completed'and RUMPRequestCancelStatus=0; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed,count(*) as "closed" from datarumprequest where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Closed'and RUMPRequestCancelStatus=0;
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t2.linkRUMPActiveFlag=1 and rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role});
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and linkrumprolefk=${role} and linkRUMPActiveFlag=1 and RUMPRequestCancelStatus=0 and linkRUMPSpace=${space} `,
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending,count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role});
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen,count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestmetype=${metype} and rumprequestflowfk in(${[...narr]}) and linkrumprolefk=${role} and RUMPRequestCancelStatus=0 and linkRUMPSpace=${space} `,
          (err, result) => {
             if (err) throw err;
         unreadStatusAll=result[0][0].UnreadStatusAll;
@@ -136,7 +136,7 @@ let express = require("express"),
       let unreadStatuspending=0;
       let unreadStatusopen=0;
       con.query(`select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow;
-      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=${role} and linkRUMPActiveFlag=1 and linkrumpspace=${space} ;`, (err, result) => {
+      select linkrumpadminaccesspk as id from linkrumpadminaccess where linkrumprolefk=${role} and linkrumpspace=${space} ;`, (err, result) => {
         if (err) throw err;
         for (let i = 0; i < result[0].length; i++) {
           let wflowdata = result[0][i].wflow.split(',');
@@ -153,8 +153,8 @@ let express = require("express"),
         con.query(`select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusAll,count(*) as "all" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestCancelStatus=0; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuscompleted,count(*) as "completed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0; 
         select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusclosed, count(*) as "closed" from datarumprequest where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Closed'; 
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending, count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where t2.linkRUMPActiveFlag=1 and rumprequestflowfk in(${narr}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role}); 
-        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen, count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestflowfk in(${narr}) and linkRUMPActiveFlag=1 and linkrumprolefk=${role} and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0;`,
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatuspending, count(*) as "pending" from datarumprequest inner join linkrumpadminaccess as t2 on RumprequestLevel=t2.linkRUMPAdminAccessPK where rumprequestflowfk in(${narr}) and RUMPRequestStatus='Pending' and RUMPRequestCancelStatus=0 and (t2.linkRUMPSpace != ${space} or t2.linkrumprolefk != ${role}); 
+        select SUM(CASE WHEN RUMPRequestUnreadStatus=1 THEN 1 ELSE 0 END) as UnreadStatusopen, count(*) as "open" from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel where rumprequestflowfk in(${narr}) and linkrumprolefk=${role} and linkRUMPSpace=${space} and RUMPRequestCancelStatus=0;`,
            (err, result) => {
             if (err) throw err;
         unreadStatusAll=result[0][0].UnreadStatusAll;

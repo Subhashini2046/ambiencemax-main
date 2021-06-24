@@ -1,4 +1,8 @@
+<div id="pause" *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+    <div id="spinner"></div>
+  </div>
 <div class="row my-3">
+
     <div class="col-md-3"></div>
     <div class="col-md-6" style="border-radius: 10px;">
         <form class="px-3 py-3 my-4" #form="ngForm" (submit)="form.reset()">
@@ -70,7 +74,8 @@
                     <br>
                 </div>
                 <div class="text-center" style="width: 100%;">
-                    <button mat-raised-button color="accent" style="width:80%;outline:none;" type="submit" (click)="onSubmit()">
+                    <button mat-raised-button color="accent" style="width:80%;outline:none;" type="submit" 
+                    [disabled]="(isLoading==true)" (click)="onSubmit()">
                         Submit
                     </button>
                 </div>

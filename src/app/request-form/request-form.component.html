@@ -1,3 +1,12 @@
+<div id="pause" *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+  <div id="spinner"></div>
+</div>
+<div id="pause" *ngIf="isLoadingRequest" class="d-flex align-items-center justify-content-center">
+  <div id="spinner"></div>
+</div>
+<div id="pause" *ngIf="isLoadingPnc" class="d-flex align-items-center justify-content-center">
+  <div id="spinner"></div>
+</div>
 <div class="row my-3">
   <div class="col-md-3"></div>
   <div class="col-md-6">
@@ -150,7 +159,7 @@
         <div class="form-row">
           <div class="form-group col-md-4">
         <button mat-raised-button class="col-bg-button" style="color: white;outline: none"
-        [disabled]="(this.role_id==0 && is_pnc==1)"  (click)=onSumbitForUpdate()>
+        [disabled]="(this.role_id==0 && is_pnc==1) || (isLoadingRequest==true)"  (click)=onSumbitForUpdate()>
          Sumbit
         </button>
           </div>
@@ -378,7 +387,7 @@
   *ngIf="((this.boqDescription1!=null && this.boqDescription1!='') || this.role_id==3 || this.role_id==4)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
-    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" (ngSubmit)="BOQform.reset() "
+    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm"
       style="border-radius: 10px;" action="#">
       <!-- <h5 class="text-center">
         Enter BOQ Details
@@ -449,7 +458,7 @@
         <div class="form-row" *ngIf="(this.role_id==3 || this.role_id==4)">
           <div class="form-group col-md-5">
             <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)="BOQform.valid ? onBOQSubmit() : null"
-              [disabled]="!BOQform.valid">
+              [disabled]="(!(BOQform.valid) || isLoading==true)">
               Submit
             </button>
           </div>
@@ -468,7 +477,7 @@
 <div class="row my-3" *ngIf="(this.is_pnc==1 || this.actualCost!=null)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
-    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" (ngSubmit)="PNCform.reset() "
+    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm"
       style="border-radius: 10px;" action="#">
       <!-- <h5 class="text-center">
         PNC Upload & Vendor Tagging/Allocation

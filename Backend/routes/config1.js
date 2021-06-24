@@ -218,7 +218,7 @@ let express = require("express"),
         }
         sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
         on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-        where rumprequestfk=${req_id} and linkRUMPActiveFlag=1 and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
+        where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
         con.query(sql, function (err, result) {
           if (err) {
             console.log(err);
@@ -230,7 +230,7 @@ let express = require("express"),
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where RUMPRequestFK=? and RUMPRequestRole in(?) and RUMPRequestRole!=(select RUMPRequestRole from datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-              where rumprequestfk=? and linkRUMProleFK=? and linkRUMPActiveFlag=1 and linkRUMPSpace=? limit 1);`
+              where rumprequestfk=? and linkRUMProleFK=? and linkRUMPSpace=? limit 1);`
               con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
                 if (err) {
                   console.log(err);
@@ -244,7 +244,7 @@ let express = require("express"),
               from datarumprequestaction datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
-              where linkRUMPActiveFlag=1 and RUMPRequestFK=? and RUMPRequestRole in(?);`
+              where RUMPRequestFK=? and RUMPRequestRole in(?);`
               con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
                 if (err) {
                   console.log(err);
@@ -268,7 +268,7 @@ let express = require("express"),
     let accessId = req.body.accessId;
     sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
       on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-      where rumprequestfk=${req_id} and linkRUMPActiveFlag=1 and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
+      where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -281,7 +281,7 @@ let express = require("express"),
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where rumprequestfk=${req_id} and (RUMPRequestActionTiming <(select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
-              where rumprequestfk=${req_id} and and linkRUMPActiveFlag=1 linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) or (RUMPRequestAction like 'Resent%' and RUMPRequestRole!=${accessId})) 
+              where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) or (RUMPRequestAction like 'Resent%' and RUMPRequestRole!=${accessId})) 
               group by linkRUMPRoleFK,linkRUMPSpace;`
           con.query(sql1, function (err, result) {
             if (err) {
@@ -298,7 +298,7 @@ let express = require("express"),
               inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
-              where linkRUMPActiveFlag=1 and rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
+              where rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
           con.query(sql2, function (err, result) {
             if (err) {
               console.log(err);

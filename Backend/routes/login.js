@@ -19,6 +19,13 @@ router.post("/login", (req, res) => {
           if (err) {
             console.log(err);
           } else {
+            if(result.length<1){
+              res.end(
+                JSON.stringify({
+                  key: "failed",
+                  value: "Unauthorized User",
+                  status:401}));
+            }
             admin_access_id=result[0].linkRUMPAdminAccessPK
             role_id = result[0].linkRUMPRoleFK;
             space=result[0].linkRuMPSpace;
