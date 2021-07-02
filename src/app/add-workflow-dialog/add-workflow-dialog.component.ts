@@ -80,7 +80,6 @@ export class AddWorkflowDialogComponent implements OnInit {
   onChanged(event: any, i: FormGroup) {
     this.roleId = event;
     this.countRole = 0;
-  //  this.checkUser = 1;
     let len = this.checkoutForm.value.items.length;
     if (this.roleId != 0) {
       this.checkUser = 1;
@@ -90,14 +89,14 @@ export class AddWorkflowDialogComponent implements OnInit {
         }
       }
     }
-    for (let i = 0; i < this.checkoutForm.value.items.length; i++) {
-      if (this.checkoutForm.value.items[i]["role"] == this.roleId) {
+    for (let j = 0; j < this.checkoutForm.value.items.length; j++) {
+      if (this.checkoutForm.value.items[j]["role"] == this.roleId) {
         this.countRole++;
         console.log(this.countRole, this.roleId);
       }
       if (this.countRole == 2) {
-        this.selectedRole = this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription'];
-        console.log(this.userRole[this.checkoutForm.value.items[i]["role"]]['pickRUMPRoleDescription']);
+        this.selectedRole = this.userRole[this.checkoutForm.value.items[j]["role"]]['pickRUMPRoleDescription'];
+        console.log(this.userRole[this.checkoutForm.value.items[j]["role"]]['pickRUMPRoleDescription']);
         console.log("rrr", this.countRole);
         break;
       }
@@ -111,7 +110,6 @@ export class AddWorkflowDialogComponent implements OnInit {
     }
     if (event == 0 || event == 8) {
       this.userDataService.getUserLocation(event, this.roleId).subscribe((res: any) => {
-        // this.userLocation = res;
         i.get('locationlist').setValue(res);
       });
     }
@@ -131,7 +129,6 @@ export class AddWorkflowDialogComponent implements OnInit {
       }
     }
     this.userDataService.getUserLocation(userId, this.roleId).subscribe((res: any) => {
-      // this.userLocation = res;
       i.get('locationlist').setValue(res);
     });
 
@@ -144,7 +141,6 @@ export class AddWorkflowDialogComponent implements OnInit {
       let len = this.checkoutForm.value.items.length;
       if (this.checkoutForm.value.items[len - 1]['accessId'].toString() != "") {
         this.checkLocation = 0;
-        // console.log("this.checkLocation",this.checkLocation);
       }
       else if (event != "") {
         this.checkLocation = 0;
@@ -162,7 +158,6 @@ export class AddWorkflowDialogComponent implements OnInit {
       if (this.checkoutForm.value.items[i]["role"] == 3) {
         console.log(this.checkoutForm.value.items[i]["accessId"]);
         newVal1 = this.checkoutForm.value.items[i]["accessId"] + 'cor';
-        // this.newWorkflow.push(newVal1);
       }
       else if (this.checkoutForm.value.items[i]["role"] == 0) {
         this.newWorkflow.push('i');

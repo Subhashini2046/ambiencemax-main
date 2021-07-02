@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 
 @Component({
@@ -6,15 +6,14 @@ import { UserDataService } from '../Services/UserDataService';
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent implements OnInit {
+export class LoginFormComponent  {
   userId : number;
   password = '';
-  constructor(private UserDataService: UserDataService) {}
+  constructor(private userService: UserDataService) {}
   onLogin() {
     
     //User Authentication
-    this.UserDataService.authenticateUser1(this.userId, this.password);
+    this.userService.authenticateUser1(this.userId, this.password);
   }
-  ngOnInit() {}
 
 }

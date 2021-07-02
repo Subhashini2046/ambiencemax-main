@@ -1,21 +1,27 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit} from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar,MatDialog } from '@angular/material';
 import { ReqSchema } from '../Services/ReqSchema';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl,FormBuilder } from '@angular/forms';
 import * as FileSaver from 'file-saver';
 import { Subscription, } from 'rxjs';
-import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material';
 import { SpoceDetailsComponent } from '../spoce-details/spoce-details.component';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable';
+//import { CancelRequestComponent } from '../cancel-request/cancel-request.component';
+//import {CancelRequestService} from '../cancel-request/Cancel-request.service';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
-  styleUrls: ['./request-form.component.css']
+  styleUrls: ['./request-form.component.css'],
+  providers: [
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+  ]
 })
-export class RequestFormComponent implements OnInit, OnDestroy {
+export class RequestFormComponent implements OnInit {
   public userId;
   public role_id;
   req_id = 0;
@@ -67,10 +73,11 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   delete_pnc_file = [];
   delete_pnc_doc = '';
   delete_pnc_option = 0;
-  isLoading=false;
-  isLoadingRequest=false
-  isLoadingPnc=false
-  constructor(public dialog: MatDialog, private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  isLoading = false;
+  isLoadingRequest = false;
+  isLoadingPnc = false;
+  pdfTableData: any[] = [];
+  constructor(public dialog: MatDialog, private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
       req_swon: '',
@@ -134,10 +141,6 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       else
         this.is_pnc = 0
     });
-    if (this.role_id == 3 || this.role_id == 4) {
-      return this.UserDataService.getRequestDetails(this.req_id).subscribe((response: any) => {
-      });
-    }
   }
   public selectedSpoc;
   filestage;
@@ -145,15 +148,14 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   BoqfileName = [];
   pncSupportingDoc = [];
   ngAfterContentInit() {
-
+    console.log(this.isLoadingPnc,(!this.isLoadingPnc));
     if (this.req_id > 0) {
-      this.UserDataService.check_asRead(this.req_id).subscribe((response: any) => {
+      this.userService.check_asRead(this.req_id).subscribe((response: any) => {
+        console.log("check as read");
       });
     }
-
     this.getSpoceDetails();
     if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
-
       //request files
       this.getRequestFiles();
 
@@ -163,7 +165,7 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   }
 
   getSpoceDetails() {
-    this.UserDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
+    this.userService.getSpocDetails(this.req_id).subscribe((response: any) => {
       this.dataSource = response;
       this.selectedElement = response;
       this.selectedSpoc = this.dataSource.length;
@@ -171,8 +173,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   }
 
   getRequestDetails() {
-    this.UserDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
+    this.userService.getRequestDetail(this.req_id).subscribe((response: any) => {
       this.requestDetails = response;
+      this.currReq.req_number=this.requestDetails[0]["RequestNumber"];
       this.currReq.budget_type = this.requestDetails[0]["BudgetType"];
       this.currReq.me_type = this.requestDetails[0]["METype"];
       this.currReq.available_budget = this.requestDetails[0]["RequestAvailableBudget"];
@@ -207,12 +210,12 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       this.reqPnc = response[0]["PNCUrl"]
       if (this.reqPnc != null) {
         this.reqPnc = this.reqPnc.replace(/^.*[\\\/]/, '')
-      };
+      }
     });
   }
 
   getRequestFiles() {
-    this.UserDataService.getRequestFile(this.req_id).subscribe((response: any) => {
+    this.userService.getRequestFile(this.req_id).subscribe((response: any) => {
       for (let i = 0; i < response.length; i++) {
         if (response[i].RUMPRequestFilesStage == 1) {
           this.fileName.push({ fileName: response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''), file_pk: response[i].RUMPRequestFilesPK });
@@ -231,12 +234,11 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
-      // this.sub();
     }
   }
 
   cancelRequest() {
-    this.UserDataService.cancelRequest(this.req_id).subscribe((response: any) => {
+    this.userService.cancelRequest(this.req_id).subscribe((response: any) => {
       this.openSnackBar('Request Cancelled Successfully !');
       this.router.navigateByUrl('/AmbienceMax/open');
     })
@@ -249,22 +251,6 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       this.remaining_description = 5000 - value.length;
     }
   }
-  // onMultipleSubmit() {
-
-  //   var filesize = 0;
-  //   const formData = new FormData();
-  //   console.log("nnnnn", this.multipleImages)
-  //   for (let img of this.multipleImages) {
-  //     formData.append('files', img);
-  //     filesize += img['size'];}
-  //   var fileInMB = 10485760;
-  //   if (filesize > fileInMB) {
-  //     console.log("lll", filesize > fileInMB);
-  //     this.areCredentialsInvalid = true;
-  //     return;
-  //   }
-  // }
-
   @ViewChild('attachments', { static: false }) attachment: any;
 
   fileList: File[] = [];
@@ -346,19 +332,17 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>(this.UserDataService.URL + 'multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.userService.URL + 'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
+      this.userService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
-    //this.openSnackBar('Request Submitted Successfully !');
-
   }
 
   // update the reuqest data
   onSumbitForUpdate() {
-    this.isLoadingRequest=true;
+    this.isLoadingRequest = true;
     this.currReq.req_subject = this.subject;
     this.currReq.req_description = this.description;
     const formData = new FormData();
@@ -366,19 +350,19 @@ export class RequestFormComponent implements OnInit, OnDestroy {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>(this.UserDataService.URL + 'multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.userService.URL + 'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
 
-      this.UserDataService.updateRequest(this.is_pnc, obj, this.admin_access_id, this.req_id, JSON.parse(localStorage.getItem('user_name')), this.filepath, this.delete_file);
+      this.userService.updateRequest(this.is_pnc, obj, this.admin_access_id, this.req_id, JSON.parse(localStorage.getItem('user_name')), this.filepath, this.delete_file);
     });
 
   }
 
   //store the BQO details in database.
   onBOQSubmit() {
-    this.isLoading=true;
+    this.isLoading = true;
     let boqDis = this.boqDescription;
     let boqCost = this.boqEstimatedCost;
     let boqTime = this.boqEstimatedTime;
@@ -388,12 +372,11 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     for (let img of this.fileList) {
       formData.append('files', img);
     }
-    this.http.post<any>(this.UserDataService.URL + 'BoqFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.userService.URL + 'BoqFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      this.UserDataService.addBOQDDetails(this.req_id, this.role_id, boqDis, boqCost, boqTime, this.filepath, this.admin_access_id, this.user_name, this.delete_Boq_file);
-      //   this.router.navigateByUrl('/AmbienceMax/open');
+      this.userService.addBOQDDetails(this.req_id, this.role_id, boqDis, boqCost, boqTime, this.filepath, this.admin_access_id, this.user_name, this.delete_Boq_file);
       this.openSnackBar('Request Submitted Successfully !');
     });
 
@@ -403,12 +386,12 @@ export class RequestFormComponent implements OnInit, OnDestroy {
   onPncChange() {
     if (this.reqPnc == null) {
       if (this.selectedElement.length > 0) {
-        if (this.isLoadingPnc==true|| this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length < 1) {
+        if (this.isLoadingPnc || this.actualCost == null || this.allocatedDays == null || this.allocationStartDate == null || this.pncvendorSelection == '' || this.pncfile.length < 1) {
           return true
         }
       }
       else {
-        if (this.isLoadingPnc==true|| this.actualCost == null || this.pncfile.length < 1) {
+        if (this.isLoadingPnc || this.actualCost == null || this.pncfile.length < 1) {
           return true
         }
       }
@@ -418,10 +401,11 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   //store the Pnc details in database.
   onPncSumbit() {
-    this.isLoadingPnc=true;
+    this.isLoadingPnc = true;
     let allocationStartDate = this.allocationStartDate;
     let cost = this.actualCost;
     let allocatedDay = this.allocatedDays;
+    console.log(allocationStartDate);
     // pnc supporting doc
     const formData = new FormData();
     let id = '' + this.req_id;
@@ -435,34 +419,34 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     formData1.append('files', this.pncfile[0]);
     let VendorPk = this.pncvendorSelection["rumpvenVendorPK"];
     if (VendorPk == null) { VendorPk = this.RequestAllocatedVendor }
-    this.http.post<any>(this.UserDataService.URL + 'BoqFiles', formData).subscribe((res) => {
-      for (let i = 0; i < res.files.length; i++) {
-        this.filepnc[i] = res.files[i]['filename'];
+    this.http.post<any>(this.userService.URL + 'BoqFiles', formData).subscribe((response) => {
+      for (let i = 0; i < response.files.length; i++) {
+        this.filepnc[i] = response.files[i]['filename'];
       }
-      this.http.post<any>(this.UserDataService.URL + 'pncFiles', formData1).subscribe((res) => {
+      this.http.post<any>(this.userService.URL + 'pncFiles', formData1).subscribe((res) => {
 
         if (this.delete_pnc_option == 0) {
           if (this.pncfile.length > 0) {
             this.pncfilesName = res.files[0]['filename'];
-            this.UserDataService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.pncfilesName, this.admin_access_id, this.user_name);
+            this.userService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.pncfilesName, this.admin_access_id, this.user_name);
           } else {
-            this.UserDataService.addPncByInitiator1(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name);
+            this.userService.addPncByInitiator1(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name);
           }
         }
         else if (this.delete_pnc_option == 1) {
           if (this.pncfile.length > 0) {
-
             this.pncfilesName = res.files[0]['filename'];
           }
-          this.UserDataService.pncSumbitWhenDelete(this.pncfilesName, allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name, this.delete_pnc_file, this.delete_pnc_doc);
+          this.userService.pncSumbitWhenDelete(this.pncfilesName, allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name, this.delete_pnc_file, this.delete_pnc_doc);
         }
       });
     });
+
   }
 
   // for approving the reuqest
   onApprove() {
-    this.UserDataService.meType = this.currReq.me_type;
+    this.userService.meType = this.currReq.me_type;
     this.route.navigate(['/AmbienceMax/approveRequest', this.req_id]);
   }
 
@@ -485,11 +469,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   // download request,BOQ and PNC supporting file
   download(downloadfile) {
-    this.UserDataService.getFiles(downloadfile).subscribe((res) => {
+    this.userService.getFiles(downloadfile).subscribe((res) => {
       if (res) {
-        const url = window.URL.createObjectURL(this.returnBlob(res));
         FileSaver.saveAs(res, downloadfile);
-        // window.open(url);
       }
     });
     return false;
@@ -497,11 +479,9 @@ export class RequestFormComponent implements OnInit, OnDestroy {
 
   // download PNC file
   downloadFile(downloadfile) {
-    this.UserDataService.downloadFile(downloadfile).subscribe((res) => {
-      if (res) {
-        const url = window.URL.createObjectURL(this.returnBlob(res));
-        FileSaver.saveAs(res, downloadfile);
-        // window.open(url);
+    this.userService.downloadFile(downloadfile).subscribe((response:any) => {
+      if (response) {
+        FileSaver.saveAs(response, downloadfile);
       }
     });
     return false;
@@ -541,6 +521,163 @@ export class RequestFormComponent implements OnInit, OnDestroy {
     this.replacePnc = 1;
     return false;
   }
-  ngOnDestroy() {
+
+
+  newDate(newdate){
+    return  newdate.slice(0, 10) + " " + newdate.slice(11, 21);
   }
+  // formate the date
+  dateFormate(date) {
+    return this.newDate(date.toString());
+  }
+  // responsible for inserting the extra space between the text 
+  space(name) {
+    let space = " Signature:________________ Date: 2020-05-29 10:06:31.0                                      "
+    let count = space.length - name.length;
+
+    let NumberOfspace = " ";
+    for (let i = 0; i < count; i++) {
+      NumberOfspace += " ";
+    }
+    return NumberOfspace;
+  }
+   // download pdf of request form
+   ExportPDF() {
+    this.pdfTableData = [];
+    this.userService.getpdfTableData(this.req_id).subscribe((res: any) => {
+      for (let i = 0; i < res.length; i++) {
+        if (res[i] != null) {
+          this.pdfTableData.push(res[i]);
+        }
+      }
+      const doc = new jsPDF('p', 'pt', 'a4');
+      let reqNum = this.currReq.req_number.indexOf('Form');
+
+      autoTable(doc, { html: '#my-table' })
+      const columns1 = [[this.currReq.req_number.slice(reqNum, reqNum + 5)]];
+      const data2 = [];
+
+      data2.push(["Request No: " + this.currReq.req_number + "             " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)]);
+      data2.push(["SWON / WON : " + this.currReq.req_swon + "             " + "Budget: " + this.currReq.budget_type]);
+      data2.push(["Available(INR): " + this.currReq.available_budget + "             " + "Consumed(INR): " + this.currReq.consumed_budget + "             " + "Balance(INR): " + this.currReq.balance_budget]);
+      data2.push(["Subject: " + this.subject]);
+      data2.push(["Description: " + this.description]);
+      for (let i = 0; i < this.pdfTableData.length; i++) {
+        if (this.pdfTableData[i].action == 'Initiated Phase 1') {
+          let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user + adspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 1) {
+          let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user + lspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 2) {
+          let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
+          data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 3 || this.pdfTableData[i].roleId == 4) {
+          let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user + espace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+          data2.push(["Description: " + this.boqDescription])
+          data2.push(["Estimated cost for the work(INR): " + this.boqEstimatedCost])
+          data2.push(["Estimated time for the work: " + this.boqEstimatedTime])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 5) {
+          let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user + hspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].action == 'Initiated Phase 2') {
+          let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user + ispace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+
+          data2.push(["Actual Cost(INR): " + this.actualCost]);
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 6) {
+          let bspace1 = this.space("From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 7) {
+          let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user + aspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 9) {
+          let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
+
+          data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[i].user + cespace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+      }
+      autoTable(doc, {
+        head: columns1,
+        theme: 'grid',
+        columnStyles: { 4: { cellPadding: 2 }, columns3: { fillColor: "black" } },
+        body: data2,
+        tableLineColor: 200,
+        styles: { fontSize: 12, textColor: 20, font: "times" },
+        didParseCell: function (data) {
+          if (data.row.raw[0] === "") {
+            data.cell.styles.fillColor = [62, 172, 148];
+          }
+          if (data.row.raw[0].includes("Initiator:") || data.row.raw[0].includes("Recommender:") ||
+            data.row.raw[0].includes("Approved by:") || data.row.raw[0].includes("From :")) {
+            data.cell.styles.fontStyle = "bold"
+          }
+        },
+        didDrawPage: (dataArg) => {
+          doc.text('', dataArg.settings.margin.left, 10);
+        }
+
+      });
+
+      const columns = [['User', 'Role', 'Action', 'Action Timing', 'Comment']];
+      const data1 = [];
+      if (this.pdfTableData.length > 0) {
+        for (let i = 0; i < this.pdfTableData.length; i++) {
+          data1.push([this.pdfTableData[i].user, this.pdfTableData[i].role1, this.pdfTableData[i].action, this.dateFormate(this.pdfTableData[i].actionTiming), this.pdfTableData[i].comment])
+        }
+      }
+      doc.addPage();
+
+      autoTable(doc, {
+        head: columns,
+        columnStyles: { 4: { cellPadding: 2, cellWidth: 'auto' }, },
+        body: data1,
+        theme: 'grid',
+        startY: 80,//Where the table should start to be printed
+        tableLineColor: 200,
+        styles: { fontSize: 12, textColor: 20, font: "times" },
+        didDrawPage: (dataArg) => {
+          doc.text('Request Workflow', 230, 50)
+        }
+
+      });
+      doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
+    })
+    return false;
+  }
+
+  // showDialog(): void {
+  //   this.cancelRequestService.confirmThis(this.req_id,"Are you sure to delete?", function () {  
+  //     alert("Yes clicked");  
+  //   }, function () {  
+  //     alert("No clicked");  
+  //   }) 
+  // }
 }

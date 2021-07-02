@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-add-dialog',
@@ -26,6 +26,7 @@ export class AddDialogComponent implements OnInit {
   }
   role_id;
   space;
+
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
@@ -36,26 +37,27 @@ export class AddDialogComponent implements OnInit {
     this.space = JSON.parse(localStorage.getItem('space'));
 
     // get user role like initiator,location head etc.
-    this.userDataService.getRoles(this.req_id, this.role_id, this.space,this.accessId ).subscribe((data) => {
-     this.users = data;
-      for(let i=0;i<this.users.length;i++){
-        if(this.users[i]['pickRUMPRoleDescription'].includes('Initiator')){
-          this.initiatorId=this.users[i]['accessId'];
-          this.users[i]['pickRUMPRoleDescription']='Initiator(Request)';
-        break;}
+    this.userDataService.getRoles(this.req_id, this.role_id, this.space, this.accessId).subscribe((data) => {
+      this.users = data;
+      for (let i = 0; i < this.users.length; i++) {
+        if (this.users[i]['pickRUMPRoleDescription'].includes('Initiator')) {
+          this.initiatorId = this.users[i]['accessId'];
+          this.users[i]['pickRUMPRoleDescription'] = 'Initiator(Request)';
+          break;
+        }
       }
       if (this.role_id < 6) {
         this.users1.push(this.users[0])
-     for(let i=1;i<this.users.length;i++){
-       this.users1.push(this.users[i])
-     }
+        for (let i = 1; i < this.users.length; i++) {
+          this.users1.push(this.users[i])
+        }
       }
       if (this.role_id >= 6) {
         this.users1.push(this.users[0])
         this.users1.push({ accessId: this.initiatorId, roleId: 0, pickRUMPRoleDescription: "Initiator(PNC)", pnc: 1 });
-     for(let i=1;i<this.users.length;i++){
-       this.users1.push(this.users[i])
-     }
+        for (let i = 1; i < this.users.length; i++) {
+          this.users1.push(this.users[i])
+        }
       }
     });
   }

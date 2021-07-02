@@ -1,52 +1,47 @@
-<div style="margin-top:2.5em"class="row graph">
+<div style="margin-top:2.5em" class="row graph">
   <div class="row" style="width: 100%">
-    <div  style="margin-left: 2.5em" class="form-group col">
-      <mat-card style="width:100%;" matBadge={{this.UnreadStatuspending}} matBadgeColor="accent" matBadgeOverlap="true" class="example-card1 button1" (click)="Request('Pending')">
-        <span class="request-Tab"> Pending Requests &nbsp;{{ Pending }}</span>
-      </mat-card>
+    <div style="margin-left: 2.5em" class="form-group col">
+      <mat-card style="width:100%" class="example-card2 button2" (click)="Request('open')"
+      matBadge={{this.UnreadStatusopen}} matBadgeOverlap="true" matBadgeColor="accent">
+      <span class="request-Tab"> Open Requests &nbsp;{{ Open }}</span>
+    </mat-card>
     </div>
+
     <div class="form-group col">
-      <mat-card style="width:100%" class="example-card2 button2" (click)="Request('open')" matBadge={{this.UnreadStatusopen}} matBadgeOverlap="true" matBadgeColor="accent">
-        <span class="request-Tab"> Open Requests &nbsp;{{ Open }}</span>
-      </mat-card>
+      <mat-card style="width:100%;" matBadge={{this.UnreadStatuspending}} matBadgeColor="accent" matBadgeOverlap="true"
+      class="example-card1 button1" (click)="Request('Pending')">
+      <span class="request-Tab"> Pending Requests &nbsp;{{ Pending }}</span>
+    </mat-card>
     </div>
-    <div  class="form-group col">
-      <mat-card style="width:100%" matBadge={{this.UnreadStatusclosed}} matBadgeColor="accent" matBadgeOverlap="true" class="example-card3 button3" (click)="Request('closed')">
+
+    <div class="form-group col">
+      <mat-card style="width:100%" matBadge={{this.UnreadStatusclosed}} matBadgeColor="accent" matBadgeOverlap="true"
+        class="example-card3 button3" (click)="Request('closed')">
         <span class="request-Tab"> Closed Requests &nbsp; {{ Closed }}</span>
       </mat-card>
-      
     </div>
+
     <div class="form-group col">
-      <mat-card style="width:100%" matBadge={{this.UnreadStatuscompleted}} matBadgeColor="accent" matBadgeOverlap="true" class="example-card4 button4" (click)="Request('complete')">
+      <mat-card style="width:100%" matBadge={{this.UnreadStatuscompleted}} matBadgeColor="accent" matBadgeOverlap="true"
+        class="example-card4 button4" (click)="Request('complete')">
         <span class="request-Tab">Completed Requests &nbsp; {{ Completed }}</span>
       </mat-card>
     </div>
   </div>
+
   <div class="col-lg-6">
-      <mat-card class="example-card">
-
-        <mat-card-content class="example-card">
-          <app-bar-chart-component></app-bar-chart-component>
-        </mat-card-content>
-      </mat-card>
-    <!-- <div class="col">
-      <mat-card class="example-card">
-
-        <mat-card-content class="example-card">
-          <app-doughnut-chart></app-doughnut-chart>
-        </mat-card-content>
-      </mat-card>
-    </div> -->
-
+    <mat-card class="example-card">
+      <mat-card-content class="example-card">
+        <app-bar-chart-component></app-bar-chart-component>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <div class="col-lg-6">
-      <mat-card class="example-card">
-
-        <mat-card-content class="example-card">
-          <app-doughnut-chart></app-doughnut-chart>
-          <!-- <app-chart-represent></app-chart-represent> -->
-        </mat-card-content>
-      </mat-card>
+    <mat-card class="example-card">
+      <mat-card-content class="example-card">
+        <app-doughnut-chart></app-doughnut-chart>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

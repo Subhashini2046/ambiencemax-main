@@ -1,20 +1,13 @@
 <mat-dialog-content>
-  <!-- <mat-card > -->
-  <!-- <mat-card class="ex1 text-center">
-    <span class="request-Tab">Add Workflow</span>
-  </mat-card> -->
   <div class="text-center" style="display: flex;">
     <span style="font-size: 20px;flex: 3;">Add Workflow</span>
   </div>
   <mat-divider style="margin: 10px 0;"></mat-divider>
   <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" action="#">
-    <!-- <hr> -->
     <br>
-    <div  formArrayName="items" *ngFor="let item of checkoutForm.controls['items']['controls']; let i = index">
+    <div formArrayName="items" *ngFor="let item of checkoutForm.controls['items']['controls']; let i = index">
       <div class="form-row" [formGroupName]="i">
-
         <div class="form-group col-md-3">
-          <!-- <label>Role</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select Role</mat-label>
             <mat-select formControlName="role" (ngModelChange)="onChanged($event,item)" required>
@@ -24,7 +17,6 @@
           </mat-form-field>
         </div>
         <div class="form-group col-md-3">
-          <!-- <label>User</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select User</mat-label>
             <mat-select formControlName="user" (ngModelChange)="onUsers($event,item)">
@@ -35,7 +27,6 @@
           </mat-form-field>
         </div>
         <div class="form-group col-md-3">
-          <!-- <label>Location</label> -->
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Select Location</mat-label>
             <mat-select formControlName="accessId" (ngModelChange)="onLocation($event)">
@@ -46,37 +37,30 @@
           </mat-form-field>
         </div>
         <div class="form-group col-md-2">
-          <button mat-button class="stylepopupbuttonconfirm m1" style="outline:none;"
-             (click)="delete(i)">
-             <mat-icon>delete</mat-icon>
+          <button mat-button class="stylepopupbuttonconfirm m1" style="outline:none;" (click)="delete(i)">
+            <mat-icon>delete</mat-icon>
           </button>
-    
+
         </div>
       </div>
     </div>
     <mat-error *ngIf="countRole==2">{{selectedRole}} is already selected.</mat-error>
-    <!-- <mat-error *ngIf="(checkUser==1 && countRole!=2)">Please select the user.</mat-error> -->
-    <!-- <mat-error *ngIf="(checkLocation==1 && countRole!=2)">Please select the Location.</mat-error> -->
     <div class="text-center">
       <div class="form-row">
         <div class="form-group col-md-5">
           <button type="button" mat-raised-button class="col-bg-button" style="color: white;outline:none"
-          [disabled]="!checkoutForm.valid || countRole==2 || checkUser==1 ||checkLocation==1" (click)="addNext()">
-          Add more roles
-        </button>
+            [disabled]="!checkoutForm.valid || countRole==2 || checkUser==1 ||checkLocation==1" (click)="addNext()">
+            Add more roles
+          </button>
         </div>
         <div class="form-group col-md-5">
           <button type="submit" mat-raised-button class="col-bg-accent" style="color: white;outline:none"
-        [disabled]="!checkoutForm.valid || countRole==2 || checkUser==1 ||checkLocation==1 || checkoutForm.value.items.length==0" (click)="onSubmit()">
-        Add Workflow
-      </button>
+            [disabled]="!checkoutForm.valid || countRole==2 || checkUser==1 ||checkLocation==1 || checkoutForm.value.items.length==0"
+            (click)="onSubmit()">
+            Add Workflow
+          </button>
         </div>
       </div>
-      <!-- <button type="submit" mat-raised-button class="col-bg-accent" style="color: white;outline:none"
-        [disabled]="!checkoutForm.valid || countRole==2 || checkUser==1 ||checkLocation==1" (click)="onSubmit()">
-        Add Workflow
-      </button> -->
     </div>
   </form>
-  <!-- </mat-card> -->
 </mat-dialog-content>

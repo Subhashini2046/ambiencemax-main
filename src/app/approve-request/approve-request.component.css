@@ -1,6 +1,6 @@
 form{
-    background-color: white;
     background: white;
+    background-color: white;
     opacity: 1;
     margin-top: 1px;
     /* border: 0.5px solid skyblue; */
@@ -60,5 +60,4 @@ form{
     bottom: 0;
     left: 0;
     z-index: 1000;
-    background-color: rgba(228, 231, 24, 0.315);
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 
 @Component({
@@ -6,7 +6,7 @@ import { UserDataService } from '../Services/UserDataService';
   templateUrl: './signup-form.component.html',
   styleUrls: ['./signup-form.component.css']
 })
-export class SignupFormComponent implements OnInit {
+export class SignupFormComponent {
   constructor(public userDataService: UserDataService) {}
   firstname = '';
   lastname = '';
@@ -16,12 +16,5 @@ export class SignupFormComponent implements OnInit {
   designation = '';
   city = '';
   zip: number;
-  // onSignUp(){
-  //   this.userDataService.NewUser(this.firstname, this.lastname, this.email, this.password,
-  //     this.address, this.designation, this.city, this.zip);
-  //   this.userDataService.authenticateUser(this.email, this.password);
-  // }
-  ngOnInit() {
-  }
-
+ 
 }

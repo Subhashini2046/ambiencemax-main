@@ -12,32 +12,27 @@
   <div class="col-md-6">
     <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
       action="#">
-      <!-- <h5 class="text-center">
-        Request Form
-      </h5>
-      <hr> -->
       <div class="text-center" style="display: flex;">
         <span style="font-size: 20px;flex: 3;">Request Form</span>
-    </div>
-    <mat-divider style="margin: 10px 0;"></mat-divider>
-    <br>
+      </div>
+      <mat-divider style="margin: 10px 0;"></mat-divider>
+      <br>
       <div class="form-row">
 
         <div class="form-group col-md-6">
           <label>ME Type</label>
           <select id="inputme" class="form-control" [(ngModel)]="currReq.me_type" name="METype"
-          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
             <option value="" selected>Select the ME Type</option>
-            <option >Civil</option>
+            <option>Civil</option>
             <option>Electrical</option>
           </select>
         </div>
 
         <div class="form-group col-md-6">
           <label>S/WON</label>
-          <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon" 
-          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
-            required />
+          <input class="form-control" id="swon" type="text" [(ngModel)]="currReq.req_swon"
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder="" required />
         </div>
 
       </div>
@@ -56,8 +51,9 @@
 
         <div class="form-group col-md-6">
           <label>Available Budget(INR)</label>
-          <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" [(ngModel)]="currReq.available_budget"
-            name="availableBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+          <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0"
+            [(ngModel)]="currReq.available_budget" name="availableBudget"
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
       </div>
@@ -66,14 +62,16 @@
 
         <div class="form-group col-md-6">
           <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0" [(ngModel)]="currReq.consumed_budget"
-            name="consumedBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+          <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0"
+            [(ngModel)]="currReq.consumed_budget" name="consumedBudget"
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
         <div class="form-group col-md-6">
           <label>Balance Budget(INR)</label>
-          <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0" [(ngModel)]="currReq.balance_budget"
-            name="balanceBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
+          <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0"
+            [(ngModel)]="currReq.balance_budget" name="balanceBudget"
+            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
       </div>
@@ -83,7 +81,7 @@
         <div class="form-group col-md-6">
           <label for="inputdes">Request Type</label>
           <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
-          [disabled]="(this.req_id)" required>
+            [disabled]="(this.req_id)" required>
             <option value="" selected>Select the Request Type</option>
             <option>Upgrade</option>
             <option>Repair</option>
@@ -93,9 +91,9 @@
       </div>
       <div class="form-group">
         <label>Request Subject</label>
-        <textarea placeholder="" id="subject" class="form-control"
-        [disabled]="!(this.role_id == 0 && this.is_pnc==0)" [(ngModel)]="subject" name="ReqSubject"
-          (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
+        <textarea placeholder="" id="subject" class="form-control" [disabled]="!(this.role_id == 0 && this.is_pnc==0)"
+          [(ngModel)]="subject" name="ReqSubject" (ngModelChange)="valueChange(subject)" maxlength="100"
+          name="RequestSubject" required></textarea>
         {{remainingText}} Characters left.
       </div>
 
@@ -108,20 +106,22 @@
       </div>
       <div class="form-group" *ngIf="this.reqComment!=null">
         <label for="reqdes">Last Provided Comment:</label>
-      <p class="form-control">{{this.reqComment}} </p>
+        <p class="form-control">{{this.reqComment}} </p>
       </div>
-      <div class="form-group"  *ngIf="(this.req_id)">
+      <div class="form-group" *ngIf="(this.req_id)">
         <label>Request Document</label>
         <br>
         <div *ngFor="let f1 of fileName,let i=index">
-        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i].fileName)">
-          Download
-        </button>
-        <button *ngIf="(role_id==0 && is_pnc==0)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deleteReqDoc(fileName[i])">
-          Delete
-        </button>
-        <label> {{fileName[i].fileName}}</label>
-      </div>
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="download(fileName[i].fileName)">
+            Download
+          </button>
+          <button *ngIf="(role_id==0 && is_pnc==0)" mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="deleteReqDoc(fileName[i])">
+            Delete
+          </button>
+          <label> {{fileName[i].fileName}}</label>
+        </div>
       </div>
       <div class="form-group" *ngIf="(this.role_id == 0 && this.is_pnc==0)">
         <form>
@@ -154,232 +154,55 @@
           Raise Request
         </button>
       </div>
-  
+      <br>
+      <div class="text-center">
+        <button mat-raised-button class="col-bg-button" style="color: white;outline:none;" (click)=ExportPDF()>
+          Download PDF
+        </button>
+      </div>
+      <br>
       <div class="text-center" *ngIf="this.role_id==0">
         <div class="form-row">
           <div class="form-group col-md-4">
-        <button mat-raised-button class="col-bg-button" style="color: white;outline: none"
-        [disabled]="(this.role_id==0 && is_pnc==1) || (isLoadingRequest==true)"  (click)=onSumbitForUpdate()>
-         Sumbit
-        </button>
+            <button mat-raised-button class="col-bg-button" style="color: white;outline: none"
+              [disabled]="(this.role_id==0 && is_pnc==1) || (isLoadingRequest==true)" (click)=onSumbitForUpdate()>
+              Sumbit
+            </button>
           </div>
           <div class="form-group col-md-4">
-        <button mat-raised-button class="col-bg-button" style="color: white; outline: none"
-        [disabled]="(this.role_id==0 && is_pnc==1)"  (click)=onResend()>
-          Resend
-        </button>
+            <button mat-raised-button class="col-bg-button" style="color: white; outline: none"
+              [disabled]="(this.role_id==0 && is_pnc==1)" (click)=onResend()>
+              Resend
+            </button>
+          </div>
+          <div class="form-group col-md-4">
+            <button *ngIf="(this.role_id==0)" mat-raised-button class="col-bg-button"
+              style="color: white;outline: none;" (click)=showDialog()>Cancel
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="form-group col-md-4">
-        <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white;outline: none;"
-         (click)=cancelRequest()>Cancel
-        </button>
-      </div>
-      </div>
-    </div>
       <div class="text-center">
         <br>
         <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
-          <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
+          
+          <div class="form-group col-md-6" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
             <button mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)=" onApprove()">
               Approve
             </button>
           </div>
-          
-          <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
+
+          <div class="form-group col-md-6" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
           || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
-            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)=onResend()>
-              Resend
-            </button>
-            <!-- <div class="text-center">
-            <div class="form-row">
-              <div class="form-group col-md-5">
-            <button  *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onSumbitForUpdate()>
-             Sumbit
-            </button>
-              </div>
-              <div class="form-group col-md-5">
-            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
+            <button *ngIf="(this.role_id!=0)" mat-raised-button class="col-bg-button"
+              style="color: white;outline: none;" (click)=onResend()>
               Resend
             </button>
           </div>
-          </div>
-        </div> -->
-          </div>
-       
+
         </div>
       </div>
     </form>
-    <!-- <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value) " style="border-radius: 10px;"
-      action="#">
-      <h5 class="text-center">
-        Request Form
-      </h5>
-      <hr>
-      <div class="form-row">
-
-        <div class="form-group col-md-6">
-          <label>ME Type</label>
-          <select id="inputme" class="form-control" formControlName="me_type" [value]="currReq.me_type" name="METype"
-          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
-            <option value="" selected>Select the ME Type</option>
-            <option >Civil</option>
-            <option>Electrical</option>
-          </select>
-        </div>
-
-        <div class="form-group col-md-6">
-          <label>S/WON</label>
-          <input class="form-control" id="swon" type="text" formControlName="req_swon" [value]="currReq.req_swon" 
-          [disabled]="!(this.role_id == 0 && this.is_pnc==0)" name="RequestSwon" placeholder=""
-            required />
-        </div>
-
-      </div>
-
-      <div class="form-row">
-
-        <div class="form-group col-md-6">
-          <label>Budget Type</label>
-          <select id="inputbudget" class="form-control" formControlName="budget_type" [value]="currReq.budget_type" name="budgetType"
-            [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required>
-            <option value="" selected>Select the Budget Type</option>
-            <option>Capex</option>
-            <option>Opex</option>
-          </select>
-        </div>
-
-        <div class="form-group col-md-6">
-          <label>Available Budget(INR)</label>
-          <input class="form-control" id="available" type="number" pattern="[0-9]+" min="0" formControlName="available_budget" [value]="currReq.available_budget"
-            name="availableBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
-        </div>
-
-      </div>
-
-      <div class="form-row">
-
-        <div class="form-group col-md-6">
-          <label>Consumed Budget(INR)</label>
-          <input class="form-control" id="consumed" type="number" pattern="[0-9]+" min="0" formControlName="consumed_budget" [value]="currReq.consumed_budget"
-            name="consumedBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
-        </div>
-
-        <div class="form-group col-md-6">
-          <label>Balance Budget(INR)</label>
-          <input type="number" class="form-control" id="balancebudget" pattern="[0-9]+" min="0" formControlName="balance_budget" [value]="currReq.balance_budget"
-            name="balanceBudget" [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
-        </div>
-
-      </div>
-
-
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputdes">Request Type</label>
-          <select id="request" class="form-control" formControlName="req_type" [value]="currReq.req_type" name="RequestType"
-          [disabled]="(this.req_id)" required>
-            <option value="" selected>Select the Request Type</option>
-            <option>Upgrade</option>
-            <option>Repair</option>
-            <option>Maintenance</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Request Subject</label>
-        <textarea placeholder="" id="subject" class="form-control"
-        [disabled]="!(this.role_id == 0 && this.is_pnc==0)" formControlName="subject"  [value]="subject" name="ReqSubject"
-          (ngModelChange)="valueChange(subject)" maxlength="100" name="RequestSubject" required></textarea>
-        {{remainingText}} Characters left.
-      </div>
-
-      <div class="form-group">
-        <label for="reqdes">Request Description</label>
-        <textarea id="description" placeholder="" [disabled]="!(this.role_id == 0 && this.is_pnc==0)"
-        formControlName="description" [value]="description" (ngModelChange)="valueChangeDiscription(description)" class="form-control"
-          name="Requestdes" maxlength="5000" required></textarea>
-        {{remaining_description}} Characters left.
-      </div>
-      <div class="form-group" *ngIf="this.reqComment!=null">
-        <label for="reqdes">Last Provided Comment:</label>
-      <p class="form-control">{{this.reqComment}} </p>
-      </div>
-      <div class="form-group"  *ngIf="(this.req_id)">
-        <label>Request Document</label>
-        <br>
-        <div *ngFor="let f1 of fileName,let i=index">
-        <button  mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(fileName[i])">
-          Download Document
-        </button>
-        <label> {{fileName[i]}}</label>
-      </div>
-      </div>
-      <div class="form-group" *ngIf="(this.role_id == 0 && this.is_pnc==0)">
-        <form>
-
-          <label for="fileUpload">Upload File Here &nbsp;&nbsp;</label>
-          <button mat-raised-button (click)="fileInput.click()">Select File</button>
-
-
-          <input style="display: none" #attachments type="file" (change)="onFileChanged($event)" #fileInput
-            multiple="true">
-
-          <div *ngFor="let selected of listOfFiles;let index = index">
-            <label>
-              <h6>{{selected}}</h6>
-            </label>
-            <button mat-icon-button mat-icon-button color="warn" (click)="removeSelectedFile(index)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-
-          <div class="alert alert-danger" role="alert" *ngIf="areCredentialsInvalid">
-            File Size should not be greater than 10MB.
-          </div>
-          <br>
-        </form>
-      </div>
-      <div class="text-center" *ngIf="(!this.req_id)">
-        <button mat-raised-button class="col-bg-button" style="color: white"
-          [disabled]="!form.valid">
-          Raise Request
-        </button>
-      </div>
-
-
-      <div class="text-center">
-        <br>
-        <div class="form-row" *ngIf="(this.currReq.req_status!='Closed')">
-          <div class="form-group col-md-5" *ngIf="(this.role_id !=3 && this.role_id !=4 && this.role_id!=0)">
-            <button mat-raised-button class="col-bg-button" style="color: white" (click)=" onApprove()">
-              Approve
-            </button>
-          </div>
-          
-          <div class="form-group col-md-5" *ngIf="((this.role_id !=3 && this.role_id !=4 && this.role_id!=0) 
-          || (is_pnc==0 && this.role_id==0 && this.currReq.req_level==this.currReq.req_initiator_id))">
-            <button *ngIf="(this.role_id!=0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
-              Resend
-            </button>
-            <div class="text-center">
-            <div class="form-row">
-              <div class="form-group col-md-5">
-            <button  *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onSumbitForUpdate()>
-             Sumbit
-            </button>
-              </div>
-              <div class="form-group col-md-5">
-            <button *ngIf="(this.role_id==0)"mat-raised-button class="col-bg-button" style="color: white" (click)=onResend()>
-              Resend
-            </button>
-          </div>
-          </div>
-        </div>
-          </div>
-       
-        </div>
-      </div>
-    </form> -->
   </div>
 </div>
 
@@ -387,52 +210,48 @@
   *ngIf="((this.boqDescription1!=null && this.boqDescription1!='') || this.role_id==3 || this.role_id==4)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
-    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm"
-      style="border-radius: 10px;" action="#">
-      <!-- <h5 class="text-center">
-        Enter BOQ Details
-      </h5>
-      <hr> -->
+    <form ngNativeValidate class="px-3 py-3 my-4" #BOQform="ngForm" style="border-radius: 10px;" action="#">
       <div class="text-center" style="display: flex;">
         <span style="font-size: 20px;flex: 3;">Enter BOQ Details</span>
-    </div>
-    <mat-divider style="margin: 10px 0;"></mat-divider>
-    <br>
+      </div>
+      <mat-divider style="margin: 10px 0;"></mat-divider>
+      <br>
       <div class="form-group">
         <label>BOQ Description</label>
         <textarea id="subject" class="form-control" [(ngModel)]="boqDescription"
-        [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
-        name="boqDescription" required></textarea>
+          [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)"
+          name="boqDescription" required></textarea>
       </div>
       <div class="form-row">
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Cost</label>
-          <input type="number" class="form-control" min="0" pattern="[0-9]+" id="estimatedCost" [(ngModel)]="boqEstimatedCost"
-          [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
-           name="boqEstimatedCost"
-            required />
+          <input type="number" class="form-control" min="0" pattern="[0-9]+" id="estimatedCost"
+            [(ngModel)]="boqEstimatedCost"
+            [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)"
+            name="boqEstimatedCost" required />
         </div>
 
         <div class="form-group col-md-6">
           <label>BOQ Estimated Time</label>
           <input class="form-control" id="balancebudget" [(ngModel)]="boqEstimatedTime"
-            [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)" 
-            type="text" name="boqEstimatedTime"
-            required />
+            [readonly]="(this.boqDescription1!=null && this.boqDescription1!='' && this.role_id!=3 && this.role_id!=4)"
+            type="text" name="boqEstimatedTime" required />
         </div>
       </div>
-      <div class="form-group"  *ngIf="(this.boqDescription1!=null && this.boqDescription1!='')">
+      <div class="form-group" *ngIf="(this.boqDescription1!=null && this.boqDescription1!='')">
         <label>BOQ Document</label>
         <br>
         <div *ngFor="let f1 of BoqfileName,let i=index">
-        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(BoqfileName[i].fileName)">
-          Download
-        </button>
-        <button *ngIf="(role_id==3 || role_id==4)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deleteBoqDoc(BoqfileName[i])">
-          Delete
-        </button>
-        <label> {{BoqfileName[i].fileName}}</label>
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="download(BoqfileName[i].fileName)">
+            Download
+          </button>
+          <button *ngIf="(role_id==3 || role_id==4)" mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="deleteBoqDoc(BoqfileName[i])">
+            Delete
+          </button>
+          <label> {{BoqfileName[i].fileName}}</label>
         </div>
       </div>
       <div class="form-group" *ngIf="(this.role_id==3 || this.role_id==4)">
@@ -457,16 +276,17 @@
       <div class="text-center">
         <div class="form-row" *ngIf="(this.role_id==3 || this.role_id==4)">
           <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)="BOQform.valid ? onBOQSubmit() : null"
-              [disabled]="(!(BOQform.valid) || isLoading==true)">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none"
+              (click)="BOQform.valid ? onBOQSubmit() : null" [disabled]="(!(BOQform.valid) || isLoading==true)">
               Submit
             </button>
           </div>
-            <div class="form-group col-md-5">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none" (click)="onResend()">
+          <div class="form-group col-md-5">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none"
+              (click)="onResend()">
               Resend
             </button>
-         </div>
+          </div>
         </div>
       </div>
     </form>
@@ -477,61 +297,60 @@
 <div class="row my-3" *ngIf="(this.is_pnc==1 || this.actualCost!=null)">
   <div class="col-md-3"></div>
   <div class="col-md-6" style="border-radius: 10px;">
-    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm"
-      style="border-radius: 10px;" action="#">
-      <!-- <h5 class="text-center">
-        PNC Upload & Vendor Tagging/Allocation
-      </h5>
-      <hr> -->
+    <form ngNativeValidate class="px-3 py-3 my-4" #PNCform="ngForm" style="border-radius: 10px;" action="#">
       <div class="text-center" style="display: flex;">
         <span style="font-size: 20px;flex: 3;">PNC Upload & Vendor Tagging/Allocation</span>
-    </div>
-    <mat-divider style="margin: 10px 0;"></mat-divider>
-    <br>
+      </div>
+      <mat-divider style="margin: 10px 0;"></mat-divider>
+      <br>
 
       <div class="example-container mat-elevation-z8" *ngIf="selectedSpoc>0">
 
-        <mat-radio-group required [(ngModel)]="pncvendorSelection" name="radio" [disabled]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')" 
-        >
+        <mat-radio-group required [(ngModel)]="pncvendorSelection" name="radio"
+          [disabled]="!(this.role_id==0 && this.is_pnc==1)|| (this.currReq.req_status=='Closed')">
 
-          <table class="table" mat-table [dataSource]="dataSource" >
+          <table class="table" mat-table [dataSource]="dataSource">
 
-            
+
             <ng-container matColumnDef="selected">
-              <th class="text-center" mat-header-cell *matHeaderCellDef>
+              <th id="allocateVendor" class="text-center" mat-header-cell *matHeaderCellDef>
               </th>
-              <td class="text-center" mat-cell *matCellDef="let element">
-                <mat-radio-button [value]="element"
-                [checked]="RequestAllocatedVendor==element.rumpvenVendorPK"
-                >
+              <td id="vendor" class="text-center" mat-cell *matCellDef="let element">
+                <mat-radio-button [value]="element" [checked]="RequestAllocatedVendor==element.rumpvenVendorPK">
                 </mat-radio-button>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="Vendor Name">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name</th>
-              <td class="text-center"  mat-cell *matCellDef="let element"> {{element.venName}} </td>
+              <th id="name" class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name</th>
+              <td id="venName" class="text-center" mat-cell *matCellDef="let element"> {{element.venName}} </td>
             </ng-container>
 
-           
+
             <ng-container matColumnDef="spoc1">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
-                element.venSpoc1Email,element.venSpoc1Mobile,element.venSpoc1Phone)">add_circle_outline</mat-icon> </td>
+              <th id="sp1" class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
+              <td id="spoc1" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon
+                  *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
+                element.venSpoc1Email,element.venSpoc1Mobile,element.venSpoc1Phone)">add_circle_outline</mat-icon>
+              </td>
             </ng-container>
 
-            
+
             <ng-container matColumnDef="spoc2">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3" *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
-                element.venSpoc2Email,element.venSpoc2Mobile,element.venSpoc2Phone)">add_circle_outline</mat-icon></td>
+              <th id="sp2" class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
+              <td id="spoc2" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3"
+                  *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
+                element.venSpoc2Email,element.venSpoc2Mobile,element.venSpoc2Phone)">add_circle_outline</mat-icon>
+              </td>
             </ng-container>
 
-           
+
             <ng-container matColumnDef="spoc3">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3" *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
-                element.venSpoc3Email,element.venSpoc3Mobile,element.venSpoc3Phone)">add_circle_outline</mat-icon></td>
+              <th id="sp3" class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
+              <td id="spoc3" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3"
+                  *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
+                element.venSpoc3Email,element.venSpoc3Mobile,element.venSpoc3Phone)">add_circle_outline</mat-icon>
+              </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -554,8 +373,7 @@
         <br>
         <mat-form-field appearance="fill">
           <mat-label>Choose a date</mat-label>
-          <input matInput [matDatepicker]="picker1" 
-            [disabled]="!(this.role_id==0 && this.is_pnc==1)"
+          <input matInput [matDatepicker]="picker1" [disabled]="!(this.role_id==0 && this.is_pnc==1)"
             [(ngModel)]="allocationStartDate" name="allocationStartDate1" required>
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
@@ -573,19 +391,20 @@
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="downloadFile(reqPnc)">
           Download
         </button>
-        <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deletePncDoc(reqPnc)">
+        <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+          (click)="deletePncDoc(reqPnc)">
           Delete
         </button>
         <label> {{reqPnc}}</label>
-        </div>
+      </div>
 
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1 && reqPnc==null) || (replacePnc==1)">
-      
+
         <form>
-        
+
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button style="outline:none;" (click)="filesInput.click()">Add</button>
-          <input style="display: none"  #attachments  type="file" (change)="onPncFile($event)" #filesInput required>
+          <input style="display: none" #attachments type="file" (change)="onPncFile($event)" #filesInput required>
           <div *ngFor="let selected of pncfileName;let index = index">
             <label>
               <h6>{{selected}}</h6>
@@ -601,20 +420,22 @@
       <label for="fileUpload"> PNC Supporting Document: &nbsp;&nbsp;</label><br>
       <div *ngIf="pncSupportingDoc.length>0">
         <div *ngFor="let f1 of pncSupportingDoc,let i=index">
-          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="download(pncSupportingDoc[i].fileName)">
+          <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="download(pncSupportingDoc[i].fileName)">
             Download
           </button>
-          <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)="deletePncFile(pncSupportingDoc[i])">
+          <button *ngIf="(role_id==0 && is_pnc==1)" mat-button class="stylepopupbuttonconfirm" style="outline:none;"
+            (click)="deletePncFile(pncSupportingDoc[i])">
             Delete
           </button>
           <label> {{pncSupportingDoc[i].fileName}}</label>
-          </div>
         </div>
+      </div>
       <div class="form-group" *ngIf="(this.role_id==0 && this.is_pnc==1)">
         <form>
           <label for="fileUpload">Click to Add Documents: &nbsp;&nbsp;</label>
           <button mat-raised-button style="outline:none;" (click)="fileInput.click()">Add</button>
-          <input style="display: none"  #attachments  type="file" (change)="onPncFileChanged($event)" #fileInput>
+          <input style="display: none" #attachments type="file" (change)="onPncFileChanged($event)" #fileInput>
           <div *ngFor="let selected of listOfFiles1;let index = index">
             <label>
               <h6>{{selected}}</h6>
@@ -631,18 +452,17 @@
           <br>
           <div class="form-group col-md-5"
             *ngIf="((this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed'))">
-            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)="onPncSumbit()" 
-             [disabled]="onPncChange() ">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;"
+              (click)="onPncSumbit()" [disabled]="onPncChange() ">
               Submit
             </button>
           </div>
-          <div class="form-group col-md-5"
-          *ngIf="(this.role_id==0 && this.actualCost1!=null && this.is_pnc==1)">
-          <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;" (click)="onResend()" 
-           >
-            Resend
-          </button>
-        </div>
+          <div class="form-group col-md-5" *ngIf="(this.role_id==0 && this.actualCost1!=null && this.is_pnc==1)">
+            <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;"
+              (click)="onResend()">
+              Resend
+            </button>
+          </div>
         </div>
       </div>
     </form>

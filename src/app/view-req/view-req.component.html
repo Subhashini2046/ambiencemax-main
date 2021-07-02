@@ -111,7 +111,7 @@
         </button>
       </div>
       <br>
-      <div class="text-center" *ngIf="req_status=='Completed' || req_status=='Closed'">
+      <div class="text-center" *ngIf="req_status=='Completed' || req_status=='Closed' || req_status=='Pending'">
         <button mat-raised-button class="col-bg-button" style="color: white;outline:none;" (click)=ExportPDF()>
 
           Download PDF
@@ -189,37 +189,37 @@
 
             <!-- Selected Column -->
             <ng-container matColumnDef="selected">
-              <th class="text-center" mat-header-cell *matHeaderCellDef>
+              <th id="allocVendor" class="text-center" mat-header-cell *matHeaderCellDef>
               </th>
-              <td class="text-center" mat-cell *matCellDef="let element">
+              <td id="vendor" class="text-center" mat-cell *matCellDef="let element">
                 <mat-radio-button [value]="element" [checked]="RequestAllocatedVendor==element.rumpvenVendorPK">
                 </mat-radio-button>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="Vendor Name">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name</th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venName}} </td>
+              <th id="name" class="text-center" mat-header-cell *matHeaderCellDef> Vendor Name</th>
+              <td id="venName" class="text-center" mat-cell *matCellDef="let element"> {{element.venName}} </td>
             </ng-container>
 
             <!-- Position Column -->
              <ng-container matColumnDef="spoc1">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
+              <th id="sp1" class="text-center" mat-header-cell *matHeaderCellDef> SPOC1</th>
+              <td id="spoc1" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc1}}<mat-icon *ngIf="(element.venSpoc1!=null)" class="button3" (click)="openDialog(element.venSpoc1,element.venSpoc1Address,
                 element.venSpoc1Email,element.venSpoc1Mobile,element.venSpoc1Phone)">add_circle_outline</mat-icon> </td>
             </ng-container>
 
             <!-- Name Column -->
             <ng-container matColumnDef="spoc2">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3" *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
+              <th id="sp2" class="text-center" mat-header-cell *matHeaderCellDef> SPOC2 </th>
+              <td id="spoc2" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc2}} <mat-icon class="button3" *ngIf="(element.venSpoc2!=null)" (click)="openDialog(element.venSpoc2,element.venSpoc2Address,
                 element.venSpoc2Email,element.venSpoc2Mobile,element.venSpoc2Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="spoc3">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3" *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
+              <th id="sp3" class="text-center" mat-header-cell *matHeaderCellDef> SPOC3 </th>
+              <td id="spoc2" class="text-center" mat-cell *matCellDef="let element"> {{element.venSpoc3}} <mat-icon class="button3" *ngIf="(element.venSpoc3!=null)" (click)="openDialog(element.venSpoc3,element.venSpoc3Address,
                 element.venSpoc3Email,element.venSpoc3Mobile,element.venSpoc3Phone)">add_circle_outline</mat-icon></td>
             </ng-container>
 

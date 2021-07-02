@@ -1,12 +1,11 @@
-import { Component, OnInit, Inject,ViewChild} from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { Component, Inject,ViewChild} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA,MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 @Component({
   selector: 'app-spoce-details',
   templateUrl: './spoce-details.component.html',
   styleUrls: ['./spoce-details.component.css']
 })
-export class SpoceDetailsComponent implements OnInit {
+export class SpoceDetailsComponent {
   displayedColumns: string[] = ['name', 'details'];
   dataSource = new MatTableDataSource();
   spoceData:any=[];
@@ -22,8 +21,6 @@ export class SpoceDetailsComponent implements OnInit {
       this.dataSource.data=this.spoceData;
     }
 
-  ngOnInit() {
-  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

@@ -1,14 +1,11 @@
-import { findIndex } from 'rxjs/operators';
 
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog, MatTableDataSource } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as FileSaver from 'file-saver';
-import { MatTableDataSource, MatSort } from '@angular/material';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { MatDialog } from '@angular/material';
 import { SpoceDetailsComponent } from '../spoce-details/spoce-details.component';
 @Component({
   selector: 'app-view-req',
@@ -63,7 +60,7 @@ export class ViewReqComponent implements OnInit {
   dataSource3: any[] = [];
   dataSource: any[] = [];
   selectedElement: any[] = [];
-  constructor(public dialog: MatDialog,private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
+  constructor(public dialog: MatDialog, private actrouter: ActivatedRoute, public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   filestage;
   fileName = [];
@@ -90,7 +87,7 @@ export class ViewReqComponent implements OnInit {
       for (let i = 0; i < response.length; i++) {
         if (response[i].RUMPRequestFilesStage == 1) {
           this.fileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
-       
+
         }
         if (response[i].RUMPRequestFilesStage == 2) {
           this.BoqfileName.push(response[i].RUMPRequestFilesPath.replace(/^.*[\\\/]/, ''));
@@ -102,11 +99,11 @@ export class ViewReqComponent implements OnInit {
     });
 
     this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
-      this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-        this.dataSource = response;
-        this.selectedElement = response;
+      this.userDataService.getSpocDetails(this.req_id).subscribe((responseData: any) => {
+        this.dataSource = responseData;
+        this.selectedElement = responseData;
         this.selectedSpoc = this.dataSource.length;
-      
+
       });
       this.budget_type = response[0]["BudgetType"];
       this.me_type = response[0]["METype"];
@@ -126,26 +123,15 @@ export class ViewReqComponent implements OnInit {
       this.allocationStartDate = response[0]["AllocationStartDate"];
       this.actualCost = response[0]["ActualCost"];
       this.RequestAllocatedVendor = response[0]["RequestAllocatedVendor"];
-
-      // if (this.RequestAllocatedVendor != null) {
-      //   this.userDataService.getSpocDetails(this.req_id).subscribe((response: any) => {
-      //     for (let i = 0; i < response.length; i++) {
-      //       if (this.RequestAllocatedVendor == response[i]['rumpvenVendorPK']) {
-      //         this.dataSource3.push(response[i]);
-      //       }
-      //     }
-      //   });
-      // }
-      //console.log(this.req_number.substr(12,15),"n")
       this.reqComment = response[0]["requestComments"];
-   
+
       this.pncurl = response[0]["PNCUrl"];
       if (this.pncurl != null) {
         this.filename = response[0]["PNCUrl"].replace(/^.*[\\\/]/, '');
       }
       if (this.req_status.toString().trim() != 'Pending') {
-        this.userDataService.check_asRead(this.req_id).subscribe((response: any) => {
-        
+        this.userDataService.check_asRead(this.req_id).subscribe((res: any) => {
+          console.log("Request is Checked!!");
         });
       }
     });
@@ -167,10 +153,10 @@ export class ViewReqComponent implements OnInit {
     console.log('file downloaded');
     return new Blob([res], { type: 'pdf' });
   }
-  openDialog(venSpoc1,venSpoc1Address,venSpoc1Email,venSpoc1Mobile,venSpoc1Phone): void {
+  openDialog(venSpoc1, venSpoc1Address, venSpoc1Email, venSpoc1Mobile, venSpoc1Phone): void {
     let dialogRef = this.dialog.open(SpoceDetailsComponent, {
       width: '550px',
-      data: {venSpoc:venSpoc1,venSpocAddress:venSpoc1Address,venSpocEmail:venSpoc1Email,venSpocMobile:venSpoc1Mobile,venSpocPhone:venSpoc1Phone}
+      data: { venSpoc: venSpoc1, venSpocAddress: venSpoc1Address, venSpocEmail: venSpoc1Email, venSpocMobile: venSpoc1Mobile, venSpocPhone: venSpoc1Phone }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -181,7 +167,6 @@ export class ViewReqComponent implements OnInit {
   download(downloadfile) {
     this.userDataService.getFiles(downloadfile).subscribe((res) => {
       if (res) {
-        const url = window.URL.createObjectURL(this.returnBlob(res));
         FileSaver.saveAs(res, downloadfile);
       }
     });
@@ -192,7 +177,6 @@ export class ViewReqComponent implements OnInit {
   downloadFile() {
     this.userDataService.downloadFile(this.filename).subscribe((res) => {
       if (res) {
-        const url = window.URL.createObjectURL(this.returnBlob(res));
         FileSaver.saveAs(res, this.filename);
       }
     });
@@ -202,7 +186,7 @@ export class ViewReqComponent implements OnInit {
   // Mark request status as Complete
   onCompelete() {
     this.userDataService.addCompleteRequest(this.req_id, this.accessID, this.user_name).subscribe((ResData) => {
-    
+      console.log("Data saved!!");
     })
     this.route.navigateByUrl('/AmbienceMax/close');
   }
@@ -210,12 +194,12 @@ export class ViewReqComponent implements OnInit {
     this.route.navigate(['/AmbienceMax/pdf', this.req_id]);
   }
 
+  newDate(newdate){
+    return  newdate.slice(0, 10) + " " + newdate.slice(11, 21);
+  }
   // formate the date
   dateFormate(date) {
-    let sDate = date.toString();
-    let newDate = sDate.slice(0, 10) + " " + sDate.slice(11, 21);
-    return newDate;
-
+    return this.newDate(date.toString());
   }
   // responsible for inserting the extra space between the text 
   space(name) {
@@ -228,9 +212,7 @@ export class ViewReqComponent implements OnInit {
     }
     return NumberOfspace;
   }
- 
 
-  
   // download pdf of request form
   ExportPDF() {
     this.pdfTableData = [];
@@ -241,79 +223,79 @@ export class ViewReqComponent implements OnInit {
         }
       }
       const doc = new jsPDF('p', 'pt', 'a4');
-      let reqNum=this.req_number.indexOf('Form');
-    
+      let reqNum = this.req_number.indexOf('Form');
+
       autoTable(doc, { html: '#my-table' })
-      const columns1 = [[this.req_number.slice(reqNum, reqNum+5)]];
+      const columns1 = [[this.req_number.slice(reqNum, reqNum + 5)]];
       const data2 = [];
-      const columns3 = [[""]];
 
       data2.push(["Request No: " + this.req_number + "             " + "Date: " + this.dateFormate(this.pdfTableData[0].actionTiming)]);
       data2.push(["SWON / WON : " + this.req_swon + "             " + "Budget: " + this.budget_type]);
       data2.push(["Available(INR): " + this.available_budget + "             " + "Consumed(INR): " + this.consumed_budget + "             " + "Balance(INR): " + this.balance_budget]);
       data2.push(["Subject: " + this.req_subject]);
       data2.push(["Description: " + this.req_description]);
-for(let i=0;i<this.pdfTableData.length;i++){
-  if(this.pdfTableData[i].action=='Initiated Phase 1'){
-      let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user);
-      data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user + adspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
-  }
- else if(this.pdfTableData[i].roleId==1){
-      let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user);
-      data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user + lspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
- }
- else if(this.pdfTableData[i].roleId==2){
-      let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
-      data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
-      data2.push([""]);
- }
- else if(this.pdfTableData[i].roleId==3 || this.pdfTableData[i].roleId==4){
-      let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user);
+      for (let i = 0; i < this.pdfTableData.length; i++) {
+        if (this.pdfTableData[i].action == 'Initiated Phase 1') {
+          let adspace1 = this.space("Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Initiator: User Dept/ Admin" + "               " + "Name: " + this.pdfTableData[i].user + adspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 1) {
+          let lspace1 = this.space("Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Recommender: Local Administration." + "               " + "Name: " + this.pdfTableData[i].user + lspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 2) {
+          let cspace1 = this.space("From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user);
+          data2.push(["From : Cluster Head" + "               " + "Name: " + this.pdfTableData[2].user + cspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[2].actionTiming)])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 3 || this.pdfTableData[i].roleId == 4) {
+          let espace1 = this.space("From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user + espace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
-      data2.push(["Description: " + this.boqDescription])
-      data2.push(["Estimated cost for the work(INR): " + this.boqEstimatedCost])
-      data2.push(["Estimated time for the work: " + this.boqEstimatedTime])
-      data2.push([""]);
- }
- else if(this.pdfTableData[i].roleId==5){
-      let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["From : Engineer" + "               " + "Name: " + this.pdfTableData[i].user + espace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+          data2.push(["Description: " + this.boqDescription])
+          data2.push(["Estimated cost for the work(INR): " + this.boqEstimatedCost])
+          data2.push(["Estimated time for the work: " + this.boqEstimatedTime])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 5) {
+          let hspace1 = this.space("From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user + hspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
-      data2.push([""]);
- }
- else if(this.pdfTableData[i].action=='Initiated Phase 2'){
-      let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["From : Head of Maintenance" + "               " + "Name: " + this.pdfTableData[i].user + hspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].action == 'Initiated Phase 2') {
+          let ispace1 = this.space("From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user + ispace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+          data2.push(["From : Initiator" + "               " + "Name: " + this.pdfTableData[i].user + ispace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
 
-      data2.push(["Actual Cost(INR): " + this.actualCost]);
-      data2.push([""]);
- }
- else if(this.pdfTableData[i].roleId==6){
-      let bspace1 = this.space("From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Actual Cost(INR): " + this.actualCost]);
+          data2.push([""]);
+        }
+        else if (this.pdfTableData[i].roleId == 6) {
+          let bspace1 = this.space("From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
- }
- else if(this.pdfTableData[i].roleId==7){
-        let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["From : Branch PMO" + "               " + "Name: " + this.pdfTableData[i].user + bspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 7) {
+          let aspace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user + aspace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
- }
- else if(this.pdfTableData[i].roleId==9){
-      let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
+          data2.push(["Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user + aspace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+        else if (this.pdfTableData[i].roleId == 9) {
+          let cespace1 = this.space("Approved by: Administration Head" + "               " + "Name: " + this.pdfTableData[i].user);
 
-      data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[i].user + cespace1
-        + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
-}}
+          data2.push(["Approved by: Centre Head" + "               " + "Name: " + this.pdfTableData[i].user + cespace1
+            + "Signature:________________   " + "Date: " + this.dateFormate(this.pdfTableData[i].actionTiming)])
+        }
+      }
       autoTable(doc, {
         head: columns1,
         theme: 'grid',
@@ -322,55 +304,13 @@ for(let i=0;i<this.pdfTableData.length;i++){
         tableLineColor: 200,
         styles: { fontSize: 12, textColor: 20, font: "times" },
         didParseCell: function (data) {
-          // console.log("data",data.row.raw[0].includes("From"))
-          // console.log("data row",data.row)
-          // if (data.row.index === 8) {
-          //   data.cell.styles.fillColor = [62, 172, 148];
-          // }
           if (data.row.raw[0] === "") {
             data.cell.styles.fillColor = [62, 172, 148];
           }
-          if (data.row.raw[0].includes("Initiator:") || data.row.raw[0].includes("Recommender:")||
-          data.row.raw[0].includes("Approved by:")|| data.row.raw[0].includes("From :")) {
+          if (data.row.raw[0].includes("Initiator:") || data.row.raw[0].includes("Recommender:") ||
+            data.row.raw[0].includes("Approved by:") || data.row.raw[0].includes("From :")) {
             data.cell.styles.fontStyle = "bold"
           }
-          // if (data.row.index === 5) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 6) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 7) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 9) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 14) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 16) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 19) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 20) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-          // if (data.row.index === 21) {
-          //   data.cell.styles.fontStyle = "bold"
-          // }
-
-          // if (data.row.index === 13) {
-          //   data.cell.styles.fillColor = [62, 172, 148];
-          // }
-          // if (data.row.index === 15) {
-          //   data.cell.styles.fillColor = [62, 172, 148];
-          // }
-          // if (data.row.index === 18) {
-          //   data.cell.styles.fillColor = [62, 172, 148];
-          // }
         },
         didDrawPage: (dataArg) => {
           doc.text('', dataArg.settings.margin.left, 10);
@@ -381,12 +321,9 @@ for(let i=0;i<this.pdfTableData.length;i++){
       const columns = [['User', 'Role', 'Action', 'Action Timing', 'Comment']];
       const data1 = [];
       if (this.pdfTableData.length > 0) {
-    
-        for (let i = 0; i <this.pdfTableData.length; i++) {
+        for (let i = 0; i < this.pdfTableData.length; i++) {
           data1.push([this.pdfTableData[i].user, this.pdfTableData[i].role1, this.pdfTableData[i].action, this.dateFormate(this.pdfTableData[i].actionTiming), this.pdfTableData[i].comment])
         }
-
-
       }
       doc.addPage();
 
@@ -403,18 +340,8 @@ for(let i=0;i<this.pdfTableData.length;i++){
         }
 
       });
-    doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
+      doc.save('AmbienceMax_Form_' + this.req_id + '.pdf');
     })
-
-
-    
     return false;
   }
-
-}
-
-export interface views1 {
-  id: number;
-  name: String;
-  status: String;
 }

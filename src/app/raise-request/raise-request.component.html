@@ -1,4 +1,3 @@
-<!-- <loading *ngIf="isLoading">{{ isLoading }}</loading> -->
 <div id="pause" *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
   <div id="spinner"></div>
 </div>
@@ -131,7 +130,7 @@
 
         <div class="text-center" >
           <button mat-raised-button class="col-bg-button" style="color: white;outline:none;"
-            [disabled]="(!(form.valid) || isLoading==true)">
+            [disabled]="(!(form.valid) || isLoading==true) || areCredentialsInvalid == true">
             Raise Request
           </button>
         </div>

@@ -19,8 +19,8 @@ export class ViewStatusComponent implements OnInit {
   view_id = null;
   view_name = null;
   view_status = null;
-  public viewStatus: views1;
-  public viewStatus1: views1[] = [];
+  public viewStatus: Views;
+  public viewStatus1: Views[] = [];
   displayedColumns: string[] = ['aaction_taken_by', 'req_action', 'req_date', 'req_time'];
   displayedColumns1: string[] = ['id', 'name', 'status'];
   dataSource = new MatTableDataSource();
@@ -136,9 +136,6 @@ export class ViewStatusComponent implements OnInit {
           this.viewStatus1.splice(i, 1);
         }
       }
-      // if (this.viewStatus1[4]["name"] == null) {
-      //   this.viewStatus1.splice(4, 1);
-      // }
       this.dataSource1.data = this.viewStatus1;
     }));
   }
@@ -146,8 +143,8 @@ export class ViewStatusComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 }
-export interface views1 {
+export interface Views {
   id: number;
-  name: String;
-  status: String;
+  name: string;
+  status: string;
 }

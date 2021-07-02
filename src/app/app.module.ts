@@ -1,17 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Component } from '@angular/core';
+import { NgModule} from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { SignupFormComponent } from './signup-form/signup-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { RouterModule, CanActivate } from '@angular/router';
+import { RouterModule} from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatFormFieldModule, MatSelectModule, MatTableModule, MatChipsModule ,
   MatMenuModule, MatCardModule, MatButtonModule, MatSidenavModule, MatToolbarModule, MatIconModule,
-  MatListModule, MatSnackBarModule, MatPaginatorModule} from '@angular/material';
+  MatListModule, MatSnackBarModule, MatPaginatorModule,MatRadioModule,MatNativeDateModule,MatInputModule} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserDataService } from './Services/UserDataService';
 import{AuthGuardService} from './Services/AuthGuardService';
@@ -35,9 +35,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { NavigationHomeComponent } from './navigation-home/navigation-home.component';
 import { ApproveRequestComponent } from './approve-request/approve-request.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatRadioModule} from '@angular/material';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule,MatInputModule} from '@angular/material';
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
 import { CompleteComponent } from './complete/complete.component';
 import {MatBadgeModule} from '@angular/material/badge';
@@ -49,8 +47,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import {AuthenticationGuard} from './authentication.guard';
 import { RaiseRequestComponent } from './raise-request/raise-request.component';
 import { DraftRequestComponent } from './draft-request/draft-request.component';
-import { SpoceDetailsComponent } from './spoce-details/spoce-details.component'; 
-//import { LoadingComponent } from './loading'
+import { SpoceDetailsComponent } from './spoce-details/spoce-details.component';
+import { CancelRequestComponent } from './cancel-request/cancel-request.component'; 
+import {CancelRequestService} from './cancel-request/Cancel-request.service';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
@@ -76,9 +75,6 @@ const appRoutes = [
 },
 { path: '', redirectTo: "/login", pathMatch: 'full' },  
   {path:'login',component: HomeComponent},
- // {path: '' , component: HomeComponent},
- // {path: 'admin' , component: AdminPanelComponent},
-
 ];
 @NgModule(
   {
@@ -109,6 +105,7 @@ const appRoutes = [
     RaiseRequestComponent,
     DraftRequestComponent,
     SpoceDetailsComponent,
+    CancelRequestComponent,
   ],
   entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent,SpoceDetailsComponent],
   imports: [

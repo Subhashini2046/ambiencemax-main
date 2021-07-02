@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserDataService } from '../Services/UserDataService';
 import { ActivatedRoute, Router } from '@angular/router';
-export interface vendor {
+export interface Vendor {
   asvendorId: number;
   vendorName: string;
   taggedCount: number;
@@ -20,8 +20,8 @@ export class ApproveRequestComponent implements OnInit {
   constructor(private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userDataService: UserDataService) { }
   vendCategoryId: number;
   displayedColumns: string[] = ['select', 'position', 'name', 'weight'];
-  dataSource = new MatTableDataSource<vendor>();
-  selection = new SelectionModel<vendor>(true, []);
+  dataSource = new MatTableDataSource<Vendor>();
+  selection = new SelectionModel<Vendor>(true, []);
   requestComment = "";
   vendorList: any[] = [];
   req_id: number;
@@ -53,13 +53,7 @@ export class ApproveRequestComponent implements OnInit {
   }
   vendorID = []
   ngAfterContentInit() {
-
-
     //get request comment
-    // this.userDataService.getHomComment(this.req_id).subscribe((res) => {
-    //   this.requestComment = res[0].RUMPRequestComments;
-    // });
-
     if (this.role_id == 5) {
 
       //get vendorId
@@ -70,8 +64,8 @@ export class ApproveRequestComponent implements OnInit {
         this.vendCategoryId = res.result[0].pickRumpVendorCategoriesPK;
         if (this.vendCategoryId != null) {
 
-          this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((res) => {
-            this.dataSource.data = res;
+          this.userDataService.getVendorDetails(this.vendCategoryId).subscribe((resData) => {
+            this.dataSource.data = resData;
             this.dataSource.data.forEach(data => {
               this.vendorID.forEach(id => {
                 if (id == data['vendorId']) {

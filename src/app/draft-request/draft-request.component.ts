@@ -19,7 +19,7 @@ readstatus:any[]=[]
 hover=false;
 @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 @ViewChild(MatSort, { static: true }) sort: MatSort;
-constructor(private route: Router, public UserDataService: UserDataService) { }
+constructor(private route: Router, public userService: UserDataService) { }
 ngOnInit() {
   
 
@@ -28,24 +28,24 @@ ngOnInit() {
   this.fetchAllDraftRequest();
 }
 fetchAllDraftRequest(){
-  this.UserDataService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('space')),this.role_id).subscribe((response: any) => {
+  this.userService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('space')),this.role_id).subscribe((response: any) => {
     this.dataSource.data= response;
  
   });
 }
 deleteDraftRequest(draftReqId) {
   this.hover=true;
-  this.UserDataService.deleteDraftReques(draftReqId).subscribe((response:any)=>{
+  this.userService.deleteDraftReques(draftReqId).subscribe((response:any)=>{
 
     this.fetchAllDraftRequest();
   })}
 // navigate to view reuqest data
 viewDraftRequest(req_id) {
-  if (this.hover==true){
+  if (this.hover){
     this.hover=false;
     return;
   }
-  if(this.hover==false){
+  if(!this.hover){
   this.route.navigate(['/AmbienceMax/raiseRequest', req_id]);
 }
 }

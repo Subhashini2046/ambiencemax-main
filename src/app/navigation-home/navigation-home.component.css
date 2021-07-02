@@ -74,21 +74,21 @@
   margin: 0px;
   width: 100%;
 }
-.example-card1{
+.example-card2{
   margin-top: 5px;
-  background-color: rgba(252, 255, 71, 0.315);
+  background-color: rgba(252, 255, 71, 0.555);
 }
-.button1:hover {
+.button2:hover {
   background-color: rgba(214, 245, 39, 0.507);
   color: rgb(26, 6, 6);
   cursor: pointer;
 }
-.button2:hover {
+.button3:hover {
   background-color: rgba(59, 75, 163, 0.589);
   color: rgb(26, 6, 6);
   cursor: pointer;
 }
-.button3:hover {
+.button1:hover {
   background-color: rgba(214, 57, 29, 0.63);
   color: rgb(26, 6, 6);
   cursor: pointer;
@@ -98,17 +98,17 @@
   color: rgb(26, 6, 6);
   cursor: pointer;
 }
-.example-card2{
-  margin-top: 5px;
-  background-color: rgba(71, 99, 255, 0.301);
-}
 .example-card3{
   margin-top: 5px;
-  background-color: rgba(255, 99, 71, 0.233);
+  background-color: rgba(71, 99, 255, 0.479);
+}
+.example-card1{
+  margin-top: 5px;
+  background-color: rgba(255, 99, 71, 0.582);
 }
 .example-card4{
   margin-top: 5px;
-  background-color: rgba(71, 255, 71, 0.226);
+  background-color: rgba(105, 233, 105, 0.534);
 }
 .example-card{
   margin-top: 5px;
@@ -124,8 +124,7 @@ mat-card-title{
   font-size: medium;
 }
 mat-card{
-  background-color: rgba(70, 227, 238, 0.411);
-  background: white;
+  background-color:white;
 }
 .sidenav .btn{
   color: white;

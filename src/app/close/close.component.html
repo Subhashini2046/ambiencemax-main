@@ -1,9 +1,5 @@
 <div class="container" style="background-color: white; margin-top: 20px;">
   <br>
-  <!-- <mat-card class="example-card1">
-    <mat-card-title> Closed Requests</mat-card-title>
-  </mat-card>
-  <br> -->
   <div style="display: flex;">
     <span style="font-size: 20px;flex: 3;">Closed Requests</span>
     <div style="display: inline-block;margin-left: auto;">
@@ -14,67 +10,63 @@
     </div>
   </div>
   <mat-divider style="margin: 10px 0;"></mat-divider>
-  <!-- <mat-card class="example-card1"> -->
   <table class="table" mat-table [dataSource]="this.dataSource">
 
     <!-- REQUEST NO COULMN -->
     <ng-container matColumnDef="reqNumber">
-      <th class="text-center" mat-header-cell *matHeaderCellDef> Request Number </th>
-      <td class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestNumber}} </td>
+      <th id="requestNum" class="text-center" mat-header-cell *matHeaderCellDef> Request Number </th>
+      <td id="requestNumber" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestNumber}} </td>
     </ng-container>
 
     <!-- REQUEST TITLE Column -->
     <ng-container matColumnDef="Request Subject">
-      <th class="text-center" mat-header-cell *matHeaderCellDef> Request Subject </th>
-      <td class="text-center truncate-cell" mat-cell *matCellDef="let element"> {{element.RUMPRequestSubject}} </td>
+      <th id="subject" class="text-center" mat-header-cell *matHeaderCellDef> Request Subject </th>
+      <td id="requestSubject" class="text-center truncate-cell" mat-cell *matCellDef="let element"> {{element.RUMPRequestSubject}} </td>
     </ng-container>
 
     <!-- Satus Column -->
     <ng-container matColumnDef="status">
-      <th class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
-      <td class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestStatus}} </td>
+      <th id="status" class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
+      <td id="requestStatus" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestStatus}} </td>
     </ng-container>
     <!-- Type Column -->
     <ng-container matColumnDef="Request Type">
-      <th class="text-center" mat-header-cell *matHeaderCellDef> Request Type </th>
-      <td class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestType}} </td>
+      <th id="type" class="text-center" mat-header-cell *matHeaderCellDef> Request Type </th>
+      <td id="requestType" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestType}} </td>
     </ng-container>
     <!-- Date Column -->
     <ng-container matColumnDef="RequestDate">
-      <th class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
-      <td class="text-center" mat-cell *matCellDef="let element">
+      <th id="date" class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
+      <td id="requestDate" class="text-center" mat-cell *matCellDef="let element">
         {{element.RUMPRequestDate | date: 'yyyy-MM-dd'}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="view">
-      <th class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
-      <td class="text-center" mat-cell *matCellDef="let element">
-        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
-        (click)='view(element.RUMPRequestPK)'>
-        <mat-icon>visibility</mat-icon>
+      <th id="action" class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
+      <td id="requestAction" class="text-center" mat-cell *matCellDef="let element">
+        <button mat-button class="stylepopupbuttonconfirm" style="outline:none;" (click)='view(element.RUMPRequestPK)'>
+          <mat-icon>visibility</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <ng-container  matColumnDef="progress">
-      <th class="text-center" mat-header-cell *matHeaderCellDef style=" text-align: center;">Log and Progress</th>
-      <td class="text-center" mat-cell *matCellDef="let element">
+    <ng-container matColumnDef="progress">
+      <th id="viewSatus" class="text-center" mat-header-cell *matHeaderCellDef style=" text-align: center;">Log and Progress</th>
+      <td id="vStatus" class="text-center" mat-cell *matCellDef="let element">
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
-        (click) = 'status(element.RUMPRequestPK)'>
-        Check progress
+          (click)='status(element.RUMPRequestPK)'>
+          Check progress
         </button>
       </td>
     </ng-container>
-    
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-  <!-- </mat-card> -->
-  <!-- <mat-card-title *ngIf="this.dataSource.data.length<1">No data is available</mat-card-title> -->
-  <mat-paginator  [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
-  <div style="text-align: center;color:red;margin: 20px 0;padding-bottom: 20px;"
-*ngIf="this.dataSource.data.length<1">
-  No data is available
+  <mat-paginator [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[5 , 10]" showFirstLastButtons>
+  </mat-paginator>
+  <div style="text-align: center;color:red;margin: 20px 0;padding-bottom: 20px;" *ngIf="this.dataSource.data.length<1">
+    No data is available
   </div>
 </div>

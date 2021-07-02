@@ -7,78 +7,67 @@
           <span style="font-size: 20px;flex: 3;">Approval Status</span>
         </div>
         <mat-divider style="margin: 10px 0;"></mat-divider>
-        <!-- <hr>
-        <mat-card class="example-card1">
-          <mat-card-title>Approval Status</mat-card-title>
-        </mat-card> -->
         <div class="container">
-          <!-- <mat-card class="example-card1"> -->
           <table class="table" mat-table [dataSource]="this.dataSource1">
 
             <ng-container matColumnDef="id">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Role Id </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.id}} </td>
+              <th id="id" class="text-center" mat-header-cell *matHeaderCellDef> Role Id </th>
+              <td id="roleId" class="text-center" mat-cell *matCellDef="let element"> {{element.id}} </td>
             </ng-container>
-
 
             <ng-container matColumnDef="name">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Designation </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.name}} </td>
+              <th id="designation" class="text-center" mat-header-cell *matHeaderCellDef> Designation </th>
+              <td id="name" class="text-center" mat-cell *matCellDef="let element"> {{element.name}} </td>
             </ng-container>
-
 
             <ng-container matColumnDef="status">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.status}} </td>
+              <th id="status "class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
+              <td id="reqStatus" class="text-center" mat-cell *matCellDef="let element"> {{element.status}} </td>
             </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
           </table>
-          <!-- </mat-card> -->
+
         </div>
 
       </div>
     </div>
     <div class="column">
       <div class="container" style="background-color: white;">
-        <!-- <mat-card class="example-card1">
-          <mat-card-title>Request Log</mat-card-title>
-        </mat-card> -->
         <br>
         <div style="display: flex;">
           <span style="font-size: 20px;flex: 3;">Request Log</span>
         </div>
         <mat-divider style="margin: 10px 0;"></mat-divider>
         <div class="container">
-          <!-- <mat-card class="example-card1"> -->
           <table class="table" mat-table [dataSource]="this.dataSource">
 
             <ng-container matColumnDef="aaction_taken_by">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.RequestRoleName}} </td>
+              <th id="action" class="text-center" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
+              <td id="roleName" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestRoleName}} </td>
             </ng-container>
 
 
             <ng-container matColumnDef="req_action">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Request Action </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.RequestAction}} </td>
+              <th id="reqAction"class="text-center" mat-header-cell *matHeaderCellDef> Request Action </th>
+              <td id="requestAction" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestAction}} </td>
             </ng-container>
 
 
             <ng-container matColumnDef="req_date">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionDate | date:
+              <th id="reqDate"class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
+              <td id="date" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionDate | date:
                 'yyyy-MM-dd'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="req_time">
-              <th class="text-center" mat-header-cell *matHeaderCellDef> Request Time </th>
-              <td class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
+              <th id="time" class="text-center" mat-header-cell *matHeaderCellDef> Request Time </th>
+              <td id="actionTime" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
-          <!-- </mat-card> -->
           <div class="text-center col">
             <button mat-button class=" stylepopupbuttonconfirm" style="outline: none" (click)="backClicked()">
               Go Back

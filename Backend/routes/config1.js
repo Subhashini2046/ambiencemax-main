@@ -1,11 +1,11 @@
 var multer = require('multer');
 var fs = require('fs');
 const date = require('date-and-time');
+
 let express = require("express"),
   async = require("async"),
   router = express.Router(),
   con = require("../mysql_config/config");
-
 
   const storage = multer.diskStorage({
     destination: (req, file, callBack) => {
@@ -18,7 +18,7 @@ let express = require("express"),
     }
   })
   
-  const upload = multer({ storage: storage })
+  const upload = multer({ storage: storage ,limits: {fileSize: 10000000}})
   router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
     const files = req.files;
     if (!files) {
@@ -27,7 +27,7 @@ let express = require("express"),
       return next(error)
     }
     res.send({
-      sttus: 'ok',
+      status: 'ok',
       files: files
     });
   })
@@ -37,44 +37,43 @@ let express = require("express"),
       console.log(req.body.id + "///")
       callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_PNC_Docs\\')
     },
-    filename: (req, file, callBack) => {
+    filename: (req1, pncFile, callBack) => {
       const now = new Date();
       let timestemp = date.format(now, 'YYYY-MM-DD HH-mm-ss');
-      callBack(null, `${timestemp}_${file.originalname}`)
+      callBack(null, `${timestemp}_${pncFile.originalname}`)
     }
   })
-  const uploadpnc = multer({ storage: storagepnc })
-  router.post('/pncFiles', uploadpnc.array('files'), (req, res, next) => {
+  const uploadpnc = multer({ storage: storagepnc,limits: {fileSize: 10000000} })
+  router.post('/pncFiles', uploadpnc.array('files'), (req, res, next1) => {
     const files = req.files;
     if (!files) {
       const error = new Error('No File')
       error.httpStatusCode = 400
-      return next(error)
+      return next1(error)
     }
     res.send({
       sttus: 'ok',
       files: files
     });
   })
-  
   
   const storageboq = multer.diskStorage({
     destination: (req, file, callBack) => {
       callBack(null, 'C:\\CommonFolderMirror\\RUMP_Req_RUMP_Supporting_Docs\\')
     },
-    filename: (req, file, callBack) => {
+    filename: (req, boqFile, callBack) => {
       const now = new Date();
       let timestemp = date.format(now, 'YYYY-MM-DD HH-mm-ss');
-      callBack(null, `${timestemp}_${file.originalname}`)
+      callBack(null, `${timestemp}_${boqFile.originalname}`)
     }
   })
-  const uploadboq = multer({ storage: storageboq })
-  router.post('/BoqFiles', uploadboq.array('files'), (req, res, next) => {
+  const uploadboq = multer({ storage: storageboq,limits: {fileSize:10000000}})
+  router.post('/BoqFiles', uploadboq.array('files'), (req, res, boqNext) => {
     const files = req.files;
     if (!files) {
       const error = new Error('No File')
       error.httpStatusCode = 400
-      return next(error)
+      return boqNext(error)
     }
     res.send({
       sttus: 'ok',
@@ -82,12 +81,10 @@ let express = require("express"),
     });
   })
   
-  
-  
   router.post("/resendReq", (req, res) => {
-    role = req.body.userRole;
-    reqId = req.body.req_id;
-    sql = `update requests set req_level = '${role}' where req_id = '${reqId}';`
+   let role = req.body.userRole;
+   let reqId = req.body.req_id;
+   let sql = `update requests set req_level = '${role}' where req_id = '${reqId}';`
     con.query(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -99,14 +96,15 @@ let express = require("express"),
       }
     })
   })
+
   router.post("/addLog", (req, res) => {
-    role = req.body.userRole;
-    reqId = req.body.req_id;
-    action_by = req.body.action_taken_by;
-    sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"routerroved",'${action_by}',"routerroved")`
-    con.query(sql, function (err, result) {
-      if (err) {
-        console.log(err);
+   let role = req.body.userRole;
+   let reqId = req.body.req_id;
+   let action_by = req.body.action_taken_by;
+   let sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"routerroved",'${action_by}',"routerroved")`
+    con.query(sql, function (error, result) {
+      if (error) {
+        console.log(error);
       } else {
         console.log(result);
         res.send(JSON.stringify({
@@ -116,14 +114,15 @@ let express = require("express"),
       }
     })
   })
+
   router.post("/addResendReqLog", (req, res) => {
-    role = req.body.userRole;
-    reqId = req.body.req_id;
-    action_by = req.body.action_taken_by;
-    sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Resent",'${action_by}',"Resent")`
-    con.query(sql, function (err, result) {
-      if (err) {
-        console.log(err);
+   let role = req.body.userRole;
+   let reqId = req.body.req_id;
+   let action_by = req.body.action_taken_by;
+   let sql = `insert into request_actionnnn (req_id,acc_id,areq_action,aaction_taken_by,acomment) values(${reqId},${role},"Resent",'${action_by}',"Resent")`
+    con.query(sql, function (err1, result) {
+      if (err1) {
+        console.log(err1);
       } else {
         console.log(result);
         res.send(JSON.stringify({
@@ -133,16 +132,15 @@ let express = require("express"),
       }
     })
   })
+
   router.post("/addLogNewReq", (req, res) => {
-    let accessId = req.body.accessId;
     const now = new Date();
     let req_date = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-    sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},(SELECT  RUMPInitiatorId FROM datarumprequest WHERE RUMPRequestPK = ${req.body.req_id}),'Initiated Phase 1','${req_date}','${req.body.user_name}',1);`
-    con.query(sql, function (err, result) {
-      if (err) {
-        console.log(err);
+    let sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},(SELECT  RUMPInitiatorId FROM datarumprequest WHERE RUMPRequestPK = ${req.body.req_id}),'Initiated Phase 1','${req_date}','${req.body.user_name}',1);`
+    con.query(sql, function (err2, result) {
+      if (err2) {
+        console.log(err2);
       } else {
-  
         console.log(result);
         res.send(JSON.stringify({
           result: "passed",
@@ -167,11 +165,10 @@ let express = require("express"),
     let wflowdata = [];
     let wflowdata1 = []
     let intiator_id = '';
-    let accessId = req.body.accessId;
     let ApprovalLevel = 0;
     let role_id = req.body.role_id;
     let space = req.body.space;
-    sql = `Select w_flow,RUMPRequestMEType,RUMPRequestApprovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =?;`
+    let sql = `Select w_flow,RUMPRequestMEType,RUMPRequestApprovalLevel,RUMPInitiatorId from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =?;`
     con.query(sql, req_id, function (err, result) {
       if (err) {
         console.log(err);
@@ -182,7 +179,7 @@ let express = require("express"),
         w_flow = result[0].w_flow.split(',');
         for (let i = 0; i < w_flow.length; i++) {
   
-          if (typeof w_flow[i] === 'string' && (w_flow[i].includes('or') == false && w_flow[i].includes('i') == false)) {
+          if (typeof w_flow[i] === 'string' && (!w_flow[i].includes('or') && !w_flow[i].includes('i'))) {
             wflowdata.push(w_flow[i]);
           }
   
@@ -216,26 +213,26 @@ let express = require("express"),
         if (!wflowdata1.includes(intiator_id.toString())) {
           wflowdata1.push(intiator_id.toString())
         }
-        sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
+       let sqlQuery = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
         on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
         where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
-        con.query(sql, function (err, result) {
-          if (err) {
-            console.log(err);
+        con.query(sqlQuery, function (error, result1) {
+          if (error) {
+            console.log(error);
           } else {
-            if (result.length > 0) {
-              sql = `select distinct linkRUMPAdminAccessPK as accessId,linkRUMPRoleFK as roleId,pickRUMPRoleDescription 
+            if (result1.length > 0) {
+            let  sql1 = `select distinct linkRUMPAdminAccessPK as accessId,linkRUMPRoleFK as roleId,pickRUMPRoleDescription 
               from datarumprequestaction datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where RUMPRequestFK=? and RUMPRequestRole in(?) and RUMPRequestRole!=(select RUMPRequestRole from datarumprequestaction inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               where rumprequestfk=? and linkRUMProleFK=? and linkRUMPSpace=? limit 1);`
-              con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
-                if (err) {
-                  console.log(err);
+              con.query(sql1, [req_id, wflowdata1, req_id, role_id, space], function (err1, result2) {
+                if (err1) {
+                  console.log(err1);
                 } else {
-                  res.send(result);
+                  res.send(result2);
                 }
               })
             }
@@ -245,14 +242,11 @@ let express = require("express"),
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where RUMPRequestFK=? and RUMPRequestRole in(?);`
-              con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result) {
+              con.query(sql, [req_id, wflowdata1, req_id, role_id, space], function (err, result3) {
                 if (err) {
                   console.log(err);
                 } else {
-                  let res1=[]
-                  res1=result;
-
-                  res.send(JSON.stringify(result));
+                  res.send(JSON.stringify(result3));
                 }
               })
             }
@@ -266,7 +260,7 @@ let express = require("express"),
     let role_id = req.body.role_id;
     let space = req.body.space;
     let accessId = req.body.accessId;
-    sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
+    let sql = `select RUMPRequestActionTiming from datarumprequestaction inner join linkrumpadminaccess 
       on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
       where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1;`
     con.query(sql, function (err, result) {
@@ -274,7 +268,7 @@ let express = require("express"),
         console.log(err);
       } else {
         if (result.length > 0) {
-          sql1 = `select linkRUMPAdminAccessPK as accessId,
+         let sql1 = `select linkRUMPAdminAccessPK as accessId,
               linkRUMPRoleFK as roleId,pickRUMPRoleDescription from datarumprequestaction 
               inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
@@ -283,28 +277,28 @@ let express = require("express"),
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               where rumprequestfk=${req_id} and linkRUMProleFK=${role_id} and linkRUMPSpace=${space} limit 1) or (RUMPRequestAction like 'Resent%' and RUMPRequestRole!=${accessId})) 
               group by linkRUMPRoleFK,linkRUMPSpace;`
-          con.query(sql1, function (err, result) {
-            if (err) {
-              console.log(err);
+          con.query(sql1, function (error, result1) {
+            if (error) {
+              console.log(error);
             } else {
-              console.log(result);
-              res.send(result);
+              console.log(result1);
+              res.send(result1);
             }
           })
         }
         else {
-          sql2 = `select linkRUMPAdminAccessPK as accessId,
+         let sql2 = `select linkRUMPAdminAccessPK as accessId,
               linkRUMPRoleFK as roleId,pickRUMPRoleDescription from datarumprequestaction 
               inner join linkrumpadminaccess 
               on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole)
               inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkrumprolefk)
               where rumprequestfk=${req_id} and RUMPRequestActionTiming group by linkRUMPRoleFK,linkRUMPSpace;`
-          con.query(sql2, function (err, result) {
-            if (err) {
-              console.log(err);
+          con.query(sql2, function (err1, result2) {
+            if (err1) {
+              console.log(err1);
             } else {
-              console.log(result);
-              res.send(result);
+              console.log(result2);
+              res.send(result2);
             }
           })
         }

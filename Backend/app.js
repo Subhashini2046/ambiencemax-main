@@ -4,29 +4,30 @@ const loginRoutes = require('./routes/login');
 const approveRoutes = require('./routes/approve');
 const addRequests = require('./routes/addRequests');
 const addWorkFlow = require('./routes/addWorkFlow');
-const pendingRoute=require('./routes/pending');
-const closedRoute=require('./routes/close');
-const openRoute=require('./routes/open');
-const allReqRoute=require('./routes/allRequest');
-const viewRequest=require('./routes/viewRequest');
-const dashboardRoute=require('./routes/dashboard');
-const updateRquestRoute=require('./routes/updateRequest');
-const config1=require('./routes/config1');
-var cors = require('cors')
+const pendingRoute = require('./routes/pending');
+const closedRoute = require('./routes/close');
+const openRoute = require('./routes/open');
+const allReqRoute = require('./routes/allRequest');
+const viewRequest = require('./routes/viewRequest');
+const dashboardRoute = require('./routes/dashboard');
+const updateRquestRoute = require('./routes/updateRequest');
+const config1 = require('./routes/config1');
+var cors = require('cors');
 const app = express();
+app.disable("x-powered-by");
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
   console.log('First Middleware');
   next();
 });
-app.use((req,res,next)=>{
- res.setHeader('Access-Control-Allow-Origin','*');
- res.setHeader('Access-Control-Allow-Credentials', true);
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader(
-  'Access-Control-Allow-Headers',
-  'Origin,X-Request-With,Content-Type,Accept'
+    'Access-Control-Allow-Headers',
+    'Origin,X-Request-With,Content-Type,Accept'
   )
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -35,8 +36,8 @@ app.use((req,res,next)=>{
   next();
 });
 
-app.get("/" , (req,res,next)=>{
-  const REQ_DATA= [
+app.get("/", (req, res, next) => {
+  const REQ_DATA = [
     {
       RequestNo: 1,
       Requesttitle: 'Test1',
@@ -46,7 +47,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending', name: 'DCH'}],
+      ReqApprovers: [{ status: 'pending', name: 'DCH' }],
       RequestAddress: '9TH LANE',
       status: 'Pending',
       requestinitdate: new Date('2019-01-16'),
@@ -62,7 +63,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending', name: 'DCH'}],
+      ReqApprovers: [{ status: 'pending', name: 'DCH' }],
       RequestAddress: '9TH LANE',
       status: 'Pending',
       requestinitdate: new Date('2019-01-16'),
@@ -78,7 +79,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending', name: 'Branch Head'} , {status: 'pending', name: 'DCH'}],
+      ReqApprovers: [{ status: 'pending', name: 'Branch Head' }, { status: 'pending', name: 'DCH' }],
       RequestAddress: '9TH LANE',
       status: 'Pending',
       requestinitdate: new Date('2020-01-16'),
@@ -94,7 +95,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending', name: 'Branch PMO'}],
+      ReqApprovers: [{ status: 'pending', name: 'Branch PMO' }],
       RequestAddress: '9TH LANE',
       status: 'Pending',
       requestinitdate: new Date('2020-01-16'),
@@ -110,7 +111,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending', name: 'Branch PMO'}],
+      ReqApprovers: [{ status: 'pending', name: 'Branch PMO' }],
       RequestAddress: '9TH LANE',
       status: 'saved',
       requestinitdate: new Date('2020-01-16'),
@@ -126,7 +127,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending' , name: 'Head Of Mnt'}],
+      ReqApprovers: [{ status: 'pending', name: 'Head Of Mnt' }],
       RequestAddress: '9TH LANE',
       status: 'saved',
       requestinitdate: new Date('2020-01-16'),
@@ -142,7 +143,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending' , name: 'Head Of Mnt'}],
+      ReqApprovers: [{ status: 'pending', name: 'Head Of Mnt' }],
       RequestAddress: '9TH LANE',
       status: 'cancelled',
       requestinitdate: new Date('2020-01-16'),
@@ -158,7 +159,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending' , name: 'Mnt Engg'}],
+      ReqApprovers: [{ status: 'pending', name: 'Mnt Engg' }],
       RequestAddress: '9TH LANE',
       status: 'cancelled',
       requestinitdate: new Date('2020-01-16'),
@@ -174,7 +175,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending' , name: 'Mnt Engg'}],
+      ReqApprovers: [{ status: 'pending', name: 'Mnt Engg' }],
       RequestAddress: '9TH LANE',
       status: 'cancelled',
       requestinitdate: new Date('2020-01-16'),
@@ -190,7 +191,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'pending' , name: 'Clstr Head'}],
+      ReqApprovers: [{ status: 'pending', name: 'Clstr Head' }],
       RequestAddress: '9TH LANE',
       status: 'cancelled',
       requestinitdate: new Date('2020-01-16'),
@@ -206,7 +207,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'closed' , name: 'Clstr Head'}],
+      ReqApprovers: [{ status: 'closed', name: 'Clstr Head' }],
       RequestAddress: '9TH LANE',
       status: 'closed',
       requestinitdate: new Date('2020-01-16'),
@@ -222,7 +223,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'closed' , name: 'LC Head'}],
+      ReqApprovers: [{ status: 'closed', name: 'LC Head' }],
       RequestAddress: '9TH LANE',
       status: 'closed',
       requestinitdate: new Date('2020-01-16'),
@@ -238,7 +239,7 @@ app.get("/" , (req,res,next)=>{
       RequestDes: 'This is it!',
       RequestCity: 'ITARSI',
       RequestZip: '461111',
-      ReqApprovers: [{status: 'closed' , name: 'LC Head'}],
+      ReqApprovers: [{ status: 'closed', name: 'LC Head' }],
       RequestAddress: '9TH LANE',
       status: 'closed',
       requestinitdate: new Date('2020-01-16'),
@@ -265,15 +266,9 @@ app.get("/" , (req,res,next)=>{
   console.log('Hiii')
   res.status(200).json({
     message: "Fecthed All Requests Data",
-    requests : REQ_DATA
+    requests: REQ_DATA
   })
 })
-
-// app.use((req,res,next)=>{
-//   res.send('Hello from express!')
-//   next();
-// })
-//app.use('/file',addRequests);
 app.use(loginRoutes);
 app.use(dashboardRoute);
 app.use(pendingRoute);

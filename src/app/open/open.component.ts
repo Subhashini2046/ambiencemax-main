@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { ReqSchema } from '../Services/ReqSchema';
@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './open.component.html',
   styleUrls: ['./open.component.css'],
 })
-export class OpenComponent implements OnInit, OnDestroy {
+export class OpenComponent implements OnInit{
   displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
     'RequestDate', 'status', 'view','progress'];
 
@@ -19,12 +19,12 @@ export class OpenComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(private http: HttpClient, public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef, private route: Router) { }
+  constructor(private http: HttpClient, public userService: UserDataService, private changeDetectorRefs: ChangeDetectorRef, private route: Router) { }
   ngOnInit() {
     console.log("Open Component");
 
     //get all Open Request
-    return this.UserDataService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+    return this.userService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
       this.dataSource.data = response
     });
 
@@ -49,8 +49,5 @@ export class OpenComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-  
-  ngOnDestroy() {
   }
 }

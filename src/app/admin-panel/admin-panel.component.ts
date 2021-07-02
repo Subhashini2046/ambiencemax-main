@@ -2,16 +2,14 @@ import { AddWorkflowDialogComponent } from './../add-workflow-dialog/add-workflo
 import { WorkflowDialogComponent } from './../workflow-dialog/workflow-dialog.component';
 import { UserDataService } from './../Services/UserDataService';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatDialog, MatSelect } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReplaySubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
-import { MatSelect } from '@angular/material';
-import { Router } from '@angular/router';
-export interface admin {
+import { takeUntil } from 'rxjs/operators';
+
+export interface Admin {
   adminPK: number;
   adminIdName: string;
 }
@@ -21,7 +19,7 @@ export interface Workflow {
   location: string;
 }
 
-export interface wFlow {
+export interface Wflow {
   wId: number;
   wFlow: string;
 }
@@ -32,19 +30,19 @@ export interface wFlow {
 })
 export class AdminPanelComponent implements OnInit, AfterViewInit {
   Approvers = new FormControl();
-  admin: admin;
-  adminIdAndName: admin[] = [];
+  admin: Admin;
+  adminIdAndName: Admin[] = [];
   @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
   public adminIdAndNameCtrl: FormControl = new FormControl();
   public adminIdAndNameFilterCtrl: FormControl = new FormControl();
-  public adminIdAndNamefiltered: ReplaySubject<admin[]> = new ReplaySubject<admin[]>(1);
+  public adminIdAndNamefiltered: ReplaySubject<Admin[]> = new ReplaySubject<Admin[]>(1);
   protected _onDestroy = new Subject<void>();
 
-  wFlow: wFlow;
-  wflowIdAndFlow: wFlow[] = [];
+  wFlow: Wflow;
+  wflowIdAndFlow: Wflow[] = [];
   public wflowIdAndFlowCtrl: FormControl = new FormControl();
   public wflowIdAndFlowFilterCtrl: FormControl = new FormControl();
-  public wflowIdAndFlowfiltered: ReplaySubject<wFlow[]> = new ReplaySubject<wFlow[]>(1);
+  public wflowIdAndFlowfiltered: ReplaySubject<Wflow[]> = new ReplaySubject<Wflow[]>(1);
   protected _onDestroys = new Subject<void>();
 
   AppList: string[] = ['Geography', 'Country', 'State', 'City', 'Building', 'Location'];
@@ -89,10 +87,9 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      // w_id.clear();
     });
   }
-  
+
 
   //it will open the dialog for creating the new worlflow.
   openWorkflowDialog(): void {
@@ -122,9 +119,8 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
     this.userDataService.adminCheck(this.userId).subscribe((data) => {
       this.checkAdminAcess = data[0]['admAccess']
       if (this.checkAdminAcess == 1) {
-        this.userDataService.getAdminIdAndName().subscribe((data: any) => {
-          this.adminIdAndName = data;
-          //this.adminIdAndNameCtrl.setValue(this.adminIdAndName);
+        this.userDataService.getAdminIdAndName().subscribe((res: any) => {
+          this.adminIdAndName = res;
 
           // load the initial admin list
           this.adminIdAndNamefiltered.next(this.adminIdAndName.slice());
@@ -163,15 +159,15 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
 
   // add w_flow id and b_id in linkrumprequestinitiators
   onAddLink() {
-   
+
     this.userDataService.addLink(this.wflowIdAndFlowCtrl.value, this.b_id).subscribe((data) => {
       this.onAddlink = data["result"]
-   
+
       if (this.onAddlink != 2) {
         if (this.onAddlink != 1) {
           alert("Successfully Added");
-          this.userDataService.getFlow().subscribe((data: any) => {
-            this.dataSource.data = data;
+          this.userDataService.getFlow().subscribe((response: any) => {
+            this.dataSource.data = response;
           });
         }
       }
@@ -180,65 +176,22 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
 
   }
 
+  getHierarchy(event){
+    this.userDataService.getHierarchy(event).subscribe((res) => {
+      this.fetechHierarchy.length = 0
+      this.onAddlink = '';
+      this.fetechHierarchy.push(res);
+    });
+  }
   // once the location is selected,it will display all locName in dropdown similarly for others also.
   onChanged(event: any) {
     if (event != null) {
-      if (event.includes('Location')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
-      else if (event.includes('Building')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
-      else if (event.includes('Cluster')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-
-        });
-      }
-      else if (event.includes('City')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
-      else if (event.includes('State')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
-      else if (event.includes('Country')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
-      else if (event.includes('Geography')) {
-        this.userDataService.getHierarchy(event).subscribe((res) => {
-          this.fetechHierarchy.length = 0
-          this.onAddlink = '';
-          this.fetechHierarchy.push(res);
-        });
-      }
+      this.getHierarchy(event);
     }
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    // this.setInitialValue();
   }
 
   ngOnDestroy() {
@@ -247,14 +200,6 @@ export class AdminPanelComponent implements OnInit, AfterViewInit {
     this._onDestroys.next();
     this._onDestroys.complete();
   }
-
-  // protected setInitialValue() {
-  //   this.adminIdAndNamefiltered
-  //     .pipe(take(1), takeUntil(this._onDestroy))
-  //     .subscribe(() => {
-  //       this.singleSelect.compareWith = (a: admin, b: admin) => a && b && a.adminPK === b.adminPK;
-  //     });
-  // }
 
   protected wflowIdAndFlowfilter() {
     if (!this.wflowIdAndFlow) {

@@ -1,9 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
-import { MediaMatcher } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+
 export interface Options {
   name: string;
   func: string;
@@ -14,7 +13,6 @@ export interface Options {
   styleUrls: ['./navigation-home.component.css'],
 })
 export class NavigationHomeComponent implements OnInit, OnDestroy {
-  mobileQuery: MediaQueryList;
   main = this.UsrDataService.main;
   public Open;
   public All;
@@ -33,27 +31,9 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
   space;
 
   ChartType = 'bar';
-  Buttons: Options[] = [
-    { name: 'All Requests', func: 'all' },
-    { name: 'Pending Requests', func: 'Pending' },
-    { name: 'Open Requests', func: 'open' },
-    { name: 'Closed Requests', func: 'closed' },
-    { name: 'Completed Requests', func: 'complete' }
-  ];
   countSubsription: Subscription;
-  private _mobileQueryListener: () => void;
-  constructor(
-    public UsrDataService: UserDataService,
-    changeDetectorRef: ChangeDetectorRef,
-    private http: HttpClient,
-    media: MediaMatcher,
-    private router: Router
-  ) {
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-    this.mobileQuery.addListener(this._mobileQueryListener);
+  constructor(public UsrDataService: UserDataService,private router: Router) {
   }
-
   //nagivate to following page
   Request(type: string) {
     this.main = type;
@@ -77,7 +57,7 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
 
       //get Request count for open,pending,close and complete request.
       this.UsrDataService.getRequestCount(this.role, this.space).subscribe((res: any) => {
-        this.Pending = res.req_stats.Pending,
+        this.Pending = res.req_stats.Pending;
         this.All = res.req_stats.All;
         this.Open = res.req_stats.Open;
         this.Closed = res.req_stats.Closed;
@@ -97,7 +77,6 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.countSubsription.unsubscribe();
-    this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
 }

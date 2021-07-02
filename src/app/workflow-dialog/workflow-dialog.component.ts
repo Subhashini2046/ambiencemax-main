@@ -1,8 +1,7 @@
 import { UserDataService } from '../Services/UserDataService';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort,MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   selector: 'app-workflow-dialog',
   templateUrl: './workflow-dialog.component.html',
@@ -27,7 +26,7 @@ export class WorkflowDialogComponent implements OnInit {
     this.wflowId = this.WorkflowData.data
     this.w_flow = data.w_flow;
   }
-  
+
   onNoClick(): void {
     this.dialogRef.close();
   }
@@ -40,13 +39,13 @@ export class WorkflowDialogComponent implements OnInit {
     this.userDataService.getFlowDetails(this.WorkflowData).subscribe((res: any) => {
       for (let i = 0; i < this.w_flow.length; i++) {
         if (this.w_flow[i].includes('or')) {
-          let val1 = this.w_flow.filter(data => data.includes('c')).map(data => {
-            return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]
+          let val1 = this.w_flow.filter(data => data.includes('c')).map(data1 => {
+            return data1.split('or').filter(data2 => data2.includes('c')).map(data2 => data2.replace('c', ''))[0]
           });
           this.workflow1.push(val1[0]);
           // get index of Electrical from w_flow
-          let val2 = this.w_flow.filter(data => data.includes('e')).map(data => {
-            return data.split('or').filter(data => data.includes('e')).map(data => data.replace('e', ''))[0]
+          let val2 = this.w_flow.filter(data => data.includes('e')).map(data1 => {
+            return data1.split('or').filter(data2 => data2.includes('e')).map(data3 => data3.replace('e', ''))[0]
           });
           this.workflow1.push(val2[0]);
         }
@@ -64,8 +63,8 @@ export class WorkflowDialogComponent implements OnInit {
           this.w_flowData.push(res[i]);
         }
       }
-      else{
-        this.w_flowData=res;
+      else {
+        this.w_flowData = res;
       }
 
       for (let i = 0; i < this.workflow1.length; i++) {
@@ -76,15 +75,15 @@ export class WorkflowDialogComponent implements OnInit {
           }
         }
       }
-    
+
       // get index of Civil from w_flow
-      this.indexCivil = this.w_flow.filter(data => data.includes('c')).map(data => {
-        return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]
+      this.indexCivil = this.w_flow.filter(data => data.includes('c')).map(data1 => {
+        return data1.split('or').filter(data2 => data2.includes('c')).map(data3 => data3.replace('c', ''))[0]
       });
 
       // get index of Electrical from w_flow
-      this.indexElectrical = this.w_flow.filter(data => data.includes('e')).map(data => {
-        return data.split('or').filter(data => data.includes('e')).map(data => data.replace('e', ''))[0]
+      this.indexElectrical = this.w_flow.filter(data => data.includes('e')).map(data1 => {
+        return data1.split('or').filter(data2 => data2.includes('e')).map(data3 => data3.replace('e', ''))[0]
       });
       this.dataSource.data = this.WorkflowData1;
     });

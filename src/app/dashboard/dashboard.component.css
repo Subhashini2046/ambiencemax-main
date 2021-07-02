@@ -85,8 +85,8 @@ mat-card-title{
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 mat-card{
-  background-color: rgba(70, 227, 238, 0.411);
   background: white;
+  background-color: rgba(70, 227, 238, 0.411);
 }
 .sidenav .btn{
   color: white;

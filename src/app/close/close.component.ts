@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 @Component({
@@ -19,12 +19,12 @@ export class CloseComponent implements OnInit{
   accessId;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(public UserDataService: UserDataService, private changeDetectorRefs: ChangeDetectorRef, private route: Router) { }
+  constructor(public userService: UserDataService, private route: Router) { }
   ngOnInit() {
     console.log("Closed Component");
     this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    return this.UserDataService.getClosedRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+    return this.userService.getClosedRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
 
       this.dataSource.data = response;
     });

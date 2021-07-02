@@ -17,7 +17,7 @@ export class PendingComponent implements OnInit {
   readstatus:any[]=[]
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(private route: Router, public UserDataService: UserDataService) { }
+  constructor(private route: Router, public userService: UserDataService) { }
   ngOnInit() {
     console.log("pending Component");
 
@@ -25,7 +25,7 @@ export class PendingComponent implements OnInit {
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     
     //get all Pending Request
-    this.UserDataService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+    this.userService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
       this.dataSource.data= response;
     });
 

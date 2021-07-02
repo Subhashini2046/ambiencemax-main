@@ -1,24 +1,17 @@
-
-import { Injectable, OnInit } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { ReqSchema } from './ReqSchema';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { HttpHeaders } from '@angular/common/http';
-import { Inject } from '@angular/core';
+
 @Injectable()
 export class UserDataService {
   changedetectInRole = new BehaviorSubject(null);
-  // usersURL = "http://localhost:5600/api/users";
   URL;
   httpOptions = {
-
     headers: new HttpHeaders({
-
       'Content-Type': 'application/json',
-
     })
-
   }
   constructor(private http: HttpClient, private router: Router, @Inject('AMBI_API_URL') private apiUrl: string) {
     this.URL = apiUrl;
@@ -38,13 +31,10 @@ export class UserDataService {
 
   //.................User Authentication................//
   authenticateUser1(userId: number, password: string) {
-  
     this.http.post<{ result: string, space: string, user_id: string, role_id: number, admin_access_id: number, user_name: string }>
       (this.URL + 'login', { userId, password })
       .subscribe((ResData) => {
-       
         if (ResData.role_id !== undefined) {
-        
           localStorage.setItem('role_id', JSON.stringify(ResData.role_id));
           localStorage.setItem('userId', JSON.stringify(ResData.user_id));
           localStorage.setItem('space', JSON.stringify(ResData.space));
@@ -56,15 +46,12 @@ export class UserDataService {
   }
 
   authenticateThroughEquipmax(userId: number) {
-   
-    this.http.post<{ result: string, space: string, user_id: string, role_id: number, admin_access_id: number, user_name: string }>
+    this.http.post<{ result: string, space: string, userId: string, role_id: number, admin_access_id: number, user_name: string }>
       (this.URL + 'login', { userId })
       .subscribe((ResData) => {
-      
         if (ResData.role_id !== undefined) {
-        
           localStorage.setItem('role_id', JSON.stringify(ResData.role_id));
-          localStorage.setItem('userId', JSON.stringify(ResData.user_id));
+          localStorage.setItem('userId', JSON.stringify(ResData.userId));
           localStorage.setItem('space', JSON.stringify(ResData.space));
           localStorage.setItem('admin_access_id', JSON.stringify(ResData.admin_access_id));
           localStorage.setItem('user_name', JSON.stringify(ResData.user_name));
@@ -136,35 +123,8 @@ export class UserDataService {
   navigateToOpenRequest() {
     this.router.navigate(['/AmbienceMax/open']);
   }
+
   //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
-  // addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,pncfile,accessID,role_name,delete_pnc_file,delete_pnc_doc,delete_pnc_option) {
-  //   this.http.post<any>(this.URL+'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name}).subscribe((data) => {
-  //     if(delete_pnc_option==1){
-  //       this.deletePncFile(delete_pnc_doc,req_id); }
-  //     else if(pncfile!=null){
-  //     this.addPncfile(req_id, pncfile);}
-
-  //     if(this.filepath.length>0){
-  //     this.addPncSupportingDoc(req_id, filepath);}
-
-  //     if(delete_pnc_file.length>0){
-  //       this.deleteBOQFile(delete_pnc_file);}
-
-  //     this.navigateToOpenRequest();
-  //   });
-  // }
-  // addPncByInitiator1(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,accessID,role_name,delete_pnc_file,delete_pnc_doc) {
-  //   this.http.post<any>(this.URL+'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,accessID,role_name}).subscribe((data) => {
-
-  //     this.addPncSupportingDoc(req_id, filepath);
-  //     if(delete_pnc_file.length>0){
-  //     this.deleteBOQFile(delete_pnc_file);}
-  //     if(delete_pnc_doc!=''){
-  //       this.deletePncFile(delete_pnc_doc,req_id);
-  //     }
-  //     this.navigateToOpenRequest();
-  //   });
-  // }
   addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath, pncfile, accessID, role_name) {
     this.http.post<any>(this.URL + 'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, accessID, role_name }).subscribe((data) => {
       if (pncfile != null) {
@@ -185,29 +145,29 @@ export class UserDataService {
     this.http.post<any>(this.URL + 'updatePnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, accessID, role_name }).subscribe((data) => {
       if (delete_pnc_doc !== '') {
         this.replacePncFile(delete_pnc_doc, pncfile, req_id);
-      }
-
+      } 
       if (filepath.length > 0) {
         this.addPncSupportingDoc(req_id, filepath);
-      }
-
+      } 
       if (delete_pnc_file.length > 0) {
         this.deleteBOQFile(delete_pnc_file);
       }
-
       this.navigateToOpenRequest();
     });
-  };
+  }
+
   replacePncFile(Pnc_File, replacePncfile, req_id,) {
     this.http.post(this.URL + 'deletePncFile', { Pnc_File, replacePncfile, req_id }).subscribe((ResData) => {
-    });;
+      console.log("PNC file deleted!!");
+    });
   }
 
   addPncSupportingDoc(reqId, filepath) {
     for (let i = 0; i < filepath.length; i++) {
-      filepath[i] = filepath[i];
-      this.http.post(this.URL + 'pncSupportingDoc', { req_id: reqId, filepath: filepath[i] })
+      let fileName = filepath[i];
+      this.http.post(this.URL + 'pncSupportingDoc', { req_id: reqId, filepath: fileName })
         .subscribe((ResData) => {
+          console.log("Added pnc Supporting Doc!!");
         });
     }
   }
@@ -215,13 +175,8 @@ export class UserDataService {
   addPncfile(reqId, filepath) {
     this.http.post(this.URL + 'pncfileUpload', { req_id: reqId, filepath: filepath })
       .subscribe((ResData) => {
+        console.log("PNC File Uploaded!!");
       });
-    // for (let i = 0; i < filepath.length; i++) {
-    //   filepath[i] = filepath[i];
-    //   this.http.post(this.URL+'pncfileUpload', { req_id: reqId, filepath: filepath[i] })
-    //     .subscribe((ResData) => {
-    //     });
-    // }
   }
 
   //.................(approve Request)................//
@@ -243,13 +198,9 @@ export class UserDataService {
     return this.http.post(this.URL + 'viewRequestLog', { reqId });
   }
 
-  getViewRequestData(reqId: number) {
-    return this.http.post(this.URL + 'viewRequestData', { reqId });
-  }
   getpdfTableData(req_id) {
     return this.http.post(this.URL + 'pdfTableData', { req_id });
   }
-
   //.................Add new Request(Raise Request)(add Request)................//
   addRequest(newReq: ReqSchema, space, user_name, filepath, accessID) {
     this.http.post(this.URL + 'newReq', { request: newReq, space, accessID }).subscribe((data: any) => {
@@ -270,37 +221,40 @@ export class UserDataService {
   }
 
   deleteBOQFile(delete_file) {
-  
     for (let i = 0; i < delete_file.length; i++) {
       let file_Name = delete_file[i].fileName;
       let file_pk = delete_file[i].file_pk;
       this.http.post(this.URL + 'deleteBOQFile', { file_Name: file_Name, file_pk: file_pk })
         .subscribe((ResData) => {
+          console.log("file Deleted!!");
         });
     }
-    // return this.http.post(this.URL+'deleteBOQFile', {file_Name,file_pk});
   }
   addToLogForUpdateRequest(newReqId, user_name, filepath) {
     for (let i = 0; i < filepath.length; i++) {
-      filepath[i] = filepath[i];
-      this.http.post(this.URL + 'fileUpload', { req_id: newReqId, filepath: filepath[i] })
+      let fileName = filepath[i];
+      this.http.post(this.URL + 'fileUpload', { req_id: newReqId, filepath: fileName})
         .subscribe((ResData) => {
+          console.log("file uploaded!!");
         });
     }
   }
   addUpdateRequest(RequestData, reqId: number) {
     this.http.post(this.URL + 'updateRequest', { RequestData, reqId }).subscribe((resData) => {
+      console.log("Request Updated!!");
     });
   }
   addToLog(newReqId, user_name, filepath) {
     for (let i = 0; i < filepath.length; i++) {
-      filepath[i] = filepath[i];
-      this.http.post(this.URL + 'fileUpload', { req_id: newReqId, filepath: filepath[i] })
+      let fileName = filepath[i];
+      this.http.post(this.URL + 'fileUpload', { req_id: newReqId, filepath: fileName })
         .subscribe((ResData) => {
+          console.log("File Uploaded");
         });
     }
     this.http.post(this.URL + 'addLogNewReq', { req_id: newReqId, user_name: user_name })
       .subscribe((ResData) => {
+        console.log("added to log!!");
       });
   }
 
@@ -314,7 +268,7 @@ export class UserDataService {
 
   //.................addBOQDDetails (addRequests)................//
   addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath, accessID, role_name, delete_Boq_file) {
-   
+
     this.http.post(this.URL + 'BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, accessID, role_name }).subscribe((data: ReqSchema) => {
       this.addBOQfile(reqId, filepath);
       if (delete_Boq_file.length > 0) {
@@ -325,9 +279,10 @@ export class UserDataService {
   }
   addBOQfile(reqId, filepath) {
     for (let i = 0; i < filepath.length; i++) {
-      filepath[i] = filepath[i];
-      this.http.post(this.URL + 'fileBoqUpload', { req_id: reqId, filepath: filepath[i] })
+      let fileName = filepath[i];
+      this.http.post(this.URL + 'fileBoqUpload', { req_id: reqId, filepath: fileName })
         .subscribe((ResData) => {
+          console.log("File Uploaded!!");
         });
     }
   }
@@ -337,12 +292,8 @@ export class UserDataService {
     return this.http.get(this.URL + `roles?userid=${id}`);
   }
 
-  // getUserRoles(req_id) {
-  //   return this.http.get(this.usersURL + `/`)
-  // }
   getRoles(req_id, role_id, space, accessId) {
     return this.http.post(this.URL + 'users1', { req_id, role_id, space, accessId });
-    //return this.http.get(this.usersURL + `/${req_id},accessId`);
   }
   downloadFile(x: string): Observable<any> {
     const param = new HttpParams().set('filename', x);
@@ -442,12 +393,15 @@ export class UserDataService {
   fetchAllDraftRequest(space, role_id) {
     return this.http.post(this.URL + 'fetchAllDraftRequest', { space, role_id });
   }
+  
   fetchDraftRequest(draftReqId) {
     return this.http.post(this.URL + 'fetchDraftRequest', { draftReqId });
   }
+
   deleteDraftReques(draftReqId) {
     return this.http.post(this.URL + 'deleteDraftRequest', { draftReqId });
   }
+
   cancelRequest(req_id) {
     return this.http.post(this.URL + 'cancelRequest', { req_id });
   }

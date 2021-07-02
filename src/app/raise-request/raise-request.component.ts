@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { UserDataService } from '../Services/UserDataService';
 import { MatSnackBar } from '@angular/material';
 import { ReqSchema } from '../Services/ReqSchema';
@@ -36,9 +36,9 @@ export class RaiseRequestComponent implements OnInit {
   checkoutForm;
   draftReqId;
   requestDetails: any[] = [];
-  isLoading=false;
+  isLoading = false;
   public keyUp = new Subject<KeyboardEvent>();
-  constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public UserDataService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
       req_swon: '',
@@ -71,7 +71,7 @@ export class RaiseRequestComponent implements OnInit {
     draftReqId: 0
   };
 
- 
+
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     this.currReq.req_initiator_id = this.userId;
@@ -86,7 +86,7 @@ export class RaiseRequestComponent implements OnInit {
     }
   }
   fetchDraftRequest(draftReqId) {
-    this.UserDataService.fetchDraftRequest(draftReqId).subscribe((response: any) => {
+    this.userService.fetchDraftRequest(draftReqId).subscribe((response: any) => {
       this.requestDetails = response
       this.checkoutForm.controls['req_swon'].setValue(this.requestDetails[0]["RUMPRequestSWON"]);
       this.checkoutForm.controls['available_budget'].setValue(this.requestDetails[0]["RUMPRequestAvailableBudget"]);
@@ -108,22 +108,24 @@ export class RaiseRequestComponent implements OnInit {
       }
       if (this.requestDetails[0]["RUMPRequestType"] == "Upgrade") {
         this.checkoutForm.controls['req_type'].setValue("Upgrade");
-      } if (this.requestDetails[0]["RUMPRequestType"] == "Repair") {
+      }
+      if (this.requestDetails[0]["RUMPRequestType"] == "Repair") {
         this.checkoutForm.controls['req_type'].setValue("Repair");
-      } if (this.requestDetails[0]["RUMPRequestType"] == "Maintenance") {
+      }
+      if (this.requestDetails[0]["RUMPRequestType"] == "Maintenance") {
         this.checkoutForm.controls['req_type'].setValue("Maintenance");
       }
     });
   }
   ngAfterContentInit() {
     this.checkoutForm.get("subject").valueChanges.subscribe(selectedValue => {
-      let formSubject=this.checkoutForm.get("subject").value;
+      let formSubject = this.checkoutForm.get("subject").value;
       if (formSubject != null) {
         this.remainingText = 100 - formSubject.length;
       }
     });
     this.checkoutForm.get("description").valueChanges.subscribe(selectedValue => {
-      let formDescription=this.checkoutForm.get("description").value;
+      let formDescription = this.checkoutForm.get("description").value;
       if (formDescription != null) {
         this.remaining_description = 5000 - formDescription.length;
       }
@@ -156,18 +158,20 @@ export class RaiseRequestComponent implements OnInit {
   //autosave
   autoSaveFormData() {
     this.passCheckoutFormDataToCurrReq();
-    this.UserDataService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
+    this.userService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
       this.raiseRequestId = data.id;
     });
   }
   UpdateautoSaveFormData() {
     this.passCheckoutFormDataToCurrReq();
     if (this.draftReqId > 0) {
-      this.UserDataService.updateDraftRequest(this.currReq, this.draftReqId).subscribe((data: any) => {
+      this.userService.updateDraftRequest(this.currReq, this.draftReqId).subscribe((data: any) => {
+        console.log("data updated!!");
       });
     }
     else {
-      this.UserDataService.updateDraftRequest(this.currReq, this.raiseRequestId).subscribe((data: any) => {
+      this.userService.updateDraftRequest(this.currReq, this.raiseRequestId).subscribe((data: any) => {
+        console.log("data updated!!");
       });
     }
   }
@@ -175,18 +179,8 @@ export class RaiseRequestComponent implements OnInit {
   valueChange(value) {
     if (value != null) {
       this.remainingText = 100 - value.length;
-      // this.sub();
     }
   }
-
-  // sub(){
-  //     this.subscription = interval(5000).subscribe((val: any) => {
-  //     if (this.raiseRequestId > 0)
-  //       this.UpdateautoSaveFormData();
-  //     else
-  //       this.autoSaveFormData();
-  //  });
-  // }
 
   // calculate how many characters is left to type(subject)
   valueChangeDiscription(value) {
@@ -208,30 +202,30 @@ export class RaiseRequestComponent implements OnInit {
       filesize += this.fileList[i]['size'];
       this.listOfFiles.push(selectedFile.name);
     }
-    var fileInMB = 10485760;
+    var fileInMB = 10000000;
     if (filesize > fileInMB) {
-     
       this.areCredentialsInvalid = true;
       return;
     }
-  
     this.attachment.nativeElement.value = '';
   }
 
 
   // when user click on delete then it will remove that file from the list
   removeSelectedFile(index) {
+    this.areCredentialsInvalid = false;
     this.listOfFiles.splice(index, 1);
     this.fileList.splice(index, 1);
   }
 
   // when reuqest is raised(new request) then it store the request data in database.
   onSubmit() {
-    this.isLoading=true;
+    this.isLoading = true;
     this.passCheckoutFormDataToCurrReq();
-    if(this.draftReqId>0){
-    this.currReq.draftReqId = this.draftReqId;}
-    else{
+    if (this.draftReqId > 0) {
+      this.currReq.draftReqId = this.draftReqId;
+    }
+    else {
       this.currReq.draftReqId = this.raiseRequestId;
     }
     this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
@@ -240,15 +234,11 @@ export class RaiseRequestComponent implements OnInit {
       formData.append('files', img);
     }
     let obj = { ...this.currReq };
-    this.http.post<any>(this.UserDataService.URL + 'multipleFiles', formData).subscribe((res) => {
+    this.http.post<any>(this.userService.URL + 'multipleFiles', formData).subscribe((res) => {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      
-      this.UserDataService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
+      this.userService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
-    //this.openSnackBar('Request Submitted Successfully !');
-
-
   }
 }

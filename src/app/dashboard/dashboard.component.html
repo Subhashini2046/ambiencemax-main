@@ -6,14 +6,6 @@
     </button>
     <a routerLink="/AmbienceMax/dashboard" class="navbar-brand" (click)="main = ''">
       <div class="logo">
-        <!-- <img
-        class="text-center"
-        src="../assets/Logo.svg"
-        width="100"
-        height="30"
-        alt=""
-        class="d-align-block"
-      /> -->
         <span class="apptype" style="margin-left: 16px; color: rgb(245, 236, 236);">AmbienceMax</span>
       </div>
     </a>
@@ -37,13 +29,13 @@
         <a class="btn" (click)="snav.toggle();" routerLink="dashboard" mat-list-item>
           Dashboard
         </a>
-        <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="raiseRequest" mat-list-item>Raise
+        <a class="btn" *ngIf="(role_id==0)" (click)="snav.toggle()" routerLink="raiseRequest" mat-list-item>Raise
           Request </a>
-        <a class="btn"  (click)="snav.toggle()" routerLink="pending" mat-list-item>
+        <a class="btn" (click)="snav.toggle()" routerLink="pending" mat-list-item>
           <span> Pending Requests</span>
         </a>
 
-        <a class="btn"  (click)="snav.toggle()" routerLink="open" mat-list-item>
+        <a class="btn" (click)="snav.toggle()" routerLink="open" mat-list-item>
           <span> Open Requests</span>
         </a>
 
@@ -53,21 +45,16 @@
 
         <a class="btn" (click)="snav.toggle()" routerLink="complete" mat-list-item>
           <span>Completed Requests</span>
-
         </a>
 
         <a class="btn" (click)="snav.toggle()" routerLink="allRequest" mat-list-item>
           <span>All Request</span>
-          </a>
-          <a class="btn" *ngIf="(role_id==0)"(click)="snav.toggle()" routerLink="draftRequest" mat-list-item>Draft
-            Request </a>
-          <a class="btn" *ngIf="checkAdmin==1" (click)="snav.toggle();admin()" mat-list-item>
-            <span>AmbienceMax Configuration</span>
-            </a>
-
-        <!-- <a class="btn" *ngFor="let chip of Buttons" (click)="Request(chip.func); snav.toggle(); main = chip.func;
-        this.UsrDataService.main = chip.func;" mat-list-item>
-          {{ chip.name }} <mat-icon> message</mat-icon>.</a> -->
+        </a>
+        <a class="btn" *ngIf="(role_id==0)" (click)="snav.toggle()" routerLink="draftRequest" mat-list-item>Draft
+          Request </a>
+        <a class="btn" *ngIf="checkAdmin==1" (click)="snav.toggle();admin()" mat-list-item>
+          <span>AmbienceMax Configuration</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
 

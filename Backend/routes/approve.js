@@ -7,8 +7,8 @@ let express = require("express"),
 
 
 router.post("/getSpocs", (req, res) => {
-  reqId = req.body.req_id;
-  sql = `select (select rumpspoName from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1,
+  let reqId = req.body.req_id;
+ let sql = `select (select rumpspoName from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1,
   (select rumpspoEmailUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Email,
 (select rumpspoPhone from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Phone,
 (select rumpspoMobileUK from datarumpvendorspoc where rumpspoVendorSpocPK=rumpvenSpoc1FK) as venSpoc1Mobile,
@@ -103,9 +103,21 @@ router.get("/vendorcategories", (req, res) => {
     }
   })
 })
+// select list of vendorcategories //
+router.get("/vendorcategories", (req, res) => {
+ let sql = `select * from pickrumpvendorcategories;`
+  con.query(sql, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.send(JSON.stringify(result));
+    }
+  })
+})
 // select ventor details //
 router.post("/vendorDetail", (req, res) => {
-  sql = `select  datarumpvendor.rumpvenVendorPK as vendorId,datarumpvendor.rumpvenName as vendorName, if(count is null,0,count) as taggedCount,if(acount is null,0,acount) as alloccatedCount from datarumpvendor 
+ let sql = `select  datarumpvendor.rumpvenVendorPK as vendorId,datarumpvendor.rumpvenName as vendorName, if(count is null,0,count) as taggedCount,if(acount is null,0,acount) as alloccatedCount from datarumpvendor 
   left join (select vendpk,count(*) as count from (select  rumprequestpk,rumprequesttaggedvendor1 as vendpk from datarumprequest 
   where RUMPRequestAllocatedVendor is null
   and RUMPRequesttaggedvendor1 is not null 
@@ -139,9 +151,9 @@ router.post("/vendorDetail", (req, res) => {
   on(t3.vend=rumpvenvendorpk)
   where rumpvenvendorpk in(select linkRumpVendorFK from linkrumpvendorcategorymap 
   where linkRumpVendorCategoryFK=${req.body.vendCategoryId});`
-  con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
+  con.query(sql, function (error, result) {
+    if (error) {
+      console.log(error);
     } else {
       console.log(result);
       res.send(JSON.stringify(result));
@@ -152,6 +164,13 @@ router.post("/vendorDetail", (req, res) => {
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
   let accessID = req.body.accessID;
+  let venderTagged_1=null;
+  let venderTagged_2=null;
+  let venderTagged_3=null;
+  let venderTagged_4=null;
+  let venderTagged_5=null;
+  let venderTagged_6=null;
+  let venderTagged_7=null;
   if (vendorList[0] != null) {
     venderTagged_1 = vendorList[0];
   } else
@@ -187,22 +206,21 @@ router.post("/addVendors", (req, res) => {
   } else
     venderTagged_7 = null;
 
-  sql = `select RUMPInitiatorId as initiatorId,RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK = ${req.body.req_id};`
+ let sql = `select RUMPInitiatorId as initiatorId,RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK = ${req.body.req_id};`
 
   con.query(sql, function (err, result) {
     if (err) {
       console.log(err);
     } else {
-      let approvalLevel = result[0].RUMPRequestApprovalLevel;
       let initiatorId = result[0].initiatorId;
       console.log(result);
-      sql = `select distinct RUMPRequestRole from datarumprequestaction 
+     let sqlQuery = `select distinct RUMPRequestRole from datarumprequestaction 
       where RUMPRequestRole=? and RUMPRequestFK=?;`
-      con.query(sql, [accessID, req.body.req_id], function (err, result) {
-        if (err) {
-          console.log(err);
+      con.query(sqlQuery, [accessID, req.body.req_id], function (err1, result1) {
+        if (err1) {
+          console.log(err1);
         } else {
-          if (result.length > 0) {
+          if (result1.length > 0) {
             sql = `update datarumprequest set RUMPRequestUnreadStatus=1,RUMPRequestTaggedVendor1 = ${venderTagged_1}, 
       RUMPRequestTaggedVendor2 = ${venderTagged_2}, RUMPRequestTaggedVendor3 = ${venderTagged_3}, 
       RUMPRequestTaggedVendor4 = ${venderTagged_4}, RUMPRequestTaggedVendor5 = ${venderTagged_5}, RUMPRequestTaggedVendor6 = ${venderTagged_6}, 
@@ -216,20 +234,20 @@ router.post("/addVendors", (req, res) => {
         RUMPRequestTaggedVendor7 = ${venderTagged_7}, RumprequestLevel=${initiatorId},ispnc=1,
         RUMPRequestApprovalLevel=${accessID} where RUMPRequestPK = '${req.body.req_id}';`
           }
-          con.query(sql, function (err, result) {
-            if (err) {
-              console.log(err);
+          con.query(sql, function (err2, result2) {
+            if (err2) {
+              console.log(err2);
             } else {
-              console.log(result);
+              console.log(result2);
               const now = new Date();
               let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+             let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
 
-              con.query(sql, function (err, result) {
-                if (err) {
-                  console.log(err);
+              con.query(sql1, function (err3, result3) {
+                if (err3) {
+                  console.log(err3);
                 } else {
-                  console.log(result);
+                  console.log(result3);
                   res.send(JSON.stringify({
                     result: "passed"
                   }));
@@ -242,56 +260,16 @@ router.post("/addVendors", (req, res) => {
     }
   })
 
-  // if(vendorList[0]!=null){
-  //   console.log("fff");
-  //   sql1 = `update datarumprequest set RUMPRequestTaggedVendor1=${vendorList[0]},ispnc=1 where rumprequestpk=${req_id};`
-  //    con.query(sql1, (err, result) => {
-  //     if (err) throw err;
-  //     console.log("fff--");
-  //   });
-  // }
-  // if(vendorList[1]!=null){
-  //   console.log("fff");
-  //     sql1 = `update datarumprequest set RUMPRequestTaggedVendor2=${vendorList[1]},ispnc=1 where rumprequestpk=${req_id};`
-  //      con.query(sql1, (err, result) => {
-  //       if (err) throw err;
-  //     });}
-  // if(vendorList[3]!=null){
-  //     sql1 = `update datarumprequest set RUMPRequestTaggedVendor3=${vendorList[2]},ispnc=1 where rumprequestpk=${req_id};`
-  //      con.query(sql1, (err, result) => {
-  //       if (err) throw err;
-  //     });}
-  // if(vendorList[4]!=null){
-  //    sql1 = `update datarumprequest set RUMPRequestTaggedVendor4=${vendorList[3]},ispnc=1 where rumprequestpk=${req_id};`
-  //        con.query(sql1, (err, result) => {
-  //         if (err) throw err;
-  //       });}
-  // if(vendorList[5]!=null){
-  //     sql1 = `update datarumprequest set RUMPRequestTaggedVendor5=${vendorList[4]},ispnc=1 where rumprequestpk=${req_id};`
-  //     con.query(sql1, (err, result) => {
-  //     if (err) throw err;
-  //         });}
-  //  if(vendorList[6]!=null){
-  //     sql1 = `update datarumprequest set RUMPRequestTaggedVendor6=${vendorList[5]},ispnc=1 where rumprequestpk=${req_id};`
-  //     con.query(sql1, (err, result) => {
-  //     if (err) throw err;
-  //         });}
-  //  if(vendorList[7]!=null){
-  //     sql1 = `update datarumprequest set RUMPRequestTaggedVendor7=${vendorList[6]},ispnc=1 where rumprequestpk=${req_id};`
-  //     con.query(sql1, (err, result) => {
-  //     if (err) throw err;
-  //         });}              
-
-
+ 
 });
 
 
 router.post("/getComment", (req, res) => {
-  reqId = req.body.req_id;
-  sql = `select RUMPRequestComments from datarumprequestaction where RUMPRequestFK=${reqId} order by RUMPRequestActionTiming desc limit 1;`
-  con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
+ let reqId = req.body.req_id;
+ let sql = `select RUMPRequestComments from datarumprequestaction where RUMPRequestFK=${reqId} order by RUMPRequestActionTiming desc limit 1;`
+  con.query(sql, function (error1, result) {
+    if (error1) {
+      console.log(error1);
     } else {
       console.log(result);
       res.send(JSON.stringify(result));
@@ -303,9 +281,9 @@ router.post("/approveRequest", (req, res) => {
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow,datarumprequest.RumprequestLevel as requestLevel,
   datarumprequest.RUMPInitiatorId as initiatorId from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
-  con.query(sql, function (err, result) {
-    if (err) {
-      console.log(err);
+  con.query(sql, function (error2, result) {
+    if (error2) {
+      console.log(errr2);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
       let wflowdata = result[0].wflow.split(',');
@@ -320,41 +298,42 @@ router.post("/approveRequest", (req, res) => {
             nextValue = wflowdata[i + 1];
             if (meType.toString().trim() === "Civil") {
               if (nextValue.includes('c')) {
-                nextValue = wflowdata.filter(data => data.includes('c')).map(data => {
-                  return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]
+                nextValue = wflowdata.filter(data => data.includes('c')).map(data1 => {
+                  return data1.split('or').filter(data2 => data2.includes('c')).map(data3 => data3.replace('c', ''))[0]
                 })
               }
-              else { nextValue = nextValue; }
+              else { let nextValueData=nextValue;
+                nextValue = nextValueData; }
             }
             else if (meType.toString().trim() === "Electrical") {
               if (nextValue.includes('e')) {
-                nextValue = wflowdata.filter(data => data.includes('e')).map(data => {
-                  return data.split('or').filter(data => data.includes('e')).map(data => data.replace('e', ''))
+                nextValue = wflowdata.filter(data => data.includes('e')).map(data1 => {
+                  return data1.split('or').filter(data2 => data2.includes('e')).map(data3 => data3.replace('e', ''))[0]
                 })
               }
-              else { nextValue = nextValue; }
+              else { let nextValueData=nextValue;
+                nextValue = nextValueData;}
             }
           }
         }
       } else {
         nextValue = initiatorId;
       }
-      sql = `update datarumprequest set RUMPRequestStatus=if(RumprequestLevel=3,'Closed','Pending'),RUMPRequestUnreadStatus=1,
+     let sqlQuery= `update datarumprequest set RUMPRequestStatus=if(RumprequestLevel=3,'Closed','Pending'),RUMPRequestUnreadStatus=1,
              RumprequestLevel=${nextValue},RUMPRequestApprovalLevel=${accessID} where rumprequestpk=${req.body.req_id};`
-      con.query(sql, function (err, result) {
-        if (err) {
-          console.log(err);
+      con.query(sqlQuery, function (error, result1) {
+        if (error) {
+          console.log(error);
         } else {
-          console.log(result);
-          //res.send(result);
+          console.log(result1);
           const now = new Date();
           let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
-          con.query(sql, function (err, result) {
-            if (err) {
-              console.log(err);
+         let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+          con.query(sql1, function (err1, result2) {
+            if (err1) {
+              console.log(err1);
             } else {
-              console.log(result);
+              console.log(result2);
               res.send(JSON.stringify({
                 result: "passed",
               }));
@@ -367,7 +346,7 @@ router.post("/approveRequest", (req, res) => {
 });
 
 router.post("/cancelRequest", (req, res) => {
-  sql = `update datarumprequest set RUMPRequestCancelStatus=1 where RUMPRequestPK=?;`
+ let sql = `update datarumprequest set RUMPRequestCancelStatus=1 where RUMPRequestPK=?;`
   con.query(sql, [req.body.req_id], function (err, result) {
     if (err) {
       console.log(err);

@@ -3,19 +3,9 @@ let express = require("express"),
   router = express.Router(),
   con = require("../mysql_config/config");
 
-// router.get("/getWorkFlow",(req,res)=>{
-//   sql='Select * from workflow inner join (select w_id from requests where request.w_id=workflow.w_id);'
-// con.query(sql,(err,result)=> {
-// if(err)
-// {
-//   console.log(err)
-// }
-// else{
-//   res.send(JSON.stringify({data,result}));}
-// })})
 router.post("/getFlowDetails", (req, res) => {
   let w_id = req.body.Workflow.data;
-  sql = `select w_flow from linkrumprequestflow where linkrumprequestflowpk=?;`
+ let sql = `select w_flow from linkrumprequestflow where linkrumprequestflowpk=?;`
   con.query(sql, w_id, (err, result) => {
     if (err) {
       console.log(err);
@@ -24,20 +14,20 @@ router.post("/getFlowDetails", (req, res) => {
       let wflowdata = [];
       w_flow = result[0].w_flow.split(',');
       for (let i = 0; i < w_flow.length; i++) {
-        if (typeof w_flow[i] === 'string' && (w_flow[i].includes('or') == false && w_flow[i].includes('i') == false)) {
+        if (typeof w_flow[i] === 'string' && (!w_flow[i].includes('or') && !w_flow[i].includes('i'))) {
           wflowdata.push(w_flow[i]);
         }
 
         else if (w_flow[i].includes('or')) {
           if (w_flow[i].includes('c')) {
-            nextValue = w_flow.filter(data => data.includes('c')).map(data => {
-              return data.split('or').filter(data => data.includes('c')).map(data => data.replace('c', ''))[0]
+           let nextValue = w_flow.filter(data => data.includes('c')).map(data1 => {
+              return data1.split('or').filter(data2 => data2.includes('c')).map(data3 => data3.replace('c', ''))[0]
             })
             wflowdata.push(nextValue);
           }
           if (w_flow[i].includes('c')) {
-            nextValue = w_flow.filter(data => data.includes('e')).map(data => {
-              return data.split('or').filter(data => data.includes('e')).map(data => data.replace('e', ''))[0]
+           let nextValue = w_flow.filter(data => data.includes('e')).map(data1 => {
+              return data1.split('or').filter(data2 => data2.includes('e')).map(data3 => data3.replace('e', ''))[0]
             })
             wflowdata.push(nextValue);
           }
@@ -47,7 +37,7 @@ router.post("/getFlowDetails", (req, res) => {
 
         }
       }
-      sql = `select dataadmin.admName as adminName,linkrumpadminaccess.linkRUMPAdminAccessPK as id, linkrumpadminaccess.linkrumprolefk as role,
+     let sqlQuery = `select dataadmin.admName as adminName,linkrumpadminaccess.linkRUMPAdminAccessPK as id, linkrumpadminaccess.linkrumprolefk as role,
       COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as role from linkrumpadminaccess 
       left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
       left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
@@ -56,12 +46,12 @@ router.post("/getFlowDetails", (req, res) => {
       inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
       inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK)
       where linkRUMPAdminAccessPK in (?);`
-      con.query(sql, [wflowdata], (err, result) => {
-        if (err) {
-          console.log(err);
+      con.query(sqlQuery, [wflowdata], (error, result1) => {
+        if (error) {
+          console.log(error);
         } else {
 
-          res.send(result);
+          res.send(result1);
         }
       })
     }
@@ -69,7 +59,7 @@ router.post("/getFlowDetails", (req, res) => {
 })
 
 router.get("/getFlow", (req, res) => {
-  sql = `select COALESCE(locname,buiname,cluname,citname,geoName,couName,staName) as name,
+  let sql = `select COALESCE(locname,buiname,cluname,citname,geoName,couName,staName) as name,
   COALESCE( replace(locLocationPK,locLocationPK,'Location'),replace(buiBuildingPK,buiBuildingPK,'Building'),
   replace(cluClubPK,cluClubPK,'Cluster'),replace(citCityPK,citCityPK,'City'),replace(staStatePK,staStatePK,'City'),
   replace(couCountryPK,couCountryPK,'Country'),replace(geoGeographyPK,geoGeographyPK,'Geography'))
@@ -83,9 +73,9 @@ router.get("/getFlow", (req, res) => {
 	  left join datageography on(datageography.geoGeographyPK LIKE linkrumprequestinitiators.b_id)
       left join datastate on(datastate.staStatePK LIKE linkrumprequestinitiators.b_id)
       left join linkrumprequestflow on(linkrumprequestflow.linkrumprequestflowpk=linkrumprequestinitiators.work_id);`
-  con.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
+  con.query(sql, (error, result) => {
+    if (error) {
+      console.log(error);
     } else {
       res.send(result);
     }
@@ -94,6 +84,7 @@ router.get("/getFlow", (req, res) => {
 
 router.post("/getHierarchy", (req, res) => {
   let name = req.body.name;
+  let sql='';
   if (name.includes('Location')) {
     sql = `select locLocationPK as id,locName as name from datalocation;`
   }
@@ -115,9 +106,9 @@ router.post("/getHierarchy", (req, res) => {
   else if (name.includes('Geography')) {
     sql = `select geoGeographyPK as id,geoName as name from datageography;`
   }
-  con.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
+  con.query(sql, (err1, result) => {
+    if (err1) {
+      console.log(err1);
     } else {
       res.send(result);
     }
@@ -127,159 +118,161 @@ router.post("/getHierarchy", (req, res) => {
 
 router.post("/getUsersWorkflow", (req, res) => {
   let role = req.body.role;
-let result1=[];
-if(role!=0){
-sql='select distinct dataadmin.admName as name,linkrumpadminaccess.linkRUMPAdminFK as userId from linkrumpadminaccess inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK) where linkRUMPActiveFlag=1 and linkRUMPRoleFK=?;'
-  con.query(sql,role, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  })
-}
-else
-{
-  res.send(result1);
-}
+  let result1 = [];
+  if (role != 0) {
+    let sql = 'select distinct dataadmin.admName as name,linkrumpadminaccess.linkRUMPAdminFK as userId from linkrumpadminaccess inner join dataadmin on(dataadmin.admAdminPK=linkrumpadminaccess.linkRUMPAdminFK) where linkRUMPActiveFlag=1 and linkRUMPRoleFK=?;'
+    con.query(sql, role, (err2, result) => {
+      if (err2) {
+        console.log(err2);
+      } else {
+        res.send(result);
+      }
+    })
+  }
+  else {
+    res.send(result1);
+  }
 })
 
 router.post("/getUserLocation", (req, res) => {
   let roleId = req.body.roleId;
-  let userId=req.body.userId;
-  let result1=[];
-  if(roleId==0){
+  let userId = req.body.userId;
+  let result1 = [];
+  let sql = '';
+  if (roleId == 0) {
     res.send(result1);
   }
-  else{
-  if (roleId==1) {
-    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
+  else {
+    if (roleId == 1) {
+      sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datalocation.locName as locName from linkrumpadminaccess inner join datalocation on(datalocation.locLocationPK=linkrumpadminaccess.linkRUMPSpace)
     where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
-  }
-  else if (roleId==2 || roleId==3 || roleId==4 || roleId==5) {
-    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,dataclub.cluName as locName from linkrumpadminaccess inner join dataclub on(dataclub.cluClubPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
-  }
-  else if (roleId==6 || roleId==7 || roleId==9) {
-    sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datacity.citName as locName from linkrumpadminaccess inner join datacity on(datacity.citCityPK=linkrumpadminaccess.linkRUMPSpace)
-    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
-  }
-  con.query(sql,[userId,roleId], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
     }
-  })
-}
+    else if (roleId == 2 || roleId == 3 || roleId == 4 || roleId == 5) {
+      sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,dataclub.cluName as locName from linkrumpadminaccess inner join dataclub on(dataclub.cluClubPK=linkrumpadminaccess.linkRUMPSpace)
+    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    }
+    else if (roleId == 6 || roleId == 7 || roleId == 9) {
+      sql = `select linkrumpadminaccess.linkRUMPAdminAccessPK as accessId,linkrumpadminaccess.linkRUMPSpace,datacity.citName as locName from linkrumpadminaccess inner join datacity on(datacity.citCityPK=linkrumpadminaccess.linkRUMPSpace)
+    where linkRUMPActiveFlag=1 and linkRUMPAdminFK=? and linkRUMPRoleFK=?;`
+    }
+    con.query(sql, [userId, roleId], (err3, result) => {
+      if (err3) {
+        console.log(err3);
+      } else {
+        res.send(result);
+      }
+    })
+  }
 });
 
-router.get("/getUserRole",(req,res)=> {
-  sql = `select * from pickrumprole;`
-  con.query(sql,(err,result)=>{
-    if(err){
-      console.log(err);
-    }else{
+router.get("/getUserRole", (req, res) => {
+  let sql = `select * from pickrumprole;`
+  con.query(sql, (err4, result) => {
+    if (err4) {
+      console.log(err4);
+    } else {
       res.send(result);
     }
   });
 });
 
 
-router.post("/addWorkflow",(req,res)=> {
-  let w_flow=req.body.w_flow;
-  let w_flowStr='';
-w_flowStr=w_flow.toString();
-  sql = `insert into linkrumprequestflow (w_flow) values(?);`
-  con.query(sql,w_flowStr,(err,result)=>{
-    if(err){
+router.post("/addWorkflow", (req, res) => {
+  let w_flow = req.body.w_flow;
+  let w_flowStr = '';
+  w_flowStr = w_flow.toString();
+ let sql = `insert into linkrumprequestflow (w_flow) values(?);`
+  con.query(sql, w_flowStr, (err, result) => {
+    if (err) {
       console.log(err);
-    }else{
-      res.send(JSON.stringify({result:'Inserted'}));
+    } else {
+      res.send(JSON.stringify({ result: 'Inserted' }));
     }
   });
 });
 
 router.post("/addLink", (req, res) => {
-  work_id = req.body.work_id;
-  b_id = req.body.b_id;
+  let work_id = req.body.work_id;
+  let b_id = req.body.b_id;
 
-  sql = `select * from linkrumprequestinitiators where (b_id='${b_id}' and work_id=${work_id});`
-  con.query(sql,(err, result) => {
+  let sql = `select * from linkrumprequestinitiators where (b_id='${b_id}' and work_id=${work_id});`
+  con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
     } else {
-      if(result.length>0){
-        res.end(JSON.stringify({result:1}));
+      if (result.length > 0) {
+        res.end(JSON.stringify({ result: 1 }));
       }
-      else{
-      sql = `select * from linkrumprequestflow where linkrumprequestflowpk=${work_id};` 
-      con.query(sql,(err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          if(result.length==0){
-            console.log("result",result.length);
-            res.end(JSON.stringify({result:2}));
+      else {
+        let sqlQuery = `select * from linkrumprequestflow where linkrumprequestflowpk=${work_id};`
+        con.query(sqlQuery, (error, result1) => {
+          if (error) {
+            console.log(error);
+          } else {
+            if (result1.length == 0) {
+              console.log("result", result1.length);
+              res.end(JSON.stringify({ result: 2 }));
+            }
+            else {
+              sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},'${b_id}');`
+              con.query(sql, (err1, result2) => {
+                if (err1) {
+                  console.log(err1);
+                } else {
+                  res.send(result2);
+                }
+              })
+            }
           }
-          else{    
-      sql = `insert into linkrumprequestinitiators (work_id,b_id) values (${work_id},'${b_id}');`
-      con.query(sql, (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          res.send(result);
-        }
-      })
-    }}
-      })}
+        })
+      }
     }
   })
 })
 
 //get admin id and name for assiging the access priviledge
-router.get("/adminIdAndName",(req,res)=> {
+router.get("/adminIdAndName", (req, res) => {
   con.query(`select admAdminPK as adminPK,concat(admAdminPK,' (',admName,')')
-   as adminIdName from dataadmin;`,(err,result)=>{
+   as adminIdName from dataadmin;`, (err, result) => {
     if (err) throw err;
     res.end(JSON.stringify(result))
   });
 });
 
 // check if admin has already access or not
-router.post("/adminCheck",(req,res)=> {
-  adminPK = req.body.id;
+router.post("/adminCheck", (req, res) => {
+  let adminPK = req.body.id;
   con.query(`select admAccess from dataadmin where admAdminPK=?;`,
-  adminPK,(err,result)=>{
-    if (err) throw err;
-    res.end(JSON.stringify(result))
-  });
+    adminPK, (err, result) => {
+      if (err) throw err;
+      res.end(JSON.stringify(result))
+    });
 });
 
 router.post("/addAdminId", (req, res) => {
-  adminPK = req.body.id;
+  let adminPK = req.body.id;
   con.query(`update dataadmin set admAccess=1 where admAdminPK=?;`,
-  adminPK,(err, result) => {
-    if (err) throw err;
-    res.end(JSON.stringify({result:1})); 
-  });
+    adminPK, (err, result) => {
+      if (err) throw err;
+      res.end(JSON.stringify({ result: 1 }));
+    });
 });
 
 //Revoke access from user
 router.post("/revokeAccess", (req, res) => {
-  adminPK = req.body.id;
+  let adminPK = req.body.id;
   con.query(`update dataadmin set admAccess=0 where admAdminPK=?;`,
-  adminPK,(err, result) => {
-    if (err) throw err;
-    res.end(JSON.stringify({result:1})); 
-  });
+    adminPK, (err, result) => {
+      if (err) throw err;
+      res.end(JSON.stringify({ result: 1 }));
+    });
 });
 
-router.get("/wFlow",(req,res)=> {
+router.get("/wFlow", (req, res) => {
   con.query(`select linkrumprequestflowpk as wId,concat(linkrumprequestflowpk,' (',w_flow,')') as wFlow from linkrumprequestflow;`,
-  (err,result)=>{
-    if (err) throw err;
-    res.end(JSON.stringify(result))
-  });
+    (err, result) => {
+      if (err) throw err;
+      res.end(JSON.stringify(result))
+    });
 });
 module.exports = router;

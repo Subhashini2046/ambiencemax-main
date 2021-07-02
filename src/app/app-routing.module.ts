@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AddDialogComponent } from './add-dialog/add-dialog.component';
-import { ViewReqComponent } from './view-req/view-req.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { ViewcommComponent } from './viewcomm/viewcomm.component';
 
