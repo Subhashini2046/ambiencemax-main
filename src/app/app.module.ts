@@ -48,8 +48,7 @@ import {AuthenticationGuard} from './authentication.guard';
 import { RaiseRequestComponent } from './raise-request/raise-request.component';
 import { DraftRequestComponent } from './draft-request/draft-request.component';
 import { SpoceDetailsComponent } from './spoce-details/spoce-details.component';
-import { CancelRequestComponent } from './cancel-request/cancel-request.component'; 
-import {CancelRequestService} from './cancel-request/Cancel-request.service';
+import { CancelReqComponent } from './cancel-req/cancel-req.component';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
@@ -105,9 +104,9 @@ const appRoutes = [
     RaiseRequestComponent,
     DraftRequestComponent,
     SpoceDetailsComponent,
-    CancelRequestComponent,
+    CancelReqComponent,
   ],
-  entryComponents: [WorkflowDialogComponent,AddWorkflowDialogComponent,SpoceDetailsComponent],
+  entryComponents: [CancelReqComponent,WorkflowDialogComponent,AddWorkflowDialogComponent,SpoceDetailsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -143,7 +142,7 @@ const appRoutes = [
     MatBadgeModule,
     NgxMatSelectSearchModule
   ],
-  providers: [ UserDataService,AuthGuardService,AuthenticationGuard,
+  providers: [ UserDataService,AuthGuardService,
   {provide:'AMBI_API_URL',useValue:environment.url}],
   bootstrap: [AppComponent]
 })

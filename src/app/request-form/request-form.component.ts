@@ -11,15 +11,14 @@ import { SpoceDetailsComponent } from '../spoce-details/spoce-details.component'
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable';
-//import { CancelRequestComponent } from '../cancel-request/cancel-request.component';
-//import {CancelRequestService} from '../cancel-request/Cancel-request.service';
+import { CancelReqComponent } from '../cancel-req/cancel-req.component';
 @Component({
   selector: 'app-request-form',
   templateUrl: './request-form.component.html',
   styleUrls: ['./request-form.component.css'],
   providers: [
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
-  ]
+  ],
 })
 export class RequestFormComponent implements OnInit {
   public userId;
@@ -123,7 +122,6 @@ export class RequestFormComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
-
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
     this.currReq.req_initiator_id = this.userId;
@@ -156,11 +154,11 @@ export class RequestFormComponent implements OnInit {
     }
     this.getSpoceDetails();
     if ((this.role_id == 0 && this.req_id) || this.role_id != 0) {
+      this.getRequestDetails();
       //request files
       this.getRequestFiles();
 
       //request details
-      this.getRequestDetails();
     }
   }
 
@@ -193,6 +191,7 @@ export class RequestFormComponent implements OnInit {
       this.allocationStartDate = this.requestDetails[0]["AllocationStartDate"];
       this.actualCost = this.requestDetails[0]["ActualCost"];
       this.actualCost1 = this.actualCost;
+      console.log(this.actualCost1,"this.actualCost1 ");
       this.is_pnc = this.requestDetails[0]["ispnc"];
       this.currReq.req_initiator_id = this.requestDetails[0]["initiatorId"];
       this.currReq.req_level = this.requestDetails[0]["requestLevel"];
@@ -673,11 +672,21 @@ export class RequestFormComponent implements OnInit {
     return false;
   }
 
-  // showDialog(): void {
-  //   this.cancelRequestService.confirmThis(this.req_id,"Are you sure to delete?", function () {  
-  //     alert("Yes clicked");  
-  //   }, function () {  
-  //     alert("No clicked");  
-  //   }) 
-  // }
+  showDialog(): void {
+    this.getRequestDetails();
+    this.getRequestFiles();
+    this.getSpoceDetails();
+    let dialogRef = this.dialog.open(CancelReqComponent, {
+      width: '30%'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.userService.cancelRequest(this.req_id).subscribe((response: any) => {
+          this.openSnackBar('Request Cancelled Successfully !');
+          this.router.navigateByUrl('/AmbienceMax/open');
+        });
+      }
+      console.log('The dialog was closed');
+    });
+  }
 }

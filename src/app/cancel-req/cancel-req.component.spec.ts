@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CancelRequestComponent } from './cancel-request.component';
+import { CancelReqComponent } from './cancel-req.component';
 
-describe('CancelRequestComponent', () => {
-  let component: CancelRequestComponent;
-  let fixture: ComponentFixture<CancelRequestComponent>;
+describe('CancelReqComponent', () => {
+  let component: CancelReqComponent;
+  let fixture: ComponentFixture<CancelReqComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CancelRequestComponent ]
+      declarations: [ CancelReqComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CancelRequestComponent);
+    fixture = TestBed.createComponent(CancelReqComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

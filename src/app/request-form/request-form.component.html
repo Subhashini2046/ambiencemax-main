@@ -123,6 +123,7 @@
           <label> {{fileName[i].fileName}}</label>
         </div>
       </div>
+      
       <div class="form-group" *ngIf="(this.role_id == 0 && this.is_pnc==0)">
         <form>
 
@@ -450,14 +451,14 @@
       <div class="text-center">
         <div class="form-row">
           <br>
-          <div class="form-group col-md-5"
+          <div class="form-group col-md-6"
             *ngIf="((this.role_id==0 && this.is_pnc==1 && this.currReq.req_status!='Closed'))">
             <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;"
               (click)="onPncSumbit()" [disabled]="onPncChange() ">
               Submit
             </button>
           </div>
-          <div class="form-group col-md-5" *ngIf="(this.role_id==0 && this.actualCost1!=null && this.is_pnc==1)">
+          <div class="form-group col-md-6" *ngIf="(this.role_id==0 && this.is_pnc==1)">
             <button type="submit" mat-raised-button class="col-bg-button" style="color: white;outline: none;"
               (click)="onResend()">
               Resend

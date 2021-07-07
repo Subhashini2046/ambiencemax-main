@@ -31,7 +31,6 @@ router.post("/openReq", (req, res) => {
             return data1.split('or').filter(data2 => data2.includes('e')).map(data3 => data3.replace('e', ''))[0]
           })
         }
-        console.log("w_flow",wflowdata);
         for (let j = 0; j < wflowdata.length; j++) {
           for (let k = 0; k < result[1].length; k++) {
             if (result[1][k].id == wflowdata[j]) {

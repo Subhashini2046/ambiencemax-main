@@ -12,12 +12,12 @@
 
             <ng-container matColumnDef="id">
               <th id="id" class="text-center" mat-header-cell *matHeaderCellDef> Role Id </th>
-              <td id="roleId" class="text-center" mat-cell *matCellDef="let element"> {{element.id}} </td>
+              <td id="roleId" class="text-center" mat-cell *matCellDef="let element"> {{element.linkRUMPAdminAccessPK}} </td>
             </ng-container>
 
             <ng-container matColumnDef="name">
               <th id="designation" class="text-center" mat-header-cell *matHeaderCellDef> Designation </th>
-              <td id="name" class="text-center" mat-cell *matCellDef="let element"> {{element.name}} </td>
+              <td id="name" class="text-center" mat-cell *matCellDef="let element"> {{element.role}} </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
