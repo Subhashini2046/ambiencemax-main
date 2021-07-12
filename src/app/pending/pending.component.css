@@ -40,3 +40,9 @@ th{
   text-overflow: ellipsis;
 }
 
+th.mat-sort-header-sorted {
+  color: white;
+}
+.mat-row:hover {
+  cursor: pointer;
+}

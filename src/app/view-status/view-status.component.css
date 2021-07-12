@@ -1,14 +1,14 @@
 /* Create two equal columns that floats next to each other */
 .column {
     float: right;
-    width: 55%;
+    width: 60%;
     padding: 10px;
-    height: 300px; /* Should be removed. Only for demonstration */
+    /* height: 80%;  */
   }
   .column_left{
     float: left;
-    width: 45%;
-    height: 300px;
+    width: 40%;
+    /* height: 800px; */
     padding: 10px;
   }
   
@@ -65,3 +65,32 @@ th{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+img {
+  width: 60px;
+  height: 60px;
+}
+/* .vl {
+  border-left: 15px solid green;
+  height: 50px;
+} */
+
+.v3 {
+  border-left: 15px solid rgba(255, 0, 0, 0.733);
+  height: 50px;
+}
+.v2 {
+  border-left: 15px solid green;
+  height: 50px;
+}
+.mat-header-cell{
+  padding-bottom: 15px;
+}
+/* .mat-cell:first-child{
+ 
+  border-right: 15px solid green;
+  padding-left: 40px;
+} */
+
+/* .mat-cell{
+  border: none !important;
+} */

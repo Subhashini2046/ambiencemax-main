@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./pending.component.css']
 })
 export class PendingComponent implements OnInit {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 
-    'RequestDate', 'status', 'view','progress'];
+  displayedColumns: string[] = ['RUMPRequestNumber', 'RUMPRequestSubject', 'RUMPRequestType','RUMPRequestStatus', 
+  'RUMPRequestDate'];
   dataSource = new MatTableDataSource();
   members;
   role_id;
@@ -33,7 +33,8 @@ export class PendingComponent implements OnInit {
 
   // navigate to view reuqest data
   view(req_id) {
-    this.route.navigate(['/AmbienceMax/view', req_id]);
+    // this.route.navigate(['/AmbienceMax/view', req_id]);
+    this.route.navigate(['/AmbienceMax/viewRequest', req_id]);
   }
 
   // to check reuqest log and request status

@@ -9,14 +9,31 @@
 </div>
 <div class="row my-3">
   <div class="col-md-3"></div>
-  <div class="col-md-6">
-    <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm" (ngSubmit)="form.reset() " style="border-radius: 10px;"
+  <div class="col-md-6" style="border-radius: 10px;">
+    <form ngNativeValidate class="px-3 py-3 my-4" #form="ngForm"  style="border-radius: 10px;"
       action="#">
       <div class="text-center" style="display: flex;">
         <span style="font-size: 20px;flex: 3;">Request Form</span>
       </div>
       <mat-divider style="margin: 10px 0;"></mat-divider>
       <br>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputdes">Request Type</label>
+          <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
+            [disabled]="(this.req_id)" required>
+            <option value="" selected>Select the Request Type</option>
+            <option>Upgrade</option>
+            <option>Repair</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Request Number</label>
+          <input class="form-control" id="req_number" type="text" [(ngModel)]="currReq.req_number" name="req_number" readonly
+            required />
+        </div>
+      </div>
       <div class="form-row">
 
         <div class="form-group col-md-6">
@@ -74,20 +91,6 @@
             [disabled]="!(this.role_id == 0 && this.is_pnc==0)" required />
         </div>
 
-      </div>
-
-
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputdes">Request Type</label>
-          <select id="request" class="form-control" [(ngModel)]="currReq.req_type" name="RequestType"
-            [disabled]="(this.req_id)" required>
-            <option value="" selected>Select the Request Type</option>
-            <option>Upgrade</option>
-            <option>Repair</option>
-            <option>Maintenance</option>
-          </select>
-        </div>
       </div>
       <div class="form-group">
         <label>Request Subject</label>

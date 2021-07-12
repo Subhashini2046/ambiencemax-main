@@ -10,19 +10,28 @@
         <div class="container">
           <table class="table" mat-table [dataSource]="this.dataSource1">
 
-            <ng-container matColumnDef="id">
-              <th id="id" class="text-center" mat-header-cell *matHeaderCellDef> Role Id </th>
-              <td id="roleId" class="text-center" mat-cell *matCellDef="let element"> {{element.linkRUMPAdminAccessPK}} </td>
+            <ng-container matColumnDef="progress">
+              <th id="id" mat-header-cell *matHeaderCellDef>Progress</th>
+              <!-- <div *ngIf="element.status=='Approved'" class="v2">
+                <td id="roleId" class="text-center" mat-cell *matCellDef="let element"></td>
+              </div>
+              <div *ngIf="element.status=='Pending'" class="v2">
+                <td id="roleId" class="text-center" mat-cell *matCellDef="let element"></td>
+              </div> -->
+              <td id="roleId" mat-cell *matCellDef="let element">
+                <div *ngIf="element.status=='Approved'" class="v2"></div>
+                <div *ngIf="element.status=='Pending'" class="v3"></div>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="name">
-              <th id="designation" class="text-center" mat-header-cell *matHeaderCellDef> Designation </th>
-              <td id="name" class="text-center" mat-cell *matCellDef="let element"> {{element.role}} </td>
+              <th id="designation"  mat-header-cell *matHeaderCellDef> Designation </th>
+              <td id="name"  mat-cell *matCellDef="let element"> {{element.role}} </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
-              <th id="status "class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
-              <td id="reqStatus" class="text-center" mat-cell *matCellDef="let element"> {{element.status}} </td>
+              <th id="status" mat-header-cell *matHeaderCellDef> Status </th>
+              <td id="reqStatus"  mat-cell *matCellDef="let element"> {{element.status}} </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
@@ -43,27 +52,32 @@
         <div class="container">
           <table class="table" mat-table [dataSource]="this.dataSource">
 
+            <ng-container matColumnDef="imageUrl">
+              <th  mat-header-cell *matHeaderCellDef></th>
+              <td  mat-cell *matCellDef="let element"> <img [src]=this.sanitizer.bypassSecurityTrustUrl(element.admPhotoURL)/> </td>
+            </ng-container>
+
             <ng-container matColumnDef="aaction_taken_by">
-              <th id="action" class="text-center" mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
-              <td id="roleName" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestRoleName}} </td>
+              <th id="action"  mat-header-cell *matHeaderCellDef> Request Action Taken By </th>
+              <td id="roleName"  mat-cell *matCellDef="let element"> {{element.RequestRoleName}} </td>
             </ng-container>
 
 
             <ng-container matColumnDef="req_action">
-              <th id="reqAction"class="text-center" mat-header-cell *matHeaderCellDef> Request Action </th>
-              <td id="requestAction" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestAction}} </td>
+              <th id="reqAction"mat-header-cell *matHeaderCellDef> Request Action </th>
+              <td id="requestAction"  mat-cell *matCellDef="let element"> {{element.RequestAction}} </td>
             </ng-container>
 
 
             <ng-container matColumnDef="req_date">
-              <th id="reqDate"class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
-              <td id="date" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionDate | date:
+              <th id="reqDate" mat-header-cell *matHeaderCellDef> Request Date </th>
+              <td id="date"  mat-cell *matCellDef="let element"> {{element.RequestActionDate | date:
                 'yyyy-MM-dd'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="req_time">
-              <th id="time" class="text-center" mat-header-cell *matHeaderCellDef> Request Time </th>
-              <td id="actionTime" class="text-center" mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
+              <th id="time"  mat-header-cell *matHeaderCellDef> Request Time </th>
+              <td id="actionTime"  mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

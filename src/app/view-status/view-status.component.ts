@@ -4,8 +4,7 @@ import { UserDataService } from '../Services/UserDataService';
 import { Location } from '@angular/common';
 import { MatTableDataSource, MatSort} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-
-
+import {DomSanitizer,SafeUrl} from "@angular/platform-browser";
 @Component({
 
   selector: 'app-view-status',
@@ -21,8 +20,8 @@ export class ViewStatusComponent implements OnInit {
   view_status = null;
   public viewStatus: Views;
   public viewStatus1: Views[] = [];
-  displayedColumns: string[] = ['aaction_taken_by', 'req_action', 'req_date', 'req_time'];
-  displayedColumns1: string[] = ['id', 'name', 'status'];
+  displayedColumns: string[] = ['imageUrl','aaction_taken_by', 'req_action', 'req_date', 'req_time'];
+  displayedColumns1: string[] = ['progress','name', 'status'];
   dataSource = new MatTableDataSource();
   dataSource1 = new MatTableDataSource();
   members;
@@ -33,15 +32,17 @@ export class ViewStatusComponent implements OnInit {
   reqStatus;
   initiator;
   is_pnc;
+  public image_url=null;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private actrouter: ActivatedRoute, public UsrDataService: UserDataService, private _location: Location) {
+  constructor(private sanitizer: DomSanitizer,private actrouter: ActivatedRoute, public UsrDataService: UserDataService, private _location: Location) {
   }
 
   backClicked() {
     this._location.back();
   }
   space
+  imgurl="../assets/Logo.svg";
   ngOnInit() {
     
     this.actrouter.params.subscribe(params => {
@@ -52,7 +53,7 @@ export class ViewStatusComponent implements OnInit {
     this.UsrDataService.getViewRequestStatus(this.req_id).subscribe((res => {
       this.dataSource.data = res.reqLog;
       this.dataSource1.data=res.approval_status;
-      console.log(this.dataSource1.data);
+     // console.log(this.dataSource1.data['space']);
       // this.w_flow = res.w_flow;
       // this.req_level = res.requestLevel;
       // this.initiator = res.intiator_id;
@@ -147,6 +148,44 @@ export class ViewStatusComponent implements OnInit {
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
+  imgurl1="C:/CommonFolderMirror/UserImages/112951.jpg";
+  transform(url:string): SafeUrl {
+    const reader = new FileReader();
+    // reader.onloadend = (e) => {
+    //   let base64Image = this.sanitizer.bypassSecurityTrustUrl(reader.result);
+    //   console.log(base64Image);
+    // }
+    //window.location.href="/C:/CommonFolderMirror/UserImages/112951.jpg"
+//   let imgurl=this.sanitizer.bypassSecurityTrustResourceUrl(url);
+
+// let imgurl="C:/CommonFolderMirror/UserImages/112951.jpg";
+// let objectURL = URL.createObjectURL(imgurl); 
+// console.log(objectURL);
+   return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+  getImageFromService(image) {
+    console.log(image);
+        let unsafeImageUrl = URL.createObjectURL(image);
+       let imageUrl = this.sanitizer.bypassSecurityTrustUrl(unsafeImageUrl);
+      // console.log(imageUrl);
+    return imageUrl;
+}
+  returnBlob(res): Blob {
+    console.log('file downloaded');
+    return new Blob([res], { type: 'image' });
+  }
+//   createImageFromBlob(image:any){
+//     console.log(image);
+//     //var blob = new Blob([image], { type: 'image/jpeg' });
+//    // console.log(blob);
+//     const reader = new FileReader();
+//     reader.readAsDataURL(this.returnBlob(image));
+//     reader.onloadend = (evt:any) => {
+//       this.image_url = reader.result;
+//       console.log(this.image_url);
+//     };
+//     return this.image_url;
+//   }
 }
 export interface Views {
   id: number;

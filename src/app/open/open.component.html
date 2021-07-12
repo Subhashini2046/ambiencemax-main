@@ -9,39 +9,42 @@
       </mat-form-field>
     </div>
   </div>
+  
   <mat-divider style="margin: 10px 0;"></mat-divider>
-  <table class="table" mat-table [dataSource]="this.dataSource">
-
+  <table class="table" mat-table [dataSource]="this.dataSource" matSort>
     <!-- REQUEST NO COULMN -->
-    <ng-container matColumnDef="reqNumber">
-      <th id="requestNum" class="text-center" mat-header-cell *matHeaderCellDef> Request Number </th>
-      <td id="requestNumber" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestNumber}} </td>
+    <ng-container matColumnDef="RUMPRequestNumber">
+      <th id="requestNum" class="text-center"  mat-header-cell *matHeaderCellDef mat-sort-header> Request Number </th>
+      <td id="requestNumber" mat-cell *matCellDef="let element"> {{element.RUMPRequestNumber}} </td>
     </ng-container>
 
     <!-- REQUEST TITLE Column -->
-    <ng-container matColumnDef="Request Subject">
-      <th id="subject" class="text-center" mat-header-cell *matHeaderCellDef> Request Subject </th>
-      <td id="requestSubject" class="text-center truncate-cell" mat-cell *matCellDef="let element"> {{element.RUMPRequestSubject}} </td>
+    <ng-container matColumnDef="RUMPRequestSubject">
+      <th id="subject" class="text-center" mat-header-cell *matHeaderCellDef mat-sort-header> Request Subject </th>
+      <td id="requestSubject" class=" truncate-cell" mat-cell *matCellDef="let element"> {{element.RUMPRequestSubject}} </td>
     </ng-container>
+
     <!-- Satus Column -->
-    <ng-container matColumnDef="status">
-      <th id="status" class="text-center" mat-header-cell *matHeaderCellDef> Status </th>
-      <td id="requestStatus" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestStatus}} </td>
+    <ng-container matColumnDef="RUMPRequestStatus">
+      <th id="status" class="text-center" mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+      <td id="requestStatus"  mat-cell *matCellDef="let element"> {{element.RUMPRequestStatus}} </td>
     </ng-container>
+
     <!-- Type Column -->
-    <ng-container matColumnDef="Request Type">
-      <th id="type" class="text-center" mat-header-cell *matHeaderCellDef> Request Type </th>
-      <td id="requestType" class="text-center" mat-cell *matCellDef="let element"> {{element.RUMPRequestType}} </td>
+    <ng-container matColumnDef="RUMPRequestType">
+      <th  id="type" class="text-center" mat-header-cell *matHeaderCellDef mat-sort-header> Request Type </th>
+      <td id="requestType"  mat-cell *matCellDef="let element"> {{element.RUMPRequestType}} </td>
     </ng-container>
+
     <!-- Date Column -->
-    <ng-container matColumnDef="RequestDate">
-      <th id="date" class="text-center" mat-header-cell *matHeaderCellDef> Request Date </th>
-      <td id="requestDate" class="text-center" mat-cell *matCellDef="let element">
+    <ng-container matColumnDef="RUMPRequestDate">
+      <th id="date" class="text-center" mat-header-cell *matHeaderCellDef mat-sort-header> Request Date </th>
+      <td id="requestDate"  mat-cell *matCellDef="let element">
         {{element.RUMPRequestDate | date: 'yyyy-MM-dd'}}
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="view">
+    <!-- <ng-container matColumnDef="view">
       <th id="action" class="text-center" mat-header-cell *matHeaderCellDef>Action</th>
       <td id="requestAction" class="text-center" mat-cell *matCellDef="let element">
         <button mat-button class="stylepopupbuttonconfirm" style="outline:none;"
@@ -59,10 +62,10 @@
           Check progress
         </button>
       </td>
-    </ng-container>
+    </ng-container> -->
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;" (click)="view(row.RUMPRequestPK,row.ispnc)"></tr>
   </table>
   <mat-paginator [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[5 , 10]" showFirstLastButtons>
   </mat-paginator>

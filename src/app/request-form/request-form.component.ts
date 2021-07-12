@@ -673,9 +673,6 @@ export class RequestFormComponent implements OnInit {
   }
 
   showDialog(): void {
-    this.getRequestDetails();
-    this.getRequestFiles();
-    this.getSpoceDetails();
     let dialogRef = this.dialog.open(CancelReqComponent, {
       width: '30%'
     });

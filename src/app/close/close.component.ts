@@ -8,8 +8,8 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
   styleUrls: ['./close.component.css'],
 })
 export class CloseComponent implements OnInit{
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
-    'RequestDate', 'status', 'view','progress'];
+  displayedColumns: string[] = ['RUMPRequestNumber', 'RUMPRequestSubject', 'RUMPRequestType','RUMPRequestStatus', 
+  'RUMPRequestDate'];
 
   dataSource = new MatTableDataSource();
   members;
@@ -33,7 +33,7 @@ export class CloseComponent implements OnInit{
 
  // navigate to view reuqest data
   view(req_id) {
-    this.route.navigate(['/AmbienceMax/view', req_id]);
+    this.route.navigate(['/AmbienceMax/viewRequest', req_id]);
   }
 
   // to check reuqest log and request status

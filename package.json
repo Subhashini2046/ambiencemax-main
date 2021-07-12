@@ -10,6 +10,7 @@
     "e2e": "ng e2e",
     "sonar": "sonar-scanner",
     "start:server": "nodemon server.js"
+    
   },
   "private": true,
   "dependencies": {

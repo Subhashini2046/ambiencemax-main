@@ -9,8 +9,8 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
   styleUrls: ['./complete.component.css']
 })
 export class CompleteComponent implements OnInit {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type', 
-  'RequestDate', 'status', 'view','progress'];
+  displayedColumns: string[] = ['RUMPRequestNumber', 'RUMPRequestSubject', 'RUMPRequestType','RUMPRequestStatus', 
+  'RUMPRequestDate'];
 
 dataSource = new MatTableDataSource();
 members;
@@ -20,7 +20,7 @@ updatedData = [];
 role_id;
 accessId;
 @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-@ViewChild(MatSort, { static: true }) sort: MatSort;
+ @ViewChild(MatSort, { static: true }) sort: MatSort;
 constructor(public userService: UserDataService, private route: Router) { }
 ngOnInit() {
   console.log("Complete Component");
@@ -36,7 +36,7 @@ ngOnInit() {
 
  // navigate to view reuqest data
   view(req_id) {
-    this.route.navigate(['/AmbienceMax/view', req_id]);
+    this.route.navigate(['/AmbienceMax/viewRequest', req_id]);
   }
 
   // to check reuqest log and request status
@@ -44,8 +44,8 @@ ngOnInit() {
     this.route.navigate(['/AmbienceMax/status', reqId]);
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
   // to serach a location etc.
   applyFilter(event: Event) {

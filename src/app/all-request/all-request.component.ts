@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./all-request.component.css'],
 })
 export class AllRequestComponent implements OnInit {
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
-    'RequestDate', 'status', 'view', 'Approve'];
+  displayedColumns: string[] = ['RUMPRequestNumber', 'RUMPRequestSubject', 'RUMPRequestType','RUMPRequestStatus', 
+  'RUMPRequestDate'];
   dataSource = new MatTableDataSource();
 
   reqStatus
@@ -38,16 +38,16 @@ export class AllRequestComponent implements OnInit {
   // navigate to view reuqest data
   view(req_id, pnc, reqStatus) {
     if (reqStatus.toString().trim() === 'Pending') {
-      this.route.navigate(['AmbienceMax/view', req_id]);
+      this.route.navigate(['AmbienceMax/viewRequest', req_id]);
     }
     else if (reqStatus.toString().trim() === 'Completed') {
-      this.route.navigate(['AmbienceMax/view', req_id]);
+      this.route.navigate(['AmbienceMax/viewRequest', req_id]);
     }
     else if (reqStatus.toString().trim() === 'Closed') {
-      this.route.navigate(['AmbienceMax/view', req_id]);
+      this.route.navigate(['AmbienceMax/viewRequest', req_id]);
     }
     else
-      this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
+      this.route.navigate(['/AmbienceMax/requestDetail', req_id, pnc]);
   }
 
   // to serach a location etc.

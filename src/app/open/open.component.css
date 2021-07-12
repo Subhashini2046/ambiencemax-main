@@ -8,9 +8,9 @@
     font-size:large;
   }
   
-  /* mat-card{
-    background-color:  rgba(106, 135, 223, 0.589);
-  } */
+  .mat-row:hover {
+    cursor: pointer;
+  }
   mat-form-field {
     font-size: 14px;
   width: 100%;

@@ -11,8 +11,9 @@ import { RequestFormComponent } from './request-form/request-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatFormFieldModule, MatSelectModule, MatTableModule, MatChipsModule ,
   MatMenuModule, MatCardModule, MatButtonModule, MatSidenavModule, MatToolbarModule, MatIconModule,
-  MatListModule, MatSnackBarModule, MatPaginatorModule,MatRadioModule,MatNativeDateModule,MatInputModule} from '@angular/material';
+  MatListModule, MatSnackBarModule, MatPaginatorModule,MatRadioModule,MatNativeDateModule,MatInputModule,MatSortModule} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {MatTabsModule} from '@angular/material/tabs';
 import { UserDataService } from './Services/UserDataService';
 import{AuthGuardService} from './Services/AuthGuardService';
 import { ViewReqComponent } from './view-req/view-req.component';
@@ -49,6 +50,8 @@ import { RaiseRequestComponent } from './raise-request/raise-request.component';
 import { DraftRequestComponent } from './draft-request/draft-request.component';
 import { SpoceDetailsComponent } from './spoce-details/spoce-details.component';
 import { CancelReqComponent } from './cancel-req/cancel-req.component';
+import { RequestTabComponent } from './request-tab/request-tab.component';
+import { ViewRequestTabComponent } from './view-request-tab/view-request-tab.component';
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
@@ -69,7 +72,9 @@ const appRoutes = [
     {path: 'approveRequest/:id' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
     {path:'draftRequest',component:DraftRequestComponent},
-    {path: 'raiseRequest/:id' , component: RaiseRequestComponent}
+    {path: 'raiseRequest/:id' , component: RaiseRequestComponent},
+    {path: 'requestDetail/:id/:pnc' , component: RequestTabComponent},
+    {path: 'viewRequest/:id' , component: ViewRequestTabComponent}
   ]
 },
 { path: '', redirectTo: "/login", pathMatch: 'full' },  
@@ -105,6 +110,8 @@ const appRoutes = [
     DraftRequestComponent,
     SpoceDetailsComponent,
     CancelReqComponent,
+    RequestTabComponent,
+    ViewRequestTabComponent,
   ],
   entryComponents: [CancelReqComponent,WorkflowDialogComponent,AddWorkflowDialogComponent,SpoceDetailsComponent],
   imports: [
@@ -140,7 +147,9 @@ const appRoutes = [
     MatMomentDateModule,
     MatInputModule,
     MatBadgeModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatSortModule,
+    MatTabsModule,
   ],
   providers: [ UserDataService,AuthGuardService,
   {provide:'AMBI_API_URL',useValue:environment.url}],

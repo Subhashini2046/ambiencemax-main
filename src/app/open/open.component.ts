@@ -10,8 +10,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./open.component.css'],
 })
 export class OpenComponent implements OnInit{
-  displayedColumns: string[] = ['reqNumber', 'Request Subject', 'Request Type',
-    'RequestDate', 'status', 'view','progress'];
+  displayedColumns: string[] = ['RUMPRequestNumber', 'RUMPRequestSubject', 'RUMPRequestType','RUMPRequestStatus', 
+  'RUMPRequestDate'];
 
   dataSource = new MatTableDataSource();
   members;
@@ -32,7 +32,9 @@ export class OpenComponent implements OnInit{
 
   // navigate to view reuqest data,approve or resend or reuqest update or BOQ form or PNC form
   view(req_id, pnc) {
-    this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
+   //this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
+   //this.route.navigateByUrl('/AmbienceMax/requestDetail');
+   this.route.navigate(['/AmbienceMax/requestDetail', req_id, pnc]);
   }
 
   // to check reuqest log and request status
