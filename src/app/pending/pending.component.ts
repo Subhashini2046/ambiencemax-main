@@ -21,11 +21,11 @@ export class PendingComponent implements OnInit {
   ngOnInit() {
     console.log("pending Component");
 
-    this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
+  //  this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     
     //get all Pending Request
-    this.userService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+    this.userService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
       this.dataSource.data= response;
     });
 

@@ -163,7 +163,6 @@ router.post("/vendorDetail", (req, res) => {
 
 router.post("/addVendors", (req, res) => {
   let vendorList = req.body.vendorList;
-  let accessID = req.body.accessID;
   let venderTagged_1=null;
   let venderTagged_2=null;
   let venderTagged_3=null;
@@ -206,13 +205,13 @@ router.post("/addVendors", (req, res) => {
   } else
     venderTagged_7 = null;
 
- let sql = `select RUMPInitiatorId as initiatorId,RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK = ${req.body.req_id};`
-
-  con.query(sql, function (err, result) {
+  con.query(`select RUMPInitiatorId as initiatorId,RUMPRequestApprovalLevel from datarumprequest where RUMPRequestPK = ${req.body.req_id};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};`, function (err, result) {
     if (err) {
       console.log(err);
     } else {
-      let initiatorId = result[0].initiatorId;
+      let initiatorId = result[0][0].initiatorId;
+      let accessID=result[1][0].accessID;
       console.log(result);
      let sqlQuery = `select distinct RUMPRequestRole from datarumprequestaction 
       where RUMPRequestRole=? and RUMPRequestFK=?;`
@@ -241,8 +240,7 @@ router.post("/addVendors", (req, res) => {
               console.log(result2);
               const now = new Date();
               let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-             let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
-
+             let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
               con.query(sql1, function (err3, result3) {
                 if (err3) {
                   console.log(err3);
@@ -277,18 +275,20 @@ router.post("/getComment", (req, res) => {
   })
 })
 router.post("/approveRequest", (req, res) => {
-  let accessID = req.body.accessID;
+  //let accessID = req.body.accessID;
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow,datarumprequest.RumprequestLevel as requestLevel,
   datarumprequest.RUMPInitiatorId as initiatorId from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
-  con.query(sql, function (error2, result) {
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=? and linkRUMPRoleFK=?;`
+  con.query(sql,[req.body.space,req.body.roleId], function (error2, result) {
     if (error2) {
       console.log(errr2);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-      let wflowdata = result[0].wflow.split(',');
-      let requestLevel = result[0].requestLevel;
-      let initiatorId = result[0].initiatorId;
+      let wflowdata = result[0][0].wflow.split(',');
+      let requestLevel = result[0][0].requestLevel;
+      let initiatorId = result[0][0].initiatorId;
+      let accessID=result[1][0].accessID;
       let nextValue = '';
       let meType = req.body.meType;
 
@@ -328,7 +328,7 @@ router.post("/approveRequest", (req, res) => {
           console.log(result1);
           const now = new Date();
           let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-         let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+         let sql1 = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'Approved','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
           con.query(sql1, function (err1, result2) {
             if (err1) {
               console.log(err1);

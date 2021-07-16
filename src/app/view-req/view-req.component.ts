@@ -79,7 +79,7 @@ export class ViewReqComponent implements OnInit {
       this.req_id = +params['id'];
     });
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
-    this.accessID = JSON.parse(localStorage.getItem('admin_access_id'));
+   // this.accessID = JSON.parse(localStorage.getItem('admin_access_id'));
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
 
     //get reuqest file

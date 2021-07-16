@@ -42,7 +42,7 @@ export class ChartRepresentComponent implements OnInit ,OnDestroy{
     this.countSubsription= this.userDataService.changedetectInRole.subscribe(data=>{
       this.role = JSON.parse(localStorage.getItem('role_id'));
       this.space = JSON.parse(localStorage.getItem('space'));
-      this.userDataService.getRequestCount(this.role, this.space)
+      this.userDataService.getRequestCount(this.role, this.space,JSON.parse(localStorage.getItem('userId')))
       .subscribe(res => {
         let pending = res['req_stats'].Pending
         let close = res['req_stats'].Closed

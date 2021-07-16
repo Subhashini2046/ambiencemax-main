@@ -404,22 +404,22 @@ router.post("/getfiles", (req, res) => {
 });
 
 
-
 router.post("/resendRequest", (req, res) => {
-  let accessID = req.body.accessID;
   let w_flow = [];
   let wflowdata = [];
   let addIntoApprovalLevel = 0;
-  con.query(`Select w_flow,RUMPRequestMEType,RUMPInitiatorId,RUMPRequestApprovalLevel from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =${req.body.req_id};`,
+  console.log(req.body,req.body.space,req.body.roleId);
+  con.query(`Select w_flow,RUMPRequestMEType,RUMPInitiatorId,RUMPRequestApprovalLevel from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =${req.body.req_id};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};`,
    function (error12, result12) {
     if (error12) { console.log(error12); }
     else {
-      w_flow = result12[0].w_flow.split(',');
-      let intiator_id = result12[0].RUMPInitiatorId;
-      let me_type = result12[0].RUMPRequestMEType;
-      let ApprovalLevel = result12[0].RUMPRequestApprovalLevel;
+      w_flow = result12[0][0].w_flow.split(',');
+      let intiator_id = result12[0][0].RUMPInitiatorId;
+      let me_type = result12[0][0].RUMPRequestMEType;
+      let ApprovalLevel = result12[0][0].RUMPRequestApprovalLevel;
+      let accessID=result12[1][0].accessID;
       for (let i = 0; i < w_flow.length; i++) {
-
         if (typeof w_flow[i] === 'string' && (!w_flow[i].includes('or') && !w_flow[i].includes('i'))) {
           wflowdata.push(w_flow[i]);
         }
@@ -491,6 +491,95 @@ router.post("/resendRequest", (req, res) => {
     }
   });
 });
+
+// router.post("/resendRequest", (req, res) => {
+//   let accessID = req.body.accessID;
+//   let w_flow = [];
+//   let wflowdata = [];
+//   let addIntoApprovalLevel = 0;
+//   con.query(`Select w_flow,RUMPRequestMEType,RUMPInitiatorId,RUMPRequestApprovalLevel from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =${req.body.req_id};`,
+//    function (error12, result12) {
+//     if (error12) { console.log(error12); }
+//     else {
+//       w_flow = result12[0].w_flow.split(',');
+//       let intiator_id = result12[0].RUMPInitiatorId;
+//       let me_type = result12[0].RUMPRequestMEType;
+//       let ApprovalLevel = result12[0].RUMPRequestApprovalLevel;
+//       for (let i = 0; i < w_flow.length; i++) {
+
+//         if (typeof w_flow[i] === 'string' && (!w_flow[i].includes('or') && !w_flow[i].includes('i'))) {
+//           wflowdata.push(w_flow[i]);
+//         }
+
+//         else if (me_type == 0 && w_flow[i].includes('or')) {
+
+//           w_flow[i] = w_flow[i].replace("c", "");
+//           w_flow[i] = w_flow[i].replace('e', '');
+//           w_flow[i] = w_flow[i].substring(0, w_flow[i].indexOf('or') + 'or'.length);
+//           w_flow[i] = w_flow[i].replace('or', '');
+//           wflowdata.push(w_flow[i]);
+
+//         }
+//         else if (me_type == 1 && w_flow[i].includes('or')) {
+
+//           w_flow[i] = w_flow[i].replace("c", "");
+//           w_flow[i] = w_flow[i].replace('e', '');
+//           w_flow[i] = w_flow[i].substring(w_flow[i].indexOf('r') + 1);
+//           w_flow[i] = w_flow[i].replace('or', '');
+//           wflowdata.push(w_flow[i]);
+
+//         }
+//         else if (w_flow[i].includes('i')) {
+//           wflowdata.push(intiator_id);
+//         }
+
+//       }
+//       let accessIDIndex = wflowdata.indexOf(accessID.toString());
+//       let ApprovalLevelIndex = wflowdata.indexOf(ApprovalLevel.toString())
+//       if (accessIDIndex == intiator_id) {
+//         addIntoApprovalLevel = ApprovalLevel
+//       } else {
+//         if (accessIDIndex >= ApprovalLevelIndex) {
+//           addIntoApprovalLevel = accessID;
+//         }
+//         else { addIntoApprovalLevel = ApprovalLevel }
+//       }
+//       var sql = `select pickrumprole.pickRUMPRoleDescription as role from pickrumprole inner join linkrumpadminaccess 
+//   on pickRUMPRolePK=linkRUMPRoleFK where linkRUMPAdminAccessPK=${req.body.resendToId};`
+//       con.query(sql, function (error13, result13) {
+//         if (error13) {
+//           console.log(error13);
+//           res.send(JSON.stringify({ result13: "failed1" }));
+//         } else {
+//           let role = result13[0].role;
+//           let request_action = "Resent to " + role;
+//           sql = `update datarumprequest set RUMPRequestUnreadStatus=1,ispnc=${req.body.pnc},RumprequestLevel=${req.body.resendToId},RUMPRequestApprovalLevel=${addIntoApprovalLevel}
+//   where rumprequestpk=${req.body.req_id};`
+//           con.query(sql, function (error14, result14) {
+//             if (error14) {
+//               console.log(error14);
+//             } else {
+//               console.log(result14);
+//               const now = new Date();
+//               let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
+//               sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'${request_action}','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+//               con.query(sql, function (error15, result15) {
+//                 if (error15) {
+//                   console.log(error15);
+//                 } else {
+//                   console.log(result15);
+//                   res.send(result15);
+//                 }
+//               })
+//             }
+//           })
+//         }
+//       })
+//     }
+//   });
+// });
+
+
 router.post("/addPnc", (req, res) => {
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
   on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`

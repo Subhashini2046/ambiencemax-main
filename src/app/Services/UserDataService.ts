@@ -61,28 +61,28 @@ export class UserDataService {
   }
 
   //.................Request Count for pending,open,close,Complete................//
-  getRequestCount(role, space) {
-    return this.http.post(this.URL + 'dashboard', { role, space });
+  getRequestCount(role, space,userId) {
+    return this.http.post(this.URL + 'dashboard', { role, space,userId });
   }
 
-  getPendingRequest(role, space, access_id) {
-    return this.http.post(this.URL + 'pendingReq', { role, space, access_id });
+  getPendingRequest(role, space, userId) {
+    return this.http.post(this.URL + 'pendingReq', { role, space, userId });
   }
 
-  getClosedRequest(role, space, access_id) {
-    return this.http.post(this.URL + 'closedReq', { role, space, access_id });
+  getClosedRequest(role, space, userId) {
+    return this.http.post(this.URL + 'closedReq', { role, space, userId});
   }
 
-  getAllRequest(role, space, access_id) {
-    return this.http.post(this.URL + 'allReq', { role, space, access_id });
+  getAllRequest(role, space, userId) {
+    return this.http.post(this.URL + 'allReq', { role, space, userId});
   }
 
-  getOpenRequest(role, space, access_id) {
-    return this.http.post(this.URL + 'openReq', { role, space, access_id });
+  getOpenRequest(role, space, userId) {
+    return this.http.post(this.URL + 'openReq', { role, space, userId });
   }
 
-  getCompleteRequest(role, space, access_id) {
-    return this.http.post(this.URL + 'complete_reqs', { role, space, access_id });
+  getCompleteRequest(role, space, userId) {
+    return this.http.post(this.URL + 'complete_reqs', { role, space, userId });
   }
 
   //.................Mark request status as Complete................//
@@ -105,8 +105,8 @@ export class UserDataService {
   }
 
   //.................add vendorId once the HOM allocate the Vendor................//
-  addVendors(vendorList, req_id, reqComment, accessID, role_name) {
-    return this.http.post<any>(this.URL + 'addVendors', { vendorList, req_id, reqComment, accessID, role_name });
+  addVendors(vendorList, req_id, reqComment,space,roleId, role_name) {
+    return this.http.post<any>(this.URL + 'addVendors', { vendorList, req_id, reqComment,space,roleId, role_name });
   }
 
   //.................get Request Comment................//
@@ -180,13 +180,13 @@ export class UserDataService {
   }
 
   //.................(approve Request)................//
-  approveRequest(reqComment, req_id, userId, accessID, role_name) {
+  approveRequest(reqComment, req_id, userId,space,roleId, role_name) {
     let meType = this.meType;
-    return this.http.post<any>(this.URL + 'approveRequest', { reqComment, req_id, userId, accessID, role_name, meType });
+    return this.http.post<any>(this.URL + 'approveRequest', { reqComment, req_id, userId,space,roleId, role_name, meType });
   }
   //.................(add Request)................//
-  resendRequest(reqComment, req_id, resendToId, accessID, role_name, pnc) {
-    return this.http.post<any>(this.URL + 'resendRequest', { reqComment, req_id, resendToId, accessID, role_name, pnc });
+  resendRequest(reqComment, req_id, resendToId, role_name, pnc,space,roleId) {
+    return this.http.post<any>(this.URL + 'resendRequest', { reqComment, req_id, resendToId, role_name, pnc,space,roleId });
   }
 
 

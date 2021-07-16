@@ -28,7 +28,7 @@ export class DoughnutChartComponent implements OnInit ,OnDestroy{
       this.space = JSON.parse(localStorage.getItem('space'));
 
       // get Request Count for pending,open,close,Complete
-      this.userDataService.getRequestCount(this.role, this.space).subscribe((response: any) => {
+      this.userDataService.getRequestCount(this.role, this.space,JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
       let Pending = response.req_stats.Pending;
       let Open = response.req_stats.Open;
       let Closed = response.req_stats.Closed;

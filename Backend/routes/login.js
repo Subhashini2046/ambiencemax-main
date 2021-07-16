@@ -48,6 +48,7 @@ router.post("/login", (req, res) => {
 });
 
 router.get('/roles', (req, res) => {
+  let result1=[];
   let getrolesquery = `select linkrumpadminaccess.linkRUMPAdminAccessPK as sid,linkrumpadminaccess.linkrumprolefk as role,linkrumpspace as space,
 COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as roledesc from linkrumpadminaccess 
 left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
@@ -58,7 +59,13 @@ inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkR
 where linkrumpadminfk=? and linkRUMPActiveFlag=1 order by linkrumprolefk`;
   con.query(getrolesquery, [req.query.userid], (err, result) => {
     if (err) throw err;
-    res.send(JSON.stringify(result));
+    if(result.length>1){
+      result1.push({role:-1,space:"",name: "All Request", roledesc: "Initiator"});
+    }
+    for(var r of result){
+      result1.push(r);
+    }
+    res.send(JSON.stringify(result1));
   })
 })
 module.exports = router;

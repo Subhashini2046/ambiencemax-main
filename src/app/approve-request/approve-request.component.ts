@@ -31,12 +31,14 @@ export class ApproveRequestComponent implements OnInit {
   user_name;
   me_type;
   isLoading = false;
+  space;
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
+      this.space=params['space'];
+      this.role_id=params['roleId'];
     });
-
-    this.role_id = JSON.parse(localStorage.getItem('role_id'));
+   // this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.user_id = JSON.parse(localStorage.getItem('userId'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
     this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
@@ -96,14 +98,15 @@ export class ApproveRequestComponent implements OnInit {
       for (let i = 0; i < this.selection.selected.length; i++) {
         this.vendorList[i] = (this.selection.selected[i]["vendorId"]);
       }
-      this.userDataService.addVendors(this.vendorList, this.req_id, this.requestComment, this.admin_access_id, this.user_name).subscribe((ResData) => {
+      this.userDataService.addVendors(this.vendorList, this.req_id, this.requestComment, this.space,this.role_id, this.user_name).subscribe((ResData) => {
         this.route.navigate(['/AmbienceMax/open']);
       })
 
     } else
-      this.userDataService.approveRequest(this.requestComment, this.req_id, this.user_id, this.admin_access_id, this.user_name).subscribe((ResData) => {
+      this.userDataService.approveRequest(this.requestComment, this.req_id, this.user_id,this.space,this.role_id, this.user_name).subscribe((ResData) => {
         this.route.navigate(['/AmbienceMax/open']);
         console.log("Successfully Inserted");
       });
   }
+
 }

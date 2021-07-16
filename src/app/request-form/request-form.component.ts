@@ -76,6 +76,9 @@ export class RequestFormComponent implements OnInit {
   isLoadingRequest = false;
   isLoadingPnc = false;
   pdfTableData: any[] = [];
+  location;
+  roleId;
+
   constructor(public dialog: MatDialog, private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
       me_type: '',
@@ -127,9 +130,11 @@ export class RequestFormComponent implements OnInit {
     this.currReq.req_initiator_id = this.userId;
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
-    this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
+   // this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
+      this.location=params['space'];
+      this.roleId=params['roleId'];
     });
     this.actrouter.params.subscribe(params => {
       this.is_pnc = +params['pnc'];
@@ -446,12 +451,12 @@ export class RequestFormComponent implements OnInit {
   // for approving the reuqest
   onApprove() {
     this.userService.meType = this.currReq.me_type;
-    this.route.navigate(['/AmbienceMax/approveRequest', this.req_id]);
+    this.route.navigate(['/AmbienceMax/approveRequest', this.req_id,this.location,this.roleId]);
   }
 
   // for resend reuqest
   onResend() {
-    this.route.navigate(['/AmbienceMax/dialogg/', this.req_id, this.is_pnc]);
+    this.route.navigate(['/AmbienceMax/dialogg/', this.req_id, this.is_pnc,this.location,this.roleId]);
   }
 
   openSnackBar(message: string) {

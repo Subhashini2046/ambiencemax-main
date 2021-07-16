@@ -43,7 +43,7 @@ export class BarChartComponentComponent implements OnInit, OnDestroy {
       this.space = JSON.parse(localStorage.getItem('space'));
 
       // get Request Count for pending,open,close,Complete
-      this.userDataService.getRequestCount(this.role, this.space)
+      this.userDataService.getRequestCount(this.role, this.space,JSON.parse(localStorage.getItem('userId')))
         .subscribe(res => {
           let pending = res['req_stats'].Pending
           let close = res['req_stats'].Closed

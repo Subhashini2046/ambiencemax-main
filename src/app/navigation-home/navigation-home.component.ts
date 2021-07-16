@@ -56,7 +56,7 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
       this.space = JSON.parse(localStorage.getItem('space'));
 
       //get Request count for open,pending,close and complete request.
-      this.UsrDataService.getRequestCount(this.role, this.space).subscribe((res: any) => {
+      this.UsrDataService.getRequestCount(this.role, this.space,JSON.parse(localStorage.getItem('userId'))).subscribe((res: any) => {
         this.Pending = res.req_stats.Pending;
         this.All = res.req_stats.All;
         this.Open = res.req_stats.Open;

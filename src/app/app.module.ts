@@ -55,8 +55,8 @@ import { ViewRequestTabComponent } from './view-request-tab/view-request-tab.com
 const appRoutes = [
   {path: 'AmbienceMax' ,component: DashboardComponent,canActivate:[AuthenticationGuard],
   children: [
-    {path: 'dialogg/:id/:pnc', component: AddDialogComponent,},
-    {path: 'viewcomm/:id/:reqId/:pnc' , component: ViewcommComponent},
+    {path: 'dialogg/:id/:pnc/:space/:roleId', component: AddDialogComponent,},
+    {path: 'viewcomm/:id/:reqId/:pnc/:space/:roleId' , component: ViewcommComponent},
     {path: 'reqform/:id',component:RequestFormComponent},
     {path: 'status/:id' , component: ViewStatusComponent},
     {path: 'view/:id' , component: ViewReqComponent},
@@ -69,11 +69,11 @@ const appRoutes = [
     {path: 'pending' , component: PendingComponent},
     {path: 'allRequest' , component: AllRequestComponent},
     {path: 'admin/:userId' , component: AdminPanelComponent},
-    {path: 'approveRequest/:id' , component: ApproveRequestComponent},
+    {path: 'approveRequest/:id/:space/:roleId' , component: ApproveRequestComponent},
     {path: 'complete' , component: CompleteComponent},
     {path:'draftRequest',component:DraftRequestComponent},
     {path: 'raiseRequest/:id' , component: RaiseRequestComponent},
-    {path: 'requestDetail/:id/:pnc' , component: RequestTabComponent},
+    {path: 'requestDetail/:id/:pnc/:space/:roleId' , component: RequestTabComponent},
     {path: 'viewRequest/:id' , component: ViewRequestTabComponent}
   ]
 },

@@ -29,6 +29,8 @@ export class ViewcommComponent implements OnInit {
   user_name;
   req_status;
   req_number;
+  space;
+  roleId;
   constructor(private actrouter: ActivatedRoute,public userDataService: UserDataService, private route: Router, private router: Router, public snackBar: MatSnackBar) {
   }
   currReqApprovers = [];
@@ -37,10 +39,12 @@ export class ViewcommComponent implements OnInit {
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['reqId'];
-      this.resendToId=+params['id'];
-      this.is_pnc=+params['pnc']
-     
+      this.resendToId=params['id'];
+      this.is_pnc=params['pnc'];
+      this.space=params['space'];
+      this.roleId=params['roleId'];
     });
+    console.log(this.space,this.roleId);
     this.user_name=JSON.parse(localStorage.getItem('user_name'));
     this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));
     this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
@@ -60,7 +64,7 @@ export class ViewcommComponent implements OnInit {
   onSubmit() {
    
     //resend the request
-    this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.accessID,this.user_name,this.is_pnc).subscribe((ResData) => {
+    this.userDataService.resendRequest(this.comment,this.req_id,this.resendToId,this.user_name,this.is_pnc,this.space,this.roleId).subscribe((ResData) => {
       console.log("Successfully inserted!!");});
     this.openSnackBar("Request is Successfully Resend")
     this.route.navigate(['/AmbienceMax/open']);

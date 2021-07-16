@@ -26,16 +26,16 @@ export class AddDialogComponent implements OnInit {
   }
   role_id;
   space;
-
   ngOnInit() {
     this.actrouter.params.subscribe(params => {
       this.req_id = +params['id'];
       this.is_pnc = +params['pnc'];
+      this.space=params['space'];
+      this.role_id=params['roleId'];
     });
     this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
-    this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    this.space = JSON.parse(localStorage.getItem('space'));
-
+    // this.role_id = JSON.parse(localStorage.getItem('role_id'));
+    // this.space = JSON.parse(localStorage.getItem('space'));
     // get user role like initiator,location head etc.
     this.userDataService.getRoles(this.req_id, this.role_id, this.space, this.accessId).subscribe((data) => {
       this.users = data;
@@ -75,7 +75,7 @@ export class AddDialogComponent implements OnInit {
     if (this.selectedUser["pnc"] == 1) { this.is_pnc = 1 }
     else
       this.is_pnc = 0;
-    this.router.navigate(['AmbienceMax/viewcomm', this.selectedUser["accessId"], this.req_id, this.is_pnc]);
+    this.router.navigate(['AmbienceMax/viewcomm', this.selectedUser["accessId"], this.req_id, this.is_pnc,this.space,this.role_id]);
   }
 
   //navigate to all open request page once click on cancel button

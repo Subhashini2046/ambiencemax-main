@@ -24,17 +24,17 @@ export class OpenComponent implements OnInit{
     console.log("Open Component");
 
     //get all Open Request
-    return this.userService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('admin_access_id'))).subscribe((response: any) => {
+    return this.userService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
       this.dataSource.data = response
     });
 
   }
 
   // navigate to view reuqest data,approve or resend or reuqest update or BOQ form or PNC form
-  view(req_id, pnc) {
+  view(req_id, pnc,space,roleId) {
    //this.route.navigate(['/AmbienceMax/request-form', req_id, pnc]);
    //this.route.navigateByUrl('/AmbienceMax/requestDetail');
-   this.route.navigate(['/AmbienceMax/requestDetail', req_id, pnc]);
+   this.route.navigate(['/AmbienceMax/requestDetail', req_id, pnc,space,roleId]);
   }
 
   // to check reuqest log and request status
