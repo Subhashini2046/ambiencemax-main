@@ -53,8 +53,7 @@ export class NavigationHomeComponent implements OnInit, OnDestroy {
     console.log('ngOnint Dashboard!');
     this.countSubsription = this.UsrDataService.changedetectInRole.subscribe(data => {
       this.role = JSON.parse(localStorage.getItem('role_id'));
-      this.space = JSON.parse(localStorage.getItem('space'));
-
+      this.space = localStorage.getItem('space');
       //get Request count for open,pending,close and complete request.
       this.UsrDataService.getRequestCount(this.role, this.space,JSON.parse(localStorage.getItem('userId'))).subscribe((res: any) => {
         this.Pending = res.req_stats.Pending;

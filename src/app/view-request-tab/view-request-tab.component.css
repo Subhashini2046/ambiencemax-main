@@ -1,0 +1,10 @@
+mat-tab-group{
+    padding-left: 10%;
+    padding-right: 10%;
+}
+.mat-tab-label {
+    min-width: 50% !important;
+    padding: 20px;
+    background-color: white;
+    color: rgb(15, 11, 11);
+}

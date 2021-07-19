@@ -41,3 +41,6 @@ th.mat-sort-header-sorted {
 .mat-row:hover {
   cursor: pointer;
 }
+td{
+  vertical-align:middle;
+}

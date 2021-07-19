@@ -49,20 +49,24 @@ router.post("/login", (req, res) => {
 
 router.get('/roles', (req, res) => {
   let result1=[];
-  let getrolesquery = `select linkrumpadminaccess.linkRUMPAdminAccessPK as sid,linkrumpadminaccess.linkrumprolefk as role,linkrumpspace as space,
-COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as roledesc from linkrumpadminaccess 
-left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
-left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
-left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
-left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
-inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
-where linkrumpadminfk=? and linkRUMPActiveFlag=1 order by linkrumprolefk`;
-  con.query(getrolesquery, [req.query.userid], (err, result) => {
+  con.query(`select distinct linkrumpadminaccess.linkrumprolefk as role,
+  concat("All Request",' | ',pickRUMPRoleDescription)  as roledesc from linkrumpadminaccess 
+  inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
+  where linkrumpadminfk=? and linkRUMPActiveFlag=1 order by linkrumprolefk;
+  select linkrumpadminaccess.linkRUMPAdminAccessPK as sid,linkrumpadminaccess.linkrumprolefk as role,linkrumpspace as space,
+    COALESCE(locname,buiname,cluname,citname) as name,pickRUMPRoleDescription as roledesc from linkrumpadminaccess 
+    left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
+    left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
+    left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
+    left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
+    inner join pickrumprole on(pickrumprole.pickrumprolepk=linkrumpadminaccess.linkRUMPRoleFK)
+    where linkrumpadminfk=? and linkRUMPActiveFlag=1 order by linkrumprolefk;
+    `, [req.query.userid,req.query.userid], (err, result) => {
     if (err) throw err;
-    if(result.length>1){
-      result1.push({role:-1,space:"",name: "All Request", roledesc: "Initiator"});
+    for(r of result[0]){
+      result1.push(r);
     }
-    for(var r of result){
+    for(r of result[1]){
       result1.push(r);
     }
     res.send(JSON.stringify(result1));

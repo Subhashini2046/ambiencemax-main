@@ -25,7 +25,7 @@ export class PendingComponent implements OnInit {
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     
     //get all Pending Request
-    this.userService.getPendingRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
+    this.userService.getPendingRequest(this.role_id,localStorage.getItem('space'), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
       this.dataSource.data= response;
     });
 

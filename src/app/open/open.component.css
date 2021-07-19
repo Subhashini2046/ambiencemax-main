@@ -44,3 +44,6 @@ th{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+td{
+  vertical-align:middle;
+}

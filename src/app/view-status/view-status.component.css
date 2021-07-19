@@ -69,10 +69,6 @@ img {
   width: 60px;
   height: 60px;
 }
-/* .vl {
-  border-left: 15px solid green;
-  height: 50px;
-} */
 
 .v3 {
   border-left: 15px solid rgba(255, 0, 0, 0.733);
@@ -85,12 +81,11 @@ img {
 .mat-header-cell{
   padding-bottom: 15px;
 }
-/* .mat-cell:first-child{
- 
-  border-right: 15px solid green;
-  padding-left: 40px;
-} */
 
-/* .mat-cell{
-  border: none !important;
-} */
+td{
+  vertical-align:middle;
+}
+.imgs{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

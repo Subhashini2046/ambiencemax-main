@@ -26,7 +26,7 @@ ngOnInit() {
   console.log("Complete Component");
   //this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
   this.role_id = JSON.parse(localStorage.getItem('role_id'));
-  return this.userService.getCompleteRequest(this.role_id, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
+  return this.userService.getCompleteRequest(this.role_id, localStorage.getItem('space'), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
     this.dataSource.data = response;
     if(this.dataSource.data.length<1){
       this.message="No data is available";

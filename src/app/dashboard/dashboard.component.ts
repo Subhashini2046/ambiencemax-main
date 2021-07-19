@@ -23,10 +23,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public UnreadStatusclosed;
   public UnreadStatuscompleted;
   public UnreadStatusopen;
-  menus:any = [];
+  menus: any = [];
   userId;
   checkAdmin;
-  flag=0;
+  flag = 0;
   private _mobileQueryListener: () => void;
   constructor(
     public UsrDataService: UserDataService,
@@ -50,13 +50,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.role_id = localStorage.getItem('role_id');
       this.UsrDataService.getUsers(localStorage.getItem('userId')).subscribe(response => {
         this.menus = JSON.parse(JSON.stringify(response));
-        console.log(this.menus);
       })
       this.role_id = localStorage.getItem('role_id');
       this.space = localStorage.getItem('space');
 
       //get Request Count for pending,open,close,Complete,unread status 
-      this.UsrDataService.getRequestCount(this.role_id, this.space,JSON.parse(localStorage.getItem('userId'))).subscribe((res) => {
+      this.UsrDataService.getRequestCount(this.role_id, this.space, JSON.parse(localStorage.getItem('userId'))).subscribe((res) => {
         this.UnreadStatuspending = res["UnreadStatuspending"];
         this.UnreadStatusAll = res["UnreadStatusAll"];
         this.UnreadStatusclosed = res["UnreadStatusclosed"];
@@ -101,9 +100,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // for switch role
   getRoleName(name, roledesc) {
-    if(name!='All Request'){
-    return roledesc + " | " + name}
-    else{
-      return name;}
+    if (roledesc.indexOf('All Request') == -1) {
+      return roledesc + " | " + name
+    }
+    else {
+      return roledesc;
+    }
   }
 }

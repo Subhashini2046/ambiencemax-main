@@ -30,6 +30,9 @@ th{
 .text-center{
   vertical-align:middle;
 }
+td{
+  vertical-align:middle;
+}
 
 .truncate-cell{
   max-width: 300px;

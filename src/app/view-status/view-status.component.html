@@ -11,7 +11,7 @@
           <table class="table" mat-table [dataSource]="this.dataSource1">
 
             <ng-container matColumnDef="progress">
-              <th id="id" mat-header-cell *matHeaderCellDef>Progress</th>
+              <th id="id" mat-header-cell *matHeaderCellDef></th>
               <!-- <div *ngIf="element.status=='Approved'" class="v2">
                 <td id="roleId" class="text-center" mat-cell *matCellDef="let element"></td>
               </div>
@@ -29,10 +29,10 @@
               <td id="name"  mat-cell *matCellDef="let element"> {{element.role}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="status">
+            <!-- <ng-container matColumnDef="status">
               <th id="status" mat-header-cell *matHeaderCellDef> Status </th>
               <td id="reqStatus"  mat-cell *matCellDef="let element"> {{element.status}} </td>
-            </ng-container>
+            </ng-container> -->
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
@@ -54,7 +54,7 @@
 
             <ng-container matColumnDef="imageUrl">
               <th  mat-header-cell *matHeaderCellDef></th>
-              <td  mat-cell *matCellDef="let element"> <img [src]=this.sanitizer.bypassSecurityTrustUrl(element.admPhotoURL)/> </td>
+              <td class="imgs" mat-cell *matCellDef="let element"> <img [src]=this.sanitizer.bypassSecurityTrustUrl(element.admPhotoURL)/> </td>
             </ng-container>
 
             <ng-container matColumnDef="aaction_taken_by">

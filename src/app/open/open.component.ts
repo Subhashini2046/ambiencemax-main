@@ -24,7 +24,7 @@ export class OpenComponent implements OnInit{
     console.log("Open Component");
 
     //get all Open Request
-    return this.userService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
+    return this.userService.getOpenRequest(JSON.parse(localStorage.getItem('role_id')), localStorage.getItem('space'), JSON.parse(localStorage.getItem('userId'))).subscribe((response: any) => {
       this.dataSource.data = response
     });
 
