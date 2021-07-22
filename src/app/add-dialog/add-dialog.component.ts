@@ -33,11 +33,9 @@ export class AddDialogComponent implements OnInit {
       this.space=params['space'];
       this.role_id=params['roleId'];
     });
-    this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
-    // this.role_id = JSON.parse(localStorage.getItem('role_id'));
-    // this.space = JSON.parse(localStorage.getItem('space'));
+    //this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
     // get user role like initiator,location head etc.
-    this.userDataService.getRoles(this.req_id, this.role_id, this.space, this.accessId).subscribe((data) => {
+    this.userDataService.getRoles(this.req_id, this.role_id, this.space).subscribe((data) => {
       this.users = data;
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i]['pickRUMPRoleDescription'].includes('Initiator')) {

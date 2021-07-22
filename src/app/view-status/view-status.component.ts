@@ -20,7 +20,7 @@ export class ViewStatusComponent implements OnInit {
   view_status = null;
   public viewStatus: Views;
   public viewStatus1: Views[] = [];
-  displayedColumns: string[] = ['imageUrl','aaction_taken_by', 'req_action', 'req_date', 'req_time'];
+  displayedColumns: string[] = ['imageUrl','aaction_taken_by', 'req_action', 'req_date', 'req_time','processingTime'];
   displayedColumns1: string[] = ['progress','name'];
   dataSource = new MatTableDataSource();
   dataSource1 = new MatTableDataSource();

@@ -238,17 +238,21 @@ router.post("/newReq", (req, response) => {
 
 
 router.post("/updateRequests", (req, res) => {
-
-  let accessID = req.body.accessID;
   let pnc = req.body.is_pnc;
+  console.log(pnc,"data...............");
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};
+  SELECT RUMPRequestActionTiming as actionTime FROM datarumprequestaction where RUMPRequestFK=${req.body.req_id} order by RUMPRequestActionTiming desc limit 1;
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};`
   con.query(sql, function (error3, result3) {
     if (error3) {
       console.log(error3);
     } 
     else {
-      let wflowdata = result3[0].wflow.split(',');
+      let wflowdata = result3[0][0].wflow.split(',');
+      let previousActionTime=result3[1][0].actionTime;
+      let accessID=result3[2][0].accessID;
+      console.log(wflowdata[0],'wflow');
       let nextValue = 0;
       if (pnc == 0) {
         nextValue = wflowdata[0];
@@ -287,8 +291,11 @@ router.post("/updateRequests", (req, res) => {
         else {
           console.log(ressult);
           const now = new Date();
-          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Submitted','${actionTime}','Submitted','${req.body.role_name}',1);`
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss');
+          let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
+          var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss")));
+          let processingTime=diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds';
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestProcessingTime,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'Submitted','${actionTime}','${processingTime}','Submitted','${req.body.role_name}',1);`
           con.query(sql, (error5, result5) => {
             if (error5) {
               console.log(error5);
@@ -306,15 +313,18 @@ router.post("/updateRequests", (req, res) => {
 // Add BOQ Details //
 router.post("/BOQRequests", (req, res) => {
   let myrole = req.body.role;
-  let accessID = req.body.accessID;
   var sql = `select datarumprequest.RUMPRequestApprovalLevel as approvalLevel ,linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.reqId};`
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.reqId};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};
+  SELECT RUMPRequestActionTiming as actionTime FROM datarumprequestaction where RUMPRequestFK=${req.body.reqId} order by RUMPRequestActionTiming desc limit 1;`
   con.query(sql, function (error6, result6) {
     if (error6) {
       console.log(error6);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-      let wflowdata = result6[0].wflow.split(',');
+      let wflowdata = result6[0][0].wflow.split(',');
+      let accessID=result6[1][0].accessID;
+      let previousActionTime=result6[2][0].actionTime;
       let nextValue = 0;
       if (myrole == 3) {
         wflowdata = wflowdata.filter(data => data.includes('c')).map(data1 => {
@@ -354,8 +364,11 @@ router.post("/BOQRequests", (req, res) => {
             } else {
               console.log(result8);
               const now = new Date();
-              let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.reqId},${req.body.accessID},'Submitted','${actionTime}','BOQ Submitted','${req.body.role_name}',1);`
+              let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss');
+              let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
+              var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss")));
+              let processingTime=diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds';
+              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestProcessingTime,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.reqId},${accessID},'Submitted','${actionTime}','${processingTime}','BOQ Submitted','${req.body.role_name}',1);`
               con.query(sql, function (error9, result9) {
                 if (error9) {
                   console.log(error9);
@@ -410,7 +423,8 @@ router.post("/resendRequest", (req, res) => {
   let addIntoApprovalLevel = 0;
   console.log(req.body,req.body.space,req.body.roleId);
   con.query(`Select w_flow,RUMPRequestMEType,RUMPInitiatorId,RUMPRequestApprovalLevel from datarumprequest inner join linkrumprequestflow on (datarumprequest.RUMPRequestFlowFK = linkrumprequestflow.linkrumprequestflowpk) where RUMPRequestPK =${req.body.req_id};
-  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};`,
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};
+  SELECT RUMPRequestActionTiming as actionTime FROM datarumprequestaction where RUMPRequestFK=${req.body.req_id} order by RUMPRequestActionTiming desc limit 1;`,
    function (error12, result12) {
     if (error12) { console.log(error12); }
     else {
@@ -419,6 +433,7 @@ router.post("/resendRequest", (req, res) => {
       let me_type = result12[0][0].RUMPRequestMEType;
       let ApprovalLevel = result12[0][0].RUMPRequestApprovalLevel;
       let accessID=result12[1][0].accessID;
+      let previousActionTime=result12[2][0].actionTime;
       for (let i = 0; i < w_flow.length; i++) {
         if (typeof w_flow[i] === 'string' && (!w_flow[i].includes('or') && !w_flow[i].includes('i'))) {
           wflowdata.push(w_flow[i]);
@@ -474,8 +489,11 @@ router.post("/resendRequest", (req, res) => {
             } else {
               console.log(result14);
               const now = new Date();
-              let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'${request_action}','${actionTime}','${req.body.reqComment}','${req.body.role_name}',1);`
+              let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss');
+              let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
+              var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss")));
+              let processingTime=diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds';
+              sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestProcessingTime,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'${request_action}','${actionTime}','${processingTime}','${req.body.reqComment}','${req.body.role_name}',1);`
               con.query(sql, function (error15, result15) {
                 if (error15) {
                   console.log(error15);
@@ -582,13 +600,17 @@ router.post("/resendRequest", (req, res) => {
 
 router.post("/addPnc", (req, res) => {
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};
+  SELECT RUMPRequestActionTiming as actionTime FROM datarumprequestaction where RUMPRequestFK=${req.body.req_id} order by RUMPRequestActionTiming desc limit 1`
   con.query(sql, function (error16, result16) {
     if (error16) {
       console.log(error16);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-      let wflowdata = result16[0].wflow.split(',');
+      let wflowdata = result16[0][0].wflow.split(',');
+      let accessID=result16[1][0].accessID;
+      let previousActionTime=result16[2][0].actionTime;
       let nextValue = 0;
       let VendorPk = req.body.VendorPk;
       let allocatedDays = req.body.allocatedDays;
@@ -620,8 +642,11 @@ router.post("/addPnc", (req, res) => {
         } else {
           console.log(result);
           const now = new Date();
-          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Initiated Phase 2','${actionTime}','','${req.body.role_name}',1);`
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss');
+          let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
+          var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss")));
+          let processingTime=diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds';
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestProcessingTime,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'Initiated Phase 2','${actionTime}','${processingTime}','','${req.body.role_name}',1);`
           con.query(sql, function (error18, result18) {
             if (error18) {
               console.log(error18);
@@ -637,13 +662,17 @@ router.post("/addPnc", (req, res) => {
 });
 router.post("/updatePnc", (req, res) => {
   var sql = `select linkrumprequestflowpk as wid,w_flow as wflow from linkrumprequestflow inner join datarumprequest 
-  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};`
+  on datarumprequest.RUMPRequestFlowFK=linkrumprequestflow.linkrumprequestflowpk where RUMPRequestPK=${req.body.req_id};
+  select linkRUMPAdminAccessPK as accessID from linkrumpadminaccess where linkRUMPSpace=${req.body.space} and linkRUMPRoleFK=${req.body.roleId};
+  SELECT RUMPRequestActionTiming as actionTime FROM datarumprequestaction where RUMPRequestFK=${req.body.req_id} order by RUMPRequestActionTiming desc limit 1;`
   con.query(sql, function (error19, result19) {
     if (error19) {
       console.log(error19);
       res.send(JSON.stringify({ result: "failed1" }));
     } else {
-      let wflowdata = result19[0].wflow.split(',');
+      let wflowdata = result19[0][0].wflow.split(',');
+      let accessID=result19[1][0].accessID;
+      let previousActionTime=result19[2][0].actionTime;
       let nextValue = 0;
       let VendorPk = req.body.VendorPk;
       let allocatedDays = req.body.allocatedDays;
@@ -675,8 +704,11 @@ router.post("/updatePnc", (req, res) => {
         } else {
           console.log(result20);
           const now = new Date();
-          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss')
-          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${req.body.accessID},'Submitted','${actionTime}','','${req.body.role_name}',1);`
+          let actionTime = date.format(now, 'YYYY-MM-DD HH:mm:ss');
+          let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
+              var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(actionTime,"YYYY-MM-DD HH:mm:ss")));
+              let processingTime=diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds';
+          sql = `insert into datarumprequestaction (RUMPRequestFK,RUMPRequestRole,RUMPRequestAction,RUMPRequestActionTiming,RUMPRequestProcessingTime,RUMPRequestComments,RUMPRequestRoleName,RUMPRequestStage) values(${req.body.req_id},${accessID},'Submitted','${actionTime}','${processingTime}','','${req.body.role_name}',1);`
           con.query(sql, function (error21, result21) {
             if (error21) {
               console.log(error21);

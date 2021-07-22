@@ -125,8 +125,8 @@ export class UserDataService {
   }
 
   //.....Add Pnc details once head of maintenance tagged the vendor(addRequest).......//
-  addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath, pncfile, accessID, role_name) {
-    this.http.post<any>(this.URL + 'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, accessID, role_name }).subscribe((data) => {
+  addPncByInitiator(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath, pncfile,space,roleId, role_name) {
+    this.http.post<any>(this.URL + 'addPnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, space,roleId, role_name }).subscribe((data) => {
       if (pncfile != null) {
         this.addPncfile(req_id, pncfile);
       }
@@ -134,15 +134,15 @@ export class UserDataService {
       this.navigateToOpenRequest();
     });
   }
-  addPncByInitiator1(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath, accessID, role_name) {
-    this.http.post<any>(this.URL + 'updatePnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, accessID, role_name }).subscribe((data) => {
+  addPncByInitiator1(allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,space,roleId, role_name) {
+    this.http.post<any>(this.URL + 'updatePnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,space,roleId, role_name }).subscribe((data) => {
       this.addPncSupportingDoc(req_id, filepath);
       this.navigateToOpenRequest();
     });
   }
 
-  pncSumbitWhenDelete(pncfile, allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath, accessID, role_name, delete_pnc_file, delete_pnc_doc) {
-    this.http.post<any>(this.URL + 'updatePnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, accessID, role_name }).subscribe((data) => {
+  pncSumbitWhenDelete(pncfile, allocatedDays, allocationStartDate, actualCost, req_id, VendorPk, filepath,space,roleId, role_name, delete_pnc_file, delete_pnc_doc) {
+    this.http.post<any>(this.URL + 'updatePnc', { allocatedDays, allocationStartDate, actualCost, req_id, VendorPk,space,roleId, role_name }).subscribe((data) => {
       if (delete_pnc_doc !== '') {
         this.replacePncFile(delete_pnc_doc, pncfile, req_id);
       } 
@@ -210,8 +210,8 @@ export class UserDataService {
     });
   }
 
-  updateRequest(is_pnc, request: ReqSchema, accessID, req_id, role_name, filepath, delete_file) {
-    this.http.post(this.URL + 'updateRequests', { is_pnc, request: request, accessID, req_id, role_name }).subscribe((res => {
+  updateRequest(is_pnc, request: ReqSchema,space,roleId, req_id, role_name, filepath, delete_file) {
+    this.http.post(this.URL + 'updateRequests', { is_pnc, request: request,space,roleId, req_id, role_name }).subscribe((res => {
       this.addToLogForUpdateRequest(req_id, role_name, filepath);
       if (delete_file.length > 0) {
         this.deleteBOQFile(delete_file);
@@ -267,9 +267,9 @@ export class UserDataService {
   }
 
   //.................addBOQDDetails (addRequests)................//
-  addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath, accessID, role_name, delete_Boq_file) {
+  addBOQDDetails(reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, filepath,space,roleId, role_name, delete_Boq_file) {
 
-    this.http.post(this.URL + 'BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime, accessID, role_name }).subscribe((data: ReqSchema) => {
+    this.http.post(this.URL + 'BOQRequests', { reqId, role, boqDescription, boqEstimatedCost, boqEstimatedTime,space,roleId, role_name }).subscribe((data: ReqSchema) => {
       this.addBOQfile(reqId, filepath);
       if (delete_Boq_file.length > 0) {
         this.deleteBOQFile(delete_Boq_file);
@@ -292,8 +292,8 @@ export class UserDataService {
     return this.http.get(this.URL + `roles?userid=${id}`);
   }
 
-  getRoles(req_id, role_id, space, accessId) {
-    return this.http.post(this.URL + 'users1', { req_id, role_id, space, accessId });
+  getRoles(req_id, role_id, space) {
+    return this.http.post(this.URL + 'users1', { req_id, role_id, space});
   }
   downloadFile(x: string): Observable<any> {
     const param = new HttpParams().set('filename', x);

@@ -46,7 +46,7 @@ export class ViewcommComponent implements OnInit {
     });
     console.log(this.space,this.roleId);
     this.user_name=JSON.parse(localStorage.getItem('user_name'));
-    this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));
+    //this.accessID=JSON.parse(localStorage.getItem('admin_access_id'));
     this.userDataService.getRequestDetail(this.req_id).subscribe((response: any) => {
       this.budget_type = response[0]["BudgetType"];
       this.me_type = response[0]["METype"];

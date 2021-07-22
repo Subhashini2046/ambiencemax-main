@@ -33,7 +33,6 @@ th{
 td{
   vertical-align:middle;
 }
-
 .truncate-cell{
   max-width: 300px;
   white-space: nowrap;
@@ -47,3 +46,7 @@ th.mat-sort-header-sorted {
 .mat-row:hover {
   cursor: pointer;
 }
+.example{
+padding-right: 100px;
+}
+

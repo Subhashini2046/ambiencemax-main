@@ -78,7 +78,7 @@ router.post("/viewStatuss", (req, res) => {
   let me_type = null;
   let intiator_id = '';
   let w_flow = [];
-  let sql = `select admPhotoURL,RUMPRequestRoleName as RequestRoleName,RUMPRequestAction as 
+  let sql = `select RUMPRequestProcessingTime, admPhotoURL,RUMPRequestRoleName as RequestRoleName,RUMPRequestAction as 
   RequestAction,RUMPRequestActionTiming as RequestActionDate,time(RUMPRequestActionTiming) 
   RequestActionTiming from datarumprequestaction 
   inner join linkrumpadminaccess on(linkrumpadminaccess.linkRUMPAdminAccessPK=datarumprequestaction.RUMPRequestRole) 

@@ -64,7 +64,9 @@
       </ng-container> -->
       
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;" (click)="view(row.RUMPRequestPK)"></tr>
+      <tr mat-row #tooltip="matTooltip" [ngClass]="{'make-gold': row.UnreadStatus == 1}" *matRowDef="let row; columns: displayedColumns;" (click)="view(row.RUMPRequestPK)" 
+      [matTooltip]="row.RUMPRequestComments"
+      matTooltipClass="example" ></tr>
     </table>
     <mat-paginator [hidden]="!(this.dataSource.data.length>=1)" [pageSizeOptions]="[5 , 10]" showFirstLastButtons></mat-paginator>
   <div style="text-align: center;color:red;margin: 20px 0;padding-bottom: 20px;"

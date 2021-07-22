@@ -46,6 +46,7 @@ import { AddWorkflowDialogComponent } from './add-workflow-dialog/add-workflow-d
 import { environment } from 'src/environments/environment';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import {AuthenticationGuard} from './authentication.guard';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { RaiseRequestComponent } from './raise-request/raise-request.component';
 import { DraftRequestComponent } from './draft-request/draft-request.component';
 import { SpoceDetailsComponent } from './spoce-details/spoce-details.component';
@@ -150,6 +151,7 @@ const appRoutes = [
     NgxMatSelectSearchModule,
     MatSortModule,
     MatTabsModule,
+    MatTooltipModule
   ],
   providers: [ UserDataService,AuthGuardService,
   {provide:'AMBI_API_URL',useValue:environment.url}],

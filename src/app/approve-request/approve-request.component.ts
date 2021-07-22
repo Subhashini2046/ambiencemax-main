@@ -41,7 +41,7 @@ export class ApproveRequestComponent implements OnInit {
    // this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.user_id = JSON.parse(localStorage.getItem('userId'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
-    this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
+   // this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
 
     //get vendor Category
     if (this.role_id == 5) {

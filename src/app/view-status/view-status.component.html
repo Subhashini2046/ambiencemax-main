@@ -79,6 +79,11 @@
               <th id="time"  mat-header-cell *matHeaderCellDef> Request Time </th>
               <td id="actionTime"  mat-cell *matCellDef="let element"> {{element.RequestActionTiming}} </td>
             </ng-container>
+            <ng-container matColumnDef="processingTime">
+              <th id="time"  mat-header-cell *matHeaderCellDef> Processing Time </th>
+              <td id="actionTime"  mat-cell *matCellDef="let element"> {{element.RUMPRequestProcessingTime}} </td>
+            </ng-container>
+            
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>

@@ -359,7 +359,7 @@ export class RequestFormComponent implements OnInit {
         this.filepath[i] = res.files[i]['filename'];
       }
 
-      this.userService.updateRequest(this.is_pnc, obj, this.admin_access_id, this.req_id, JSON.parse(localStorage.getItem('user_name')), this.filepath, this.delete_file);
+      this.userService.updateRequest(this.is_pnc, obj, this.location,this.roleId, this.req_id, JSON.parse(localStorage.getItem('user_name')), this.filepath, this.delete_file);
     });
 
   }
@@ -380,7 +380,7 @@ export class RequestFormComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      this.userService.addBOQDDetails(this.req_id, this.role_id, boqDis, boqCost, boqTime, this.filepath, this.admin_access_id, this.user_name, this.delete_Boq_file);
+      this.userService.addBOQDDetails(this.req_id, this.role_id, boqDis, boqCost, boqTime, this.filepath,this.location,this.roleId, this.user_name, this.delete_Boq_file);
       this.openSnackBar('Request Submitted Successfully !');
     });
 
@@ -432,16 +432,16 @@ export class RequestFormComponent implements OnInit {
         if (this.delete_pnc_option == 0) {
           if (this.pncfile.length > 0) {
             this.pncfilesName = res.files[0]['filename'];
-            this.userService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.pncfilesName, this.admin_access_id, this.user_name);
+            this.userService.addPncByInitiator(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.pncfilesName,this.location,this.roleId, this.user_name);
           } else {
-            this.userService.addPncByInitiator1(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name);
+            this.userService.addPncByInitiator1(allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc,this.location,this.roleId, this.user_name);
           }
         }
         else if (this.delete_pnc_option == 1) {
           if (this.pncfile.length > 0) {
             this.pncfilesName = res.files[0]['filename'];
           }
-          this.userService.pncSumbitWhenDelete(this.pncfilesName, allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.admin_access_id, this.user_name, this.delete_pnc_file, this.delete_pnc_doc);
+          this.userService.pncSumbitWhenDelete(this.pncfilesName, allocatedDay, allocationStartDate, cost, this.req_id, VendorPk, this.filepnc, this.location,this.roleId, this.user_name, this.delete_pnc_file, this.delete_pnc_doc);
         }
       });
     });
