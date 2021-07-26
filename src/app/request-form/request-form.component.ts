@@ -112,7 +112,9 @@ export class RequestFormComponent implements OnInit {
     balance_budget: 0,
     req_subject: '',
     req_description: '',
-    draftReqId: 0
+    draftReqId: 0,
+    location:'',
+    userId:null
   };
 
   openDialog(venSpoc1, venSpoc1Address, venSpoc1Email, venSpoc1Mobile, venSpoc1Phone): void {

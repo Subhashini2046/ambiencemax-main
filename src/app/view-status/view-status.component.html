@@ -19,8 +19,8 @@
                 <td id="roleId" class="text-center" mat-cell *matCellDef="let element"></td>
               </div> -->
               <td id="roleId" mat-cell *matCellDef="let element">
-                <div *ngIf="element.status=='Approved'" class="v2"></div>
-                <div *ngIf="element.status=='Pending'" class="v3"></div>
+                <div *ngIf="element.status=='Approved'" class="v2">&nbsp;&nbsp;&nbsp;</div>
+                <div *ngIf="element.status=='Pending'" class="v3">&nbsp;&nbsp;&nbsp;</div>
               </td>
             </ng-container>
 
@@ -54,7 +54,7 @@
 
             <ng-container matColumnDef="imageUrl">
               <th  mat-header-cell *matHeaderCellDef></th>
-              <td class="imgs" mat-cell *matCellDef="let element"> <img [src]=this.sanitizer.bypassSecurityTrustUrl(element.admPhotoURL)/> </td>
+              <td class="imgs" mat-cell *matCellDef="let element"> <img [src]=element.admPhotoURL/>&nbsp;&nbsp; </td>
             </ng-container>
 
             <ng-container matColumnDef="aaction_taken_by">

@@ -89,7 +89,7 @@ router.post("/ViewRequestDetail", (req, res) => {
 
 router.post("/newReq", (req, response) => {
   console.log(req.body);
-  let space = req.body.space;
+  let space = req.body.request.location;
   let spaceCollection = splitHierarchy(space);
 
   function splitHierarchy(space) {
@@ -134,7 +134,7 @@ router.post("/newReq", (req, response) => {
           w_flow1 = w_flow[0];
           req_level = w_flow1;
           req_date = new Date();
-          sql = `select locShortName from datalocation where locLocationPK=${req.body.space.substr(0, 11)};`
+          sql = `select locShortName from datalocation where locLocationPK=${space.substr(0, 11)};`
           con.query(sql, function (err, result) {
             if (err) {
               console.log(err);
@@ -151,7 +151,7 @@ router.post("/newReq", (req, response) => {
               startDate = startYear;
               endDate = endYear.toString().substr(2, 4);
               startEndDate = startDate + "-" + endDate;
-              space = req.body.space.substr(0, 11);
+              space = space.substr(0, 11);
 
               let requestNumber = "";
               if (req.body.request.req_type == "Repair") {
@@ -161,15 +161,17 @@ router.post("/newReq", (req, response) => {
               } else if (req.body.request.req_type == "Maintenance") {
                 requestNumber = locShortName + "/" + startEndDate + "/" + "NewForm3" + "/";
               }
-
+              console.log(req.body.userId,space);
               sql = `select max(cast(REPLACE(rumprequestnumber, '${requestNumber}', '')+1 as decimal(10,0))) as nextval
-              from datarumprequest 
-              where RUMPRequestNumber like '${requestNumber}%';`
-              con.query(sql, function (err, result) {
+              from datarumprequest where RUMPRequestNumber like '${requestNumber}%';
+              select linkrumpadminaccesspk as id from linkrumpadminaccess where linkRUMPAdminFK=? and linkrumprolefk=0 and linkrumpspace=?;`
+              con.query(sql,[req.body.userId,req.body.request.location], function (err, result) {
                 if (err) {
                   console.log(err);
                 } else {
-                  nextValue = result[0].nextval;
+                  console.log(result);
+                  nextValue = result[0][0].nextval;
+                  let accessID=result[1][0].id;
                   if (nextValue == null) {
                     nextValue = 1;
                   }
@@ -197,7 +199,7 @@ router.post("/newReq", (req, response) => {
                             'NA',${budget_type},
                             ${req.body.request.available_budget},${req.body.request.consumed_budget},
                             ${req.body.request.balance_budget},'${req.body.request.req_subject}',
-                            '${req.body.request.req_description}','${req_date}',${w_id},'${req.body.request.req_status}',0,${req.body.request.req_initiator_id},${req_level},0,${req.body.accessID})`
+                            '${req.body.request.req_description}','${req_date}',${w_id},'${req.body.request.req_status}',0,${accessID},${req_level},0,${accessID})`
 
                   con.query(sql_nested, (err, res) => {
                     if (err) {
@@ -769,7 +771,6 @@ router.post("/check_asUnRead", (req, res) => {
 });
 
 router.post("/saveDraftRequest", (req, res) => {
-  console.log("saveDraftRequest",req.body);
   let me_type = null;
   if(req.body.request.me_type != ''){
   if (req.body.request.me_type == "Civil") {
@@ -794,11 +795,11 @@ router.post("/saveDraftRequest", (req, res) => {
   const now = new Date();
   let req_date = date.format(now, 'YYYY-MM-DD HH:mm:ss')
  let sql = `insert into datarumpdraftrequest (RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,
-    RUMPRequestBalanceBudget,RUMPRequestSubject,RUMPRequestDescription,RUMPRequestDate,space,role_id) values(?,?,?,?,?,?,?,?,?,?,?,?)`
+    RUMPRequestBalanceBudget,RUMPRequestSubject,RUMPRequestDescription,RUMPRequestDate,space,role_id,userId) values(?,?,?,?,?,?,?,?,?,?,?,?,?)`
   con.query(sql, [req.body.request.req_type, me_type, req.body.request.req_swon, budget_type,
   req.body.request.available_budget, req.body.request.consumed_budget,
   req.body.request.balance_budget, req.body.request.req_subject,
-  req.body.request.req_description, req_date,req.body.space,req.body.role_id], function (err3, result) {
+  req.body.request.req_description, req_date,req.body.request.location,req.body.role_id,req.body.request.userId], function (err3, result) {
     if (err3) {
       console.log(err3);
     } else {
@@ -855,11 +856,12 @@ router.post("/updateDraftRequest", (req, res) => {
 });
 
 router.post("/fetchAllDraftRequest", (req, res) => {
-  console.log(req.body.space);
+  if(req.body.space != 'undefined'){
+let space=JSON.parse(req.body.space);
  let sql = `select RUMPRequestPK,if(RUMPRequestType="","No Request Type",RUMPRequestType) as RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,
   RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,RUMPRequestBalanceBudget,
   if(RUMPRequestSubject="","(No Subject)",RUMPRequestSubject) as RUMPRequestSubject,
-  if(RUMPRequestDescription="","No Description Available",RUMPRequestDescription) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${req.body.space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
+  if(RUMPRequestDescription="","No Description Available",RUMPRequestDescription) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest where space='${space}' and role_id=${req.body.role_id} order by RUMPRequestDate desc;`
   con.query(sql, function (err5, result) {
     if (err5) {
       console.log(err5);
@@ -867,6 +869,21 @@ router.post("/fetchAllDraftRequest", (req, res) => {
       res.end(JSON.stringify(result));
     }
   })
+}
+else{
+  let sql = `select RUMPRequestPK,if(RUMPRequestType="","No Request Type",RUMPRequestType) as RUMPRequestType,RUMPRequestMEType,RUMPRequestSWON,RUMPRequestBudgetType,
+  RUMPRequestAvailableBudget,RUMPRequestConsumedBudget,RUMPRequestBalanceBudget,
+  if(RUMPRequestSubject="","(No Subject)",RUMPRequestSubject) as RUMPRequestSubject,
+  if(RUMPRequestDescription="","No Description Available",RUMPRequestDescription) as RUMPRequestDescription,RUMPRequestDate from datarumpdraftrequest 
+  where userId=? and role_id=0 order by RUMPRequestDate desc`
+  con.query(sql,[req.body.userId], function (err5, result) {
+    if (err5) {
+      console.log(err5);
+    } else {
+      res.end(JSON.stringify(result));
+    }
+  })
+}
 });
 
 router.post("/fetchDraftRequest", (req, res) => {

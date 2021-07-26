@@ -155,6 +155,11 @@ router.get('/download', (req, res) => {
   res.download(file);
 });
 
+router.get('/image', (req, res) => {
+  console.log(req.query.filepath)
+  res.download(req.query.filepath);
+});
+
 router.get('/RequestFle', (req, res) => {
   const file = 'C:/CommonFolderMirror/RUMP_Req_RUMP_Supporting_Docs/' + req.query.filename;
   res.download(file);

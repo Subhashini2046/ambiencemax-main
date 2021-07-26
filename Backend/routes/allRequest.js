@@ -7,10 +7,12 @@ router.post("/allReq", (req, res) => {
   if (req.body.space != 'undefined') {
     let space=JSON.parse(req.body.space);
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
-    where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc`, space, (err, result) => {
+    inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
+    where linkrumprolefk=0 and linkRUMPSpace=? and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`, space, (err, result) => {
         if (err) throw err;
         res.end(JSON.stringify(result))
       })
@@ -45,8 +47,11 @@ router.post("/allReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc `,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
+      inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
+       where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc `,
           [metype, narr], (err1, result1) => {
             if (err1) throw err1;
             res.end(JSON.stringify(result1))
@@ -70,8 +75,11 @@ router.post("/allReq", (req, res) => {
             }
           }
         }
-        con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc`,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
+      inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
+       where rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`,
           [narr], (err3, result3) => {
             if (err3) throw err3;
             res.end(JSON.stringify(result3))
@@ -81,12 +89,15 @@ router.post("/allReq", (req, res) => {
     }
   }
   else {
+    
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
+    inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
     where linkrumprolefk=0 and linkRUMPSpace in (select linkRUMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${req.body.userId} and linkrumprolefk=0 order by linkrumprolefk)
-    and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc`, req.body.space, (err, result) => {
+    and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`, req.body.space, (err, result) => {
         if (err) throw err;
         res.end(JSON.stringify(result))
       })
@@ -123,8 +134,11 @@ router.post("/allReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc `,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
+      inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
+      where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc `,
           [metype, narr], (err1, result1) => {
             if (err1) throw err1;
             res.end(JSON.stringify(result1))
@@ -150,8 +164,11 @@ router.post("/allReq", (req, res) => {
             }
           }
         }
-        con.query(`select RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
-      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest where rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 order by RUMPRequestdate desc`,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
+      inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK) 
+      where rumprequestflowfk in(?) and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`,
           [narr], (err3, result3) => {
             if (err3) throw err3;
             res.end(JSON.stringify(result3))

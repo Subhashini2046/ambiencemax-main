@@ -190,8 +190,8 @@ export class UserDataService {
   }
 
 
-  getViewRequestStatus(req_id) {
-    return this.http.post<any>(this.URL + 'viewStatuss', { req_id });
+  getViewRequestStatus(req_id,pnc) {
+    return this.http.post<any>(this.URL + 'viewStatuss', { req_id,pnc });
   }
 
   getViewRequestLog(reqId: number) {
@@ -202,8 +202,8 @@ export class UserDataService {
     return this.http.post(this.URL + 'pdfTableData', { req_id });
   }
   //.................Add new Request(Raise Request)(add Request)................//
-  addRequest(newReq: ReqSchema, space, user_name, filepath, accessID) {
-    this.http.post(this.URL + 'newReq', { request: newReq, space, accessID }).subscribe((data: any) => {
+  addRequest(newReq: ReqSchema,userId, user_name, filepath, accessID) {
+    this.http.post(this.URL + 'newReq', { request: newReq,userId, accessID }).subscribe((data: any) => {
       this.addToLog(JSON.parse(JSON.stringify(data)).id, user_name, filepath);
       alert('Request created with Request Number: ' + data.reqNumber);
       this.router.navigateByUrl('/AmbienceMax/dashboard');
@@ -291,7 +291,9 @@ export class UserDataService {
   getUsers(id) {
     return this.http.get(this.URL + `roles?userid=${id}`);
   }
-
+getLocation(userId){
+return this.http.post(this.URL+'location',{userId});
+}
   getRoles(req_id, role_id, space) {
     return this.http.post(this.URL + 'users1', { req_id, role_id, space});
   }
@@ -382,16 +384,16 @@ export class UserDataService {
   }
 
   //save the raise request as Draft Request
-  saveDraftRequest(newReq: ReqSchema, space, role_id) {
-    return this.http.post(this.URL + 'saveDraftRequest', { request: newReq, space, role_id });
+  saveDraftRequest(newReq: ReqSchema, role_id) {
+    return this.http.post(this.URL + 'saveDraftRequest', { request: newReq, role_id });
   }
 
   updateDraftRequest(newReq: ReqSchema, raiseRequestId) {
     return this.http.post(this.URL + 'updateDraftRequest', { request: newReq, raiseRequestId });
   }
 
-  fetchAllDraftRequest(space, role_id) {
-    return this.http.post(this.URL + 'fetchAllDraftRequest', { space, role_id });
+  fetchAllDraftRequest(userId,space, role_id) {
+    return this.http.post(this.URL + 'fetchAllDraftRequest', { userId,space, role_id });
   }
   
   fetchDraftRequest(draftReqId) {
@@ -404,5 +406,13 @@ export class UserDataService {
 
   cancelRequest(req_id) {
     return this.http.post(this.URL + 'cancelRequest', { req_id });
+  }
+
+  getImage(x: string): Observable<any> {
+    const param = new HttpParams().set('filepath', x);
+    const options = {
+      params: param
+    };
+    return this.http.get(this.URL + 'image', { ...options, responseType: 'blob' });
   }
 }

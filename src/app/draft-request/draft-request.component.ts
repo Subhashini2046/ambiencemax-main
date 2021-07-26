@@ -23,14 +23,13 @@ constructor(private route: Router, public userService: UserDataService) { }
 ngOnInit() {
   
 
-  this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
+  //this.accessId = JSON.parse(localStorage.getItem('admin_access_id'));
   this.role_id = JSON.parse(localStorage.getItem('role_id'));
   this.fetchAllDraftRequest();
 }
 fetchAllDraftRequest(){
-  this.userService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('space')),this.role_id).subscribe((response: any) => {
+  this.userService.fetchAllDraftRequest(JSON.parse(localStorage.getItem('userId')),localStorage.getItem('space'),this.role_id).subscribe((response: any) => {
     this.dataSource.data= response;
- 
   });
 }
 deleteDraftRequest(draftReqId) {

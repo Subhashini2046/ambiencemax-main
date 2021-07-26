@@ -9,7 +9,8 @@ router.post("/closedReq", (req, res) => {
   if (req.body.space != 'undefined') {
     let space=JSON.parse(req.body.space);
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
     inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -48,7 +49,8 @@ router.post("/closedReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK) 
       where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by rumprequestpk desc  `,
@@ -75,7 +77,8 @@ router.post("/closedReq", (req, res) => {
             }
           }
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK) 
       where rumprequestflowfk in(?) and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by rumprequestpk desc`,
@@ -89,7 +92,8 @@ router.post("/closedReq", (req, res) => {
   }
   else {
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
     inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
     inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -131,7 +135,8 @@ router.post("/closedReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK) 
       where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by rumprequestpk desc  `,
@@ -160,7 +165,8 @@ router.post("/closedReq", (req, res) => {
             }
           }
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest 
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
       where rumprequestflowfk in(?) and RUMPRequestStatus='Closed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by rumprequestpk desc`,
@@ -175,17 +181,12 @@ router.post("/closedReq", (req, res) => {
   }
 });
 
-router.post("/complete_reqs", (req, res) => {
-var previousActionTime  = "2014-08-12 18:28:58";
-var currTime = "2014-08-21 11:16:15";
-let diffInDays = Math.abs(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(currTime,"YYYY-MM-DD HH:mm:ss"), 'days'));
-var d = moment.duration(moment(previousActionTime,"YYYY-MM-DD HH:mm:ss").diff(moment(currTime,"YYYY-MM-DD HH:mm:ss")));
-console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.minutes()) + ' minutes ' + Math.abs(d.seconds())+' seconds');
- 
+router.post("/complete_reqs", (req, res) => { 
  if (req.body.space != 'undefined') {
     let space=JSON.parse(req.body.space);
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
       inner join linkrumpadminaccess on (RUMPInitiatorId=linkRUMPAdminAccessPK)
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -224,7 +225,8 @@ console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.min
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
         RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus
          from datarumprequest inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
          where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestDate desc`,
@@ -251,7 +253,8 @@ console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.min
             }
           }
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
         RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus
          from datarumprequest inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
          where rumprequestflowfk in(?) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestDate desc`,
@@ -265,7 +268,8 @@ console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.min
   }
   else {
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus from datarumprequest
       inner join linkrumpadminaccess on RUMPInitiatorId=linkRUMPAdminAccessPK
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -307,7 +311,8 @@ console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.min
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
         RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus
          from datarumprequest inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
          where rumprequestmetype=? and rumprequestflowfk in(?) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestDate desc`,
@@ -336,7 +341,8 @@ console.log(diffInDays+' days '+Math.abs(d.hours()) + ' hours ' + Math.abs(d.min
             }
           }
         }
-        con.query(`select RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
         RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus
          from datarumprequest inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
          where rumprequestflowfk in(?) and RUMPRequestStatus='Completed' and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestDate desc`,

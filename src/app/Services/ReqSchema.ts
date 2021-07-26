@@ -16,4 +16,6 @@ export interface ReqSchema {
   req_subject:string;
   req_description: string;
   draftReqId:number;
+  location:string;
+  userId:number;
 }

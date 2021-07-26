@@ -4,6 +4,7 @@ let express = require("express"),
   con = require("../mysql_config/config");
 
 
+
 router.post("/pdfTableData", (req, res) => {
   let req_id = req.body.req_id;
   let tableData = [];
@@ -71,9 +72,13 @@ router.post("/pdfTableData", (req, res) => {
 })
 
 
+
 //check.............
 router.post("/viewStatuss", (req, res) => {
+  
+  console.log(req.body);
   let reqId = req.body.req_id;
+  let pnc=req.body.pnc;
   let wflowdata = [];
   let me_type = null;
   let intiator_id = '';
@@ -130,21 +135,32 @@ router.post("/viewStatuss", (req, res) => {
             if (reqStatus == 'Pending') {
               con.query(`select linkRUMPAdminAccessPK,linkRUMPRoleFK as roleId,linkRUMPSpace as space,pickRUMPRoleDescription as role, concat('Pending') as status
               from linkrumpadminaccess inner join pickrumprole on(pickrumprole.pickRUMPRolePK=linkrumpadminaccess.linkRUMPRoleFK) 
-              where linkRUMPAdminAccessPK in(?) ORDER BY FIELD(linkRUMPAdminAccessPK,?);`,
+              where linkRUMPAdminAccessPK in(?) ORDER BY FIELD(linkRUMPAdminAccessPK,?);
+              select linkRUMPRoleFK as initiatorRole,linkRUMPSpace as initiatorSpace from linkrumpadminaccess where linkrumpadminaccesspk =${intiator_id};`,
                 [wflowdata, wflowdata], (err, result) => {
                   if (err) throw err;
-                  let wdata = result;
+                  let wdata = result[0];
+                  let initiatorRole=result[1][0].initiatorRole;
+                  let initiatorSpace=result[1][0].initiatorSpace;
+                  console.log(wdata,"ddddddd");
+                  console.log(initiatorRole,initiatorSpace,roleId,space);
                   let getIndex;
+                  if(roleId==initiatorRole && space==initiatorSpace && pnc==0){
+                    for (let i = 0; i < wdata.length; i++) {
+                      wdata[i].status = 'Pending';
+                    }
+                  }
+                  else{
                   for (let i = 0; i < wdata.length; i++) {
-                    if (wdata[i].roleId == roleId && wdata[i].space == space) {
+                   if(wdata[i].roleId == roleId && wdata[i].space == space) {
                       getIndex = i;
                       break;
                     }
                   }
                   for (let i = 0; i < getIndex; i++) {
                     wdata[i].status = 'Approved';
-                  }
-                  res.end(JSON.stringify({ reqLog: reqLog, approval_status: result }))
+                  }}
+                  res.end(JSON.stringify({ reqLog: reqLog, approval_status: wdata}))
                 })
             }
             else if (reqStatus == 'Closed' || reqStatus == 'Completed') {
@@ -161,6 +177,7 @@ router.post("/viewStatuss", (req, res) => {
     }
   });
 });
+
 
 // router.post("/viewStatuss",(req,res)=>{
 //   let reqId = req.body.req_id;

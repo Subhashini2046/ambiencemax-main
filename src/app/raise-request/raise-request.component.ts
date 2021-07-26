@@ -37,6 +37,9 @@ export class RaiseRequestComponent implements OnInit {
   draftReqId;
   requestDetails: any[] = [];
   isLoading = false;
+  locationList=[];
+  location='';
+  space;
   public keyUp = new Subject<KeyboardEvent>();
   constructor(private formBuilder: FormBuilder, private route: Router, private actrouter: ActivatedRoute, private http: HttpClient, public userService: UserDataService, private _snackBar: MatSnackBar, private router: Router) {
     this.checkoutForm = this.formBuilder.group({
@@ -44,6 +47,8 @@ export class RaiseRequestComponent implements OnInit {
       req_swon: '',
       budget_type: '',
       req_type: '',
+      location:'',
+      rleId:this.role_id,
       available_budget: 0,
       consumed_budget: 0,
       balance_budget: 0,
@@ -68,22 +73,33 @@ export class RaiseRequestComponent implements OnInit {
     balance_budget: 0,
     req_subject: '',
     req_description: '',
-    draftReqId: 0
+    draftReqId: 0,
+    location:'',
+    userId:null
   };
 
 
   ngOnInit() {
     this.userId = JSON.parse(localStorage.getItem('userId'));
-    this.currReq.req_initiator_id = this.userId;
+    //this.currReq.req_initiator_id = this.userId;
     this.role_id = JSON.parse(localStorage.getItem('role_id'));
     this.user_name = JSON.parse(localStorage.getItem('user_name'));
-    this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
+    this.space=localStorage.getItem('space');
+    console.log(this.space);
+   // this.admin_access_id = JSON.parse(localStorage.getItem('admin_access_id'));
     this.actrouter.params.subscribe(params => {
       this.draftReqId = +params['id'];
     });
     if (this.draftReqId > 0) {
       this.fetchDraftRequest(this.draftReqId);
     }
+    this.getSpace();
+  }
+  getSpace(){
+    this.userService.getLocation(this.userId).subscribe((res:any)=>{
+      this.locationList=res;
+      console.log(res);
+    })
   }
   fetchDraftRequest(draftReqId) {
     this.userService.fetchDraftRequest(draftReqId).subscribe((response: any) => {
@@ -154,11 +170,16 @@ export class RaiseRequestComponent implements OnInit {
     this.currReq.balance_budget = this.checkoutForm.value.balance_budget
     this.currReq.req_subject = this.checkoutForm.value.subject
     this.currReq.req_description = this.checkoutForm.value.description
+    this.currReq.userId=JSON.parse(localStorage.getItem('userId'));
+    if(this.space=='undefined')
+      this.currReq.location=this.checkoutForm.value.location
+    else
+      this.currReq.location=JSON.parse(this.space);
   }
   //autosave
   autoSaveFormData() {
     this.passCheckoutFormDataToCurrReq();
-    this.userService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
+    this.userService.saveDraftRequest(this.currReq, JSON.parse(localStorage.getItem('role_id'))).subscribe((data: any) => {
       this.raiseRequestId = data.id;
     });
   }
@@ -228,7 +249,7 @@ export class RaiseRequestComponent implements OnInit {
     else {
       this.currReq.draftReqId = this.raiseRequestId;
     }
-    this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
+    //this.currReq.req_initiator_id = JSON.parse(localStorage.getItem('admin_access_id'));
     const formData = new FormData();
     for (let img of this.fileList) {
       formData.append('files', img);
@@ -238,7 +259,7 @@ export class RaiseRequestComponent implements OnInit {
       for (let i = 0; i < res.files.length; i++) {
         this.filepath[i] = res.files[i]['filename'];
       }
-      this.userService.addRequest(obj, JSON.parse(localStorage.getItem('space')), JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
+      this.userService.addRequest(obj,this.userId, JSON.parse(localStorage.getItem('user_name')), this.filepath, this.admin_access_id);
     });
   }
 }

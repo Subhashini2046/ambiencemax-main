@@ -1,3 +1,5 @@
+const { json } = require("body-parser");
+
 let express = require("express"),
   async = require("async"),
   router = express.Router(),
@@ -46,6 +48,19 @@ router.post("/login", (req, res) => {
     }
   });
 });
+
+router.post('/location',(req,res)=>{
+  con.query(`select linkRUMPSpace,COALESCE(locname,buiname,cluname,citname) as name from linkrumpadminaccess 
+  left join datalocation on(datalocation.locLocationPK=linkRUMPAdminAccess.linkRUMPspace)
+  left join databuilding on(databuilding.buiBuildingPK=linkRUMPAdminAccess.linkRUMPspace)
+  left join dataclub on(dataclub.cluclubpk=linkRUMPAdminAccess.linkRUMPspace)
+  left join datacity on(datacity.citCityPK=linkRUMPAdminAccess.linkRUMPspace)
+  where linkRUMPAdminFK=? and linkRUMPRoleFK=0;`,
+  [req.body.userId],(err,result)=>{
+    if (err) throw err;
+    res.send(JSON.stringify(result));
+  })
+})
 
 router.get('/roles', (req, res) => {
   let result1=[];

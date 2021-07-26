@@ -7,7 +7,8 @@ router.post("/openReq", (req, res) => {
   if (req.body.space != 'undefined') {
     let space=JSON.parse(req.body.space);
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest
       inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -48,7 +49,8 @@ router.post("/openReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on (linkrumpadminaccesspk=rumprequestlevel) 
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
         where rumprequestmetype=? and rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace=? and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`,
@@ -76,7 +78,8 @@ router.post("/openReq", (req, res) => {
           }
         }
 
-        con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
         where rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace=? and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc;`,
@@ -90,7 +93,8 @@ router.post("/openReq", (req, res) => {
   }
   else {
     if (req.body.role == 0) {
-      con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+      con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+        ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
     RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest
       inner join linkrumpadminaccess on rumprequestlevel=linkRUMPAdminAccessPK
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
@@ -133,7 +137,8 @@ router.post("/openReq", (req, res) => {
         if (myrole == 3) {
           metype = 0;
         }
-        con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
         where rumprequestmetype=? and rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace in (select linkRUMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${req.body.userId} and linkrumprolefk=${req.body.role} order by linkrumprolefk) and RUMPRequestCancelStatus=0 group by RUMPRequestFK order by RUMPRequestdate desc`,
@@ -163,7 +168,8 @@ router.post("/openReq", (req, res) => {
           }
         }
 
-        con.query(`select RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
+        con.query(`select (SELECT RUMPRequestComments FROM datarumprequestaction where RUMPRequestFK=RUMPRequestPK group by RUMPRequestActionTiming order by RUMPRequestActionTiming desc limit 1
+          ) as RUMPRequestComments,linkRUMPSpace,linkrumprolefk,RUMPRequestNumber,RUMPRequestPK,RUMPRequestSubject,RUMPRequestType,RUMPRequestDate,
       RUMPRequestStatus,(RUMPRequestUnreadStatus+0) as UnreadStatus,ispnc from datarumprequest inner join linkrumpadminaccess on linkrumpadminaccesspk=rumprequestlevel
       inner join datarumprequestaction on(datarumprequest.RUMPRequestPK=datarumprequestaction.RUMPRequestFK)
         where rumprequestflowfk in(?) and linkrumprolefk=? and linkRUMPSpace in (select linkRUMPSpace from linkrumpadminaccess where linkRUMPAdminFK=${req.body.userId} and linkrumprolefk=${req.body.role} order by linkrumprolefk)
